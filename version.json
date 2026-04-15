@@ -1,0 +1,14 @@
+{
+  "project_name": "BinanceSquareBot",
+  "current_version": "v1.0.0",
+  "last_updated": "2026-04-14 22:26:00",
+  "change_history": [
+    {
+      "version": "v1.0.0",
+      "change_no": "INIT-001",
+      "change_type": "初始化",
+      "change_time": "2026-04-14 22:26:00",
+      "change_summary": "项目初始化，完成技术栈调研和目录结构搭建"
+    }
+  ]
+}

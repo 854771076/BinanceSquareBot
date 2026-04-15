@@ -1,0 +1,49 @@
+# 全链路文档依赖关联矩阵
+matrix_version: "v2.1.0"
+project_version: "v1.0.0"
+last_updated: "2026-04-14 22:26:00"
+latest_change_no: "INIT-001"
+
+# 核心依赖关系列表
+dependency_list:
+  - demand_id: "REQ-BOT-001" # 主需求：定时爬取生成推文
+    demand_doc_path: "docs/需求.md"
+    # 强依赖文档：需求变更必须按优先级同步更新
+    strong_dependency:
+      - doc_type: "技术选型报告"
+        doc_path: "docs/00-requirements/tech-selection-report.md"
+        update_priority: 1
+      - doc_type: "系统架构设计"
+        doc_path: "docs/01-architecture/system-architecture.md"
+        update_priority: 2
+      - doc_type: "领域模型设计"
+        doc_path: "docs/03-backend-design/domain-model.md"
+        update_priority: 3
+      - doc_type: "数据库设计"
+        doc_path: "docs/03-backend-design/database-design/"
+        update_priority: 4
+      - doc_type: "Agent流程设计"
+        doc_path: "docs/06-ai-design/agent-flow/"
+        update_priority: 5
+      - doc_type: "CLI命令设计"
+        doc_path: "docs/08-cli-design/command-spec.md"
+        update_priority: 6
+      - doc_type: "Prompt设计"
+        doc_path: "docs/06-ai-design/prompt-library/"
+        update_priority: 7
+      - doc_type: "测试用例"
+        doc_path: "docs/04-test-acceptance/cases/"
+        update_priority: 8
+    # 弱依赖文档：需求变更仅需校验兼容性
+    weak_dependency:
+      - doc_type: "CI流水线设计"
+        doc_path: "docs/09-devops-design/ci-pipeline.md"
+    # 关联代码模块，变更时同步校验
+    related_code_module:
+      - path: "src/binance_square_bot/"
+    # 需同步更新的索引文档清单
+    index_update_list:
+      - "docs/index.md"
+      - "docs/00-requirements/index.md"
+      - "docs/06-ai-design/index.md"
+      - "docs/08-cli-design/index.md"
