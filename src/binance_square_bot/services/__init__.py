@@ -4,6 +4,7 @@ from .generator import TweetGenerator
 from .publisher import PublisherService
 from .polymarket_fetcher import PolymarketFetcher
 from .polymarket_filter import PolymarketFilter
+from .research_generator import ResearchGenerator
 
 __all__ = [
     "StorageService",
@@ -12,5 +13,6 @@ __all__ = [
     "PublisherService",
     "PolymarketFetcher",
     "PolymarketFilter",
+    "ResearchGenerator",
 ]
 
