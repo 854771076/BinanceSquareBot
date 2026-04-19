@@ -303,12 +303,23 @@ def polymarket_research_run(
         total_success += success_count
         total_attempts += len(results)
 
+        # Log result for each API key
+        for api_idx, (success, error) in enumerate(results, 1):
+            if success:
+                console.print(f"  [green]✅ 账号 {api_idx}: 发布成功[/green]")
+            else:
+                console.print(f"  [red]❌ 账号 {api_idx}: 发布失败 - {error}[/red]")
+
+        console.print(f"  本市场发布结果: {success_count}/{len(results)} 成功")
+
         # Mark as published
         storage.add_published_polymarket(market.condition_id, market.question)
 
         # Add delay between posts
         if idx < len(successful_generations) and not dry_run:
-            time.sleep(config.publish_interval_seconds * config.max_concurrent_accounts)
+            delay = config.publish_interval_seconds * config.max_concurrent_accounts
+            console.print(f"  等待 {delay:.1f} 秒后发布下一篇...")
+            time.sleep(delay)
 
     console.print(f"\n[green]🏁 全部完成，总计发布 {total_success}/{total_attempts} 成功[/green]")
 
