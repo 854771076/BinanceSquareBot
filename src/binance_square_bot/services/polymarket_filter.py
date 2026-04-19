@@ -31,7 +31,7 @@ class PolymarketFilter:
         """Exclude already published markets."""
         return [m for m in markets if m.condition_id not in self.published_ids]
 
-    def select_best_markets(self, markets: list[PolymarketMarket], limit: int = 10) -> list[PolymarketMarket]:
+    def select_best_markets(self, markets: list[PolymarketMarket], limit: int = 3) -> list[PolymarketMarket]:
         """Select the top N best markets to feature based on scoring.
         Returns empty list if no markets meet criteria.
         """
