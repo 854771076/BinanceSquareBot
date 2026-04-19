@@ -1,3 +1,7 @@
+"""
+@file research_generator.py
+@description AI 投资研报推文生成，使用 LLM 分析 Polymarket 市场并生成符合币安广场格式的研报
+"""
 import logging
 from typing import Tuple, Optional, List
 
@@ -54,7 +58,7 @@ def retry_on_failure(func):
             try:
                 return func(*args, **kwargs)
             except ValueError as e:
-                logging.warning(f"Generation attempt {attempt + 1} failed: {e}")
+                logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
                 if attempt == self.max_retries - 1:
                     raise
         raise ValueError("All retries exhausted")
@@ -77,11 +81,11 @@ class ResearchGenerator:
         self.max_hashtags = config.max_hashtags
         self.max_mentions = config.max_mentions
 
-    def build_prompt(self, market: PolymarketMarket) -> str:
+    def build_prompt(self, market: PolymarketMarket, errors: Optional[List[str]] = None) -> str:
         """Build the prompt for LLM."""
         description_section = f"\n描述: {market.description}" if market.description else ""
 
-        return f"""你是一位资深的加密货币KOL，专注于预测市场（Polymarket）投资分析。你需要分析当前一个热门预测市场，生成适合币安广场用户的投资研报。
+        base_prompt = f"""你是一位资深的加密货币KOL，专注于预测市场（Polymarket）投资分析。你需要分析当前一个热门预测市场，生成适合币安广场用户的投资研报。
 
 市场信息:
 问题: {market.question}{description_section}
@@ -105,12 +109,22 @@ class ResearchGenerator:
 4. 请直接输出推文内容，不要添加其他说明。
 """
 
-    @retry_on_failure
-    def generate_research(self, market: PolymarketMarket) -> Tweet:
+        if errors:
+            error_text = "\n".join(errors)
+            base_prompt += f"""
+
+上次生成不符合格式要求，请修正以下错误：
+{error_text}
+请重新生成。
+"""
+
+        return base_prompt
+
+    def generate_research(self, market: PolymarketMarket, errors: Optional[List[str]] = None) -> Tweet:
         """Generate research tweet for the given market.
         Raises ValueError if generation fails after retries.
         """
-        prompt = self.build_prompt(market)
+        prompt = self.build_prompt(market, errors)
         response = self.llm.invoke([HumanMessage(content=prompt)])
         content = response.content.strip()
 
@@ -133,13 +147,16 @@ class ResearchGenerator:
 
     def generate_with_retry(self, market: PolymarketMarket) -> Tuple[Optional[Tweet], str]:
         """Generate with retry logic, returns (result, error_message)."""
+        error = ""
+        validation_errors: List[str] = []
         for attempt in range(self.max_retries):
             try:
-                tweet = self.generate_research(market)
+                tweet = self.generate_research(market, validation_errors if validation_errors else None)
                 return tweet, ""
             except ValueError as e:
                 logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
                 error = str(e)
+                validation_errors.append(error)
 
         logger.error(f"All {self.max_retries} generation attempts failed")
         return None, error
