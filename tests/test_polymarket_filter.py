@@ -61,7 +61,7 @@ def test_already_published_excluded():
     # 0.75 is interesting probability that gives higher score
     markets = [
         create_test_market("A", "0x1", 10000, current_ts, 0.75),
-        create_test_market("B", "0x2", 5000, current_ts, 0.5),
+        create_test_market("B", "0x2", 5000, current_ts, 0.70),  # 70% YES, meets 60-90 criteria
     ]
 
     filterer = PolymarketFilter(min_volume=1000, published_ids={"0x1"})
@@ -115,3 +115,42 @@ def test_filter_min_volume_volume_none():
     # None volume market should be filtered out, only valid remains
     assert len(filtered) == 1
     assert filtered[0].condition_id == "0x2"
+
+
+def test_filter_win_rate_range():
+    """Test filter_win_rate_range correctly filters markets where either outcome is 60%-90%."""
+    from datetime import datetime
+    current_ts = int(datetime.now().timestamp())
+
+    filterer = PolymarketFilter(min_volume=1000)
+
+    # Test 1: YES price 70% (in range) → should be kept
+    market_yes_in = create_test_market("YES 70%", "t1", 1000, current_ts, 0.70)
+    # Test 2: YES 50%, NO 50% → neither in range → should be filtered
+    market_equal = create_test_market("50-50", "t2", 1000, current_ts, 0.50)
+    # Test 3: YES 25%, NO 75% → NO is in range → should be kept
+    market_no_in = PolymarketMarket(
+        condition_id="t3",
+        question="YES 25 NO 75",
+        tokens=[
+            TokenInfo(token_id="t1", outcome="YES", price=0.25),
+            TokenInfo(token_id="t2", outcome="NO", price=0.75),
+        ],
+        volume=1000,
+        created_at=current_ts,
+    )
+    # Test 4: YES exactly 60% → not > 60 → should be filtered
+    market_exact_min = create_test_market("YES exactly 60", "t4", 1000, current_ts, 0.60)
+    # Test 5: YES exactly 90% → not < 90 → should be filtered
+    market_exact_max = create_test_market("YES exactly 90", "t5", 1000, current_ts, 0.90)
+    # Test 6: YES 95% → NO 5% → neither in range → should be filtered
+    market_too_extreme = create_test_market("YES 95%", "t6", 1000, current_ts, 0.95)
+
+    all_markets = [market_yes_in, market_equal, market_no_in, market_exact_min, market_exact_max, market_too_extreme]
+    filtered = filterer.filter_win_rate_range(all_markets)
+
+    # Should keep 2 markets: one with YES in range, one with NO in range
+    assert len(filtered) == 2
+    kept_ids = {m.condition_id for m in filtered}
+    assert "t1" in kept_ids
+    assert "t3" in kept_ids

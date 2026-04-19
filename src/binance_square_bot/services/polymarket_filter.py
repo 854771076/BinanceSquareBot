@@ -31,6 +31,17 @@ class PolymarketFilter:
         """Exclude already published markets."""
         return [m for m in markets if m.condition_id not in self.published_ids]
 
+    def filter_win_rate_range(self, markets: list[PolymarketMarket], min_pct: float = 60.0, max_pct: float = 90.0) -> list[PolymarketMarket]:
+        """Filter markets where either outcome (YES or NO) has win rate between min_pct and max_pct (percentages)."""
+        filtered = []
+        for market in markets:
+            yes_pct = market.yes_price * 100
+            no_pct = market.no_price * 100
+            # Check if either outcome is in the desired range
+            if (min_pct < yes_pct < max_pct) or (min_pct < no_pct < max_pct):
+                filtered.append(market)
+        return filtered
+
     def select_best_markets(self, markets: list[PolymarketMarket], limit: int = 3) -> list[PolymarketMarket]:
         """Select the top N best markets to feature based on scoring.
         Returns empty list if no markets meet criteria.
@@ -39,6 +50,8 @@ class PolymarketFilter:
         candidates = self.filter_min_volume(markets)
         # Filter step 2: exclude published
         candidates = self.exclude_published(candidates)
+        # Filter step 3: win rate range - either outcome between 60% and 90%
+        candidates = self.filter_win_rate_range(candidates)
 
         if not candidates:
             logger.info("No candidate markets remaining after filtering")
