@@ -4,16 +4,7 @@ on:
   schedule:
     # 每小时整点执行
     - cron: "0 * * * *"
-  workflow_dispatch: # 支持手动触发
-    inputs:
-      use_parallel:
-        description: 'Use parallel execution mode'
-        required: false
-        default: 'true'
-        type: choice
-        options:
-          - 'true'
-          - 'false'
+  workflow_dispatch: # 支持手动触发并行执行
 
 permissions:
   contents: write  # 赋予写仓库内容的权限
