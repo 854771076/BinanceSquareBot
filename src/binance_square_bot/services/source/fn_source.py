@@ -98,7 +98,7 @@ class FnSource(BaseSource):
         result: dict[str, Any] = json.loads(decompressed.decode('utf-8'))
         return result
 
-    def fetch(self) -> List[Article]:
+    def fetch(self, page_size: int = 5) -> List[Article]:
         """Fetch today's important news list."""
         date_str = datetime.now().date().strftime("%Y%m%d")
         url = f"{self.config.base_url}/v1/dayNews?is_important=true&date={date_str}"
@@ -117,7 +117,7 @@ class FnSource(BaseSource):
 
         if isinstance(decompressed, list) and len(decompressed) > 0:
             news_list = decompressed[0].get('news', [])
-            for item in news_list:
+            for item in news_list[:page_size]:
                 article = self._parse_article(item)
                 if article:
                     articles.append(article)
