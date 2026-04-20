@@ -4,7 +4,7 @@ import typer
 from rich.console import Console
 
 from binance_square_bot.common.logging import setup_logger
-from binance_square_bot.services.cli import FnCliService, PolymarketCliService, FollowinCliService, CommonCliService
+from binance_square_bot.services.cli import FnCliService, PolymarketCliService, FollowinCliService, CommonCliService, ParallelCliService
 
 # Initialize logger
 setup_logger()
@@ -193,6 +193,29 @@ def followin_discussion(
     """Run Followin discussion tokens workflow."""
     service = FollowinCliService(dry_run=dry_run, limit=limit)
     service.execute_discussion()
+
+
+@app.command("parallel")
+def parallel_run(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
+    max_workers: int = typer.Option(4, "--workers", "-w", help="Max concurrent workers"),
+    disable_fn: bool = typer.Option(False, "--no-fn", help="Disable Fn news source"),
+    enable_polymarket: bool = typer.Option(False, "--enable-polymarket", help="Enable Polymarket source"),
+    disable_followin_topics: bool = typer.Option(False, "--no-followin-topics", help="Disable Followin topics"),
+    disable_followin_io: bool = typer.Option(False, "--no-followin-io", help="Disable Followin IO flow"),
+    disable_followin_discussion: bool = typer.Option(False, "--no-followin-discussion", help="Disable Followin discussion"),
+) -> None:
+    """Run ALL sources in parallel and publish to ALL targets concurrently."""
+    service = ParallelCliService(
+        dry_run=dry_run,
+        max_workers=max_workers,
+        enable_fn=not disable_fn,
+        enable_polymarket=enable_polymarket,
+        enable_followin_topics=not disable_followin_topics,
+        enable_followin_io_flow=not disable_followin_io,
+        enable_followin_discussion=not disable_followin_discussion,
+    )
+    service.execute_all()
 
 
 if __name__ == "__main__":

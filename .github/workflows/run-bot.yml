@@ -5,12 +5,154 @@ on:
     # 每小时整点执行
     - cron: "0 * * * *"
   workflow_dispatch: # 支持手动触发
+    inputs:
+      use_parallel:
+        description: 'Use parallel execution mode'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 permissions:
   contents: write  # 赋予写仓库内容的权限
 
 jobs:
-  run-bot:
+  run-bot-parallel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event.inputs.use_parallel != 'false' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Create data and logs directories
+        run: |
+          mkdir -p data logs
+
+      - name: Run ALL sources in parallel
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 20
+
+          # PolymarketSource 配置
+          POLYMARKET_SOURCE_ENABLED: false
+          POLYMARKET_SOURCE_DAILY_MAX_EXECUTIONS: 10
+
+          # FollowinSource 配置
+          FOLLOWIN_SOURCE_ENABLED: true
+          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 24
+        run: |
+          poetry run binance-square-bot parallel --workers 4
+
+      - name: Commit and push if changes
+        env:
+          BRANCH_NAME: ${{ github.event.repository.default_branch }}
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+
+          echo "🔄 Syncing with remote (branch: $BRANCH_NAME)..."
+          git fetch origin $BRANCH_NAME
+          git stash --include-untracked || echo "Nothing to stash"
+
+          git reset --hard origin/$BRANCH_NAME
+
+          git stash pop || echo "Nothing to pop"
+
+          git add data/processed_urls.db
+
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "📭 No changes to commit"
+            exit 0
+          fi
+
+          echo "📝 Committing changes..."
+          TIMESTAMP=$(TZ=Asia/Shanghai date "+%Y-%m-%d %H:%M:%S")
+          git commit -m "Auto update processed_urls.db by BinanceSquareBot (parallel) at $TIMESTAMP"
+
+          echo "⬆️ Pushing changes..."
+          for i in {1..5}; do
+            git pull --rebase origin $BRANCH_NAME && git push origin $BRANCH_NAME && {
+              echo "✅ Successfully pushed on attempt $i"
+              exit 0
+            }
+            echo "⚠️ Attempt $i failed, waiting $((i*3)) seconds..."
+            sleep $((i * 3))
+          done
+
+          echo "❌ Failed to push after 5 attempts"
+          exit 1
+
+  # Legacy sequential execution (fallback)
+  run-bot-sequential:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: ${{ github.event.inputs.use_parallel == 'false' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Create data and logs directories
+        run: |
+          mkdir -p data logs
+
+      - name: Run Fn news workflow
+        if: ${{ success() && vars.ENABLE_FN_NEWS != 'false' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 20
+        run: |
+          poetry run binance-square-bot run
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
