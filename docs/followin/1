@@ -1,0 +1,25 @@
+binance_square_bot/
+├── config.py                    # 主配置（保持入口）,自动加载source和target中的配置类
+├── cli.py                       # CLI 只保留命令定义，业务逻辑移到 services/cli/
+├── models/                      # 通用数据模型
+│   ├── __init__.py
+│   └── daily_publish_stats.py             # 记录每个publisher的每天发布统计信息，每个publisher都有一个每天发布最大次数配置
+├── common/                      # 通用模块
+│   ├── __init__.py
+│   └── logging.py             # loguru 统一配置
+└── services/
+    ├── __init__.py
+    ├── base.py                 # 基类定义：BaseSource(包含采集，和推文生成+models数据表), BaseTarget（包含发布和统一过滤（如停用词等））
+    ├── storage.py              # 不变
+    ├── source/                 # 数据来源实现
+    │   ├── __init__.py       # 导入所有 source 实现类触发自动注册
+    │   ├── fn_source.py      # FnNewsSpider+TweetGenerator+models +config
+    │   └── polymarket_source.py # PolymarketFetcher+ResearchGenerator+models +config
+    ├── target/                # 目标实现（生成、发布）
+    │   ├── __init__.py       # 导入所有 target 实现类触发自动注册
+    │   └── binance_publisher.py # BinancePublisher+
+    ├── cli/                # 目标实现（生成、发布）
+    │   ├── __init__.py       # 导入所有 cli 实现类触发自动注册
+    │   └── fn_cli.py # FnCli
+    │   └── polymarket_cli.py # PolymarketCli
+    │   └── common_cli.py # CommonCli

@@ -1,0 +1,460 @@
+2026-04-21 00:39:17.406 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 00:56:47.296 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 00:56:47.349 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:56:47.352 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:56:47.714 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:56:48.638 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:56:48.641 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:56:48.643 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:56:48.644 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:56:48.645 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:56:48.645 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:56:48.649 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:56:48.652 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 00:56:48.656 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:56:48.659 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.661 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.663 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.664 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.665 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.667 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.668 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.669 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.670 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.672 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.673 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.674 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.676 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.677 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.678 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.680 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.681 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.682 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.684 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.685 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.686 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.688 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.689 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.690 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.692 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.693 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.694 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.696 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.697 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.698 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.699 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.701 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.702 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.703 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.705 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.706 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.707 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.709 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.710 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.711 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.712 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.714 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.715 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.716 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.718 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.719 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.720 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.722 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.723 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.724 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.726 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.727 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.729 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.730 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.731 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.733 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.734 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.735 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.737 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.738 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.740 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.741 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.742 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.744 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.745 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.746 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.748 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.749 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.751 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.752 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.753 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.754 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.756 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.757 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.759 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.760 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.761 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.762 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.764 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.765 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.767 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.768 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.770 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.771 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.772 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.774 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.775 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.777 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.778 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.779 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.781 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.783 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.784 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.786 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.787 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.788 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.790 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.791 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.792 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:48.794 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:56:51.744 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmp7j7xkkom\test.db
+2026-04-21 00:56:52.139 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmpy34vy3yk\test.db
+2026-04-21 00:56:52.169 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmpskwnnhtx\test.db
+2026-04-21 00:56:52.202 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmp11id_926\test.db
+2026-04-21 00:57:12.986 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:57:12.990 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:57:13.357 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 00:57:14.355 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:57:14.363 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:57:14.366 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:57:14.367 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:57:14.368 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:57:14.369 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 00:57:14.374 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:57:14.381 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 00:57:14.385 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 00:57:14.388 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.391 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.392 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.393 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.395 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.396 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.397 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.399 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.400 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.401 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.402 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.404 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.405 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.407 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.408 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.409 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.411 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.412 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.413 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.415 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.416 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.418 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.419 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.421 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.422 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.424 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.425 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.427 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.428 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.429 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.431 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.432 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.433 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.435 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.437 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.438 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.439 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.440 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.442 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.443 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.445 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.446 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.448 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.449 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.450 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.452 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.453 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.455 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.456 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.457 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.459 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.460 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.462 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.463 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.464 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.466 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.467 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.469 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.470 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.471 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.473 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.475 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.476 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.477 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.479 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.480 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.481 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.483 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.484 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.486 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.488 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.490 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.492 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.494 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.495 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.497 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.499 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.500 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.502 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.504 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.505 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.506 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.508 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.510 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.511 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.512 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.515 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.516 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.518 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.519 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.520 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.522 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.523 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.524 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.526 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.527 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.528 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.529 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.531 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 00:57:14.532 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:51.954 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 01:13:52.002 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:13:52.004 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:13:52.518 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:13:53.866 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:13:53.870 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:13:53.873 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:13:53.875 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:13:53.876 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:13:53.877 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:13:53.884 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:13:53.889 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 01:13:53.895 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:13:53.899 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.902 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.904 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.906 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.907 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.909 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.911 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.913 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.915 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.917 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.918 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.920 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.922 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.924 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.925 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.927 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.929 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.931 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.932 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.934 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.935 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.937 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.938 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.940 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.942 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.943 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.945 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.946 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.948 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.949 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.951 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.952 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.954 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.955 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.957 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.958 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.960 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.961 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.963 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.964 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.966 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.967 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.969 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.971 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.973 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.974 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.976 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.977 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.979 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.980 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.982 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.983 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.985 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.987 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.989 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.991 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.993 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.995 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.997 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:53.998 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.000 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.002 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.004 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.005 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.007 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.008 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.010 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.012 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.013 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.015 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.017 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.019 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.021 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.023 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.025 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.026 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.028 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.030 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.032 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.034 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.036 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.037 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.039 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.041 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.042 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.044 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.046 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.048 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.050 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.051 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.053 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.055 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.056 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.058 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.059 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.061 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.063 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.064 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.066 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:54.068 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:13:58.182 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmpjwntnm12\test.db
+2026-04-21 01:13:58.581 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmp438zja3w\test.db
+2026-04-21 01:13:58.622 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmpldwkufg7\test.db
+2026-04-21 01:13:58.654 | DEBUG    | src.binance_square_bot.services.storage:__init__:19 - Storage initialized with database: C:\Users\ADMINI~1\AppData\Local\Temp\tmprira6dby\test.db
+2026-04-21 01:14:19.016 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 01:14:19.066 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:14:19.068 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:14:19.449 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:14:20.447 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:14:20.452 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:14:20.455 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:14:20.456 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:14:20.457 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:14:20.458 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:14:20.462 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:14:20.465 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 01:14:20.471 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:14:20.474 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.478 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.480 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.482 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.484 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.485 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.487 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.488 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.490 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.492 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.494 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.496 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.498 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.500 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.502 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.503 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.505 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.507 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.509 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.510 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.512 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.514 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.515 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.517 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.519 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.520 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.522 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.523 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.525 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.526 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.528 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.529 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.531 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.532 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.533 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.535 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.537 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.539 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.540 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.542 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.543 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.545 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.546 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.547 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.549 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.550 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.551 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.553 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.554 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.555 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.557 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.558 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.559 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.560 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.562 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.563 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.564 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.565 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.567 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.568 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.570 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.571 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.572 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.574 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.575 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.576 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.578 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.580 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.581 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.583 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.584 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.586 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.587 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.588 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.590 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.592 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.593 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.595 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.596 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.598 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.600 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.602 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.603 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.605 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.606 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.608 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.610 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.611 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.613 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.614 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.616 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.617 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.619 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.620 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.622 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.623 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.625 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.626 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.627 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:14:20.629 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
