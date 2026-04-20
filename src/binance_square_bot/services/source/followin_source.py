@@ -345,7 +345,7 @@ AI总结: {topic.summary}
 {error_text}
 请重新生成。
 """
-        logger.info(f"Prompt: {base_prompt}")
+        # logger.info(f"Prompt: {base_prompt}")
         return base_prompt
 
     def _build_token_prompt(self, token: FollowinToken, errors: Optional[List[str]] = None) -> str:

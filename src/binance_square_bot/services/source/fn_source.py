@@ -597,7 +597,7 @@ class FnSource(BaseSource):
 {error_text}
 请重新生成。
 """ 
-        logger.info(f"Prompt: {base_prompt}")
+        # logger.info(f"Prompt: {base_prompt}")
         return base_prompt
 
     def generate_airdrops(self, events: list[AirdropEvent]) -> list[str]:
@@ -676,7 +676,7 @@ class FnSource(BaseSource):
 {error_text}
 请重新生成。
 """
-        logger.info(f"Prompt: {base_prompt}")
+        # logger.info(f"Prompt: {base_prompt}")
         return base_prompt
 
     def generate_fundraising(self, events: list[FundraisingEvent]) -> list[str]:
@@ -761,5 +761,5 @@ class FnSource(BaseSource):
 {error_text}
 请重新生成。
 """ 
-        logger.info(f"Prompt: {base_prompt}")
+        # logger.info(f"Prompt: {base_prompt}")
         return base_prompt
