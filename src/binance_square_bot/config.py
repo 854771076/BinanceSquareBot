@@ -1,37 +1,53 @@
 """
 @file config.py
-@description 应用配置，使用pydantic-settings从环境变量加载
+@description 应用配置，使用pydantic-settings从环境变量加载，支持动态源/目标配置注册
 @design-doc docs/03-backend-design/domain-model.md
 @task-id BE-02
 @created-by fullstack-dev-workflow
 """
 
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+from pydantic import BaseModel
+from typing import Dict, Type, Optional
 
 
-class Config(BaseSettings):
-    """应用配置，从环境变量加载"""
+class ModelsRegistry:
+    """Global registry for source data models."""
+    _models: Dict[str, Type[BaseModel]] = {}
 
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        env_ignore_empty=True,  # Ignore empty environment variables, use default values
-    )
+    @classmethod
+    def register(cls, name: str, model: Type[BaseModel]):
+        cls._models[name] = model
+
+    @classmethod
+    def get(cls, name: str) -> Optional[Type[BaseModel]]:
+        return cls._models.get(name)
+
+
+class MainConfig(BaseSettings):
+    """Main configuration with dynamic source/target config registration."""
+
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "allow",
+    }
+
+    # General settings
+    sqlite_db_path: str = "data/app.db"
+    log_level: str = "INFO"
 
     # 币安API密钥列表，逗号分隔
-    binance_api_keys: list[str]
+    binance_api_keys: list[str] = []
 
     # Fn新闻列表URL
     fn_news_url: str = "https://news.fn.org/news"
 
-    # SQLite数据库文件路径
-    sqlite_db_path: str = "data/processed_urls.db"
-
     # LLM配置
     llm_model: str = "gpt-4o-mini"
     llm_base_url: str = "https://api.openai.com/v1"
-    llm_api_key: str
+    llm_api_key: str = ""
 
     # 生成配置
     max_retries: int = 3
@@ -52,5 +68,31 @@ class Config(BaseSettings):
     polymarket_chain_id: int = 137  # Polygon
     min_volume_threshold: float = 1000.0  # 最小交易量阈值
 
+    @classmethod
+    def register_source_config(cls, name: str, config_cls: Type[BaseModel]):
+        """Register a source configuration class."""
+        cls._source_configs[name] = config_cls
 
-config = Config()  # type: ignore[call-arg]
+    @classmethod
+    def register_target_config(cls, name: str, config_cls: Type[BaseModel]):
+        """Register a target configuration class."""
+        cls._target_configs[name] = config_cls
+
+    @classmethod
+    def get_source_config_class(cls, source_name: str) -> Optional[Type[BaseModel]]:
+        """Get the config class for a specific source."""
+        return cls._source_configs.get(source_name)
+
+    @classmethod
+    def get_target_config_class(cls, target_name: str) -> Optional[Type[BaseModel]]:
+        """Get the config class for a specific target."""
+        return cls._target_configs.get(target_name)
+
+
+# Class-level registry (outside the Pydantic model so Pydantic doesn't process them as fields)
+MainConfig._source_configs: Dict[str, Type[BaseModel]] = {}
+MainConfig._target_configs: Dict[str, Type[BaseModel]] = {}
+
+
+models_registry = ModelsRegistry()
+config = MainConfig()
