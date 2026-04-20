@@ -106,6 +106,15 @@ binance-square-bot followin discussion --dry-run
 
 # Followin 完整运行（所有数据源）
 binance-square-bot followin run
+
+# 🚀 并行执行所有源（推荐）
+binance-square-bot parallel --workers 4
+
+# 并行试运行
+binance-square-bot parallel --dry-run
+
+# 并行执行并指定哪些源启用/禁用
+binance-square-bot parallel --workers 8 --no-fn --enable-polymarket
 ```
 
 ### GitHub Actions 定时运行
