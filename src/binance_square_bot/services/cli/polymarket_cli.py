@@ -28,7 +28,7 @@ class PolymarketCliService:
         # Check execution limit
         if not self.storage.can_execute_source(
             "PolymarketSource",
-            PolymarketSource.Config.model_fields["daily_max_executions"].default
+            self.source.config.daily_max_executions
         ):
             console.print("[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]")
             return {"error": "daily limit reached"}
@@ -62,18 +62,18 @@ class PolymarketCliService:
             return stats
         
         # Publish to all enabled API keys
-        api_keys = BinanceTarget.Config.model_fields["api_keys"].default
+        api_keys = self.target.config.api_keys
         if not api_keys:
             console.print("[red]❌ No API keys configured[/red]")
             return stats
-        
+
         console.print(f"[blue]📤 Publishing to {len(api_keys)} API keys...[/blue]")
-        
+
         for api_key in api_keys:
             if not self.storage.can_publish_key(
                 "BinanceTarget",
                 api_key,
-                BinanceTarget.Config.model_fields["daily_max_posts_per_key"].default
+                self.target.config.daily_max_posts_per_key
             ):
                 from binance_square_bot.models.daily_publish_stats import DailyPublishStatsModel
                 key_mask = DailyPublishStatsModel.mask_key(api_key)

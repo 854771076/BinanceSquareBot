@@ -29,33 +29,175 @@ jobs:
           pip install poetry
           poetry install
 
-      - name: Create data directory
+      - name: Create data and logs directories
         run: |
-          mkdir -p data
-      - name: Run Polymarket investment research generation and publishing
-        if: ${{ success() && vars.ENABLE_POLYMARKET != 'false' }}
+          mkdir -p data logs
+
+      - name: Run Fn news workflow
+        if: ${{ success() && vars.ENABLE_FN_NEWS != 'false' }}
         env:
-          BINANCE_API_KEYS: ${{ secrets.BINANCE_API_KEYS }}
+          # 全局配置
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
           LLM_MODEL: ${{ secrets.LLM_MODEL }}
-          ENABLE_POLYMARKET: ${{ secrets.ENABLE_POLYMARKET }}
-          POLYMARKET_HOST: ${{ secrets.POLYMARKET_HOST }}
-          POLYMARKET_CHAIN_ID: ${{ secrets.POLYMARKET_CHAIN_ID }}
-          MIN_VOLUME_THRESHOLD: ${{ secrets.MIN_VOLUME_THRESHOLD }}
-        run: |
-          poetry run binance-square-bot polymarket-research run
-          
-      - name: Run bot
-        env:
-          BINANCE_API_KEYS: ${{ secrets.BINANCE_API_KEYS }}
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
-          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 20
         run: |
           poetry run binance-square-bot run
 
-      
+      - name: Run Fn calendar workflow
+        if: ${{ success() && vars.ENABLE_FN_CALENDAR == 'true' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 10
+        run: |
+          poetry run binance-square-bot calendar
+
+      - name: Run Fn airdrop workflow
+        if: ${{ success() && vars.ENABLE_FN_AIRDROP == 'true' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 10
+        run: |
+          poetry run binance-square-bot airdrop
+
+      - name: Run Fn fundraising workflow
+        if: ${{ success() && vars.ENABLE_FN_FUNDRAISING == 'true' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FnSource 配置
+          FN_SOURCE_ENABLED: true
+          FN_SOURCE_DAILY_MAX_EXECUTIONS: 10
+        run: |
+          poetry run binance-square-bot fundraising
+
+      - name: Run Polymarket investment research
+        if: ${{ success() && vars.ENABLE_POLYMARKET != 'false' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # PolymarketSource 配置
+          POLYMARKET_SOURCE_ENABLED: false
+          POLYMARKET_SOURCE_DAILY_MAX_EXECUTIONS: 10
+          POLYMARKET_SOURCE_HOST: ${{ secrets.POLYMARKET_HOST || 'https://clob.polymarket.com' }}
+          POLYMARKET_SOURCE_MIN_VOLUME_THRESHOLD: ${{ secrets.MIN_VOLUME_THRESHOLD || '5000.0' }}
+          POLYMARKET_SOURCE_MIN_WIN_RATE: 0.6
+          POLYMARKET_SOURCE_MAX_WIN_RATE: 0.95
+        run: |
+          poetry run binance-square-bot polymarket-research run
+
+      - name: Run Followin trending topics
+        if: ${{ success() && vars.ENABLE_FOLLOWIN_TOPICS != 'false' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FollowinSource 配置
+          FOLLOWIN_SOURCE_ENABLED: true
+          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 15
+        run: |
+          poetry run binance-square-bot followin topics
+
+      - name: Run Followin IO flow tokens
+        if: ${{ success() && vars.ENABLE_FOLLOWIN_IO_FLOW != 'false' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FollowinSource 配置
+          FOLLOWIN_SOURCE_ENABLED: true
+          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 15
+        run: |
+          poetry run binance-square-bot followin io-flow
+
+      - name: Run Followin discussion tokens
+        if: ${{ success() && vars.ENABLE_FOLLOWIN_DISCUSSION != 'false' }}
+        env:
+          # 全局配置
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          LOG_LEVEL: INFO
+
+          # BinanceTarget 配置 (多 API Key)
+          BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
+          BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
+
+          # FollowinSource 配置
+          FOLLOWIN_SOURCE_ENABLED: true
+          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 15
+        run: |
+          poetry run binance-square-bot followin discussion
+
+
 
       - name: Commit and push if changes
         env:

@@ -9,10 +9,21 @@ class BinanceTarget(BaseTarget):
     """Binance Square publishing target with multi-API key support."""
 
     class Config(BaseTarget.Config):
+        enabled: bool = True
+        daily_max_posts_per_key: int = 100
+        api_keys: list[str] = []
         api_url: str = "https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add"
+        stop_words: list[str] = ["bitget","okx"]
 
     def __init__(self):
+        super().__init__()
         self.client = httpx.Client(timeout=30.0)
+        self.stop_words = set(self.config.stop_words)
+    
+    def is_contains_stop_words(self, content: str) -> bool:
+        """Check if content contains any stop words. Case-insensitive."""
+        return any(word.lower() in content.lower() for word in self.stop_words)
+
 
     def publish(self, content: str, api_key: str) -> Tuple[bool, str]:
         """Publish content using a specific API key.
@@ -24,6 +35,9 @@ class BinanceTarget(BaseTarget):
         Returns:
             Tuple of (success: bool, error_message: str)
         """
+        if self.is_contains_stop_words(content):
+            logger.info(f"Content '{content[:50]}' contains stop words, skipping publish")
+            return False, "Content contains stop words"
         headers = {
             "X-Square-OpenAPI-Key": api_key,
             "Content-Type": "application/json",
@@ -37,7 +51,7 @@ class BinanceTarget(BaseTarget):
         try:
             logger.debug(f"Publishing to Binance Square: {content[:50]}...")
             response = self.client.post(
-                self.Config.model_fields["api_url"].default,
+                self.config.api_url,
                 headers=headers,
                 json=body,
             )

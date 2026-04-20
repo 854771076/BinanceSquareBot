@@ -458,3 +458,1820 @@
 2026-04-21 01:14:20.626 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
 2026-04-21 01:14:20.627 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
 2026-04-21 01:14:20.629 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:34.077 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 01:39:34.122 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:39:34.125 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:39:34.125 | WARNING  | binance_square_bot.services.base:__init__:34 - No config registered for FnSource, using defaults
+2026-04-21 01:39:34.125 | DEBUG    | binance_square_bot.services.base:__init__:36 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 5, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 01:39:34.125 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:39:34.125 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:39:34.500 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:39:34.500 | WARNING  | binance_square_bot.services.base:__init__:34 - No config registered for PolymarketSource, using defaults
+2026-04-21 01:39:34.500 | DEBUG    | binance_square_bot.services.base:__init__:36 - PolymarketSource loaded config: {'enabled': True, 'daily_max_executions': 10, 'host': 'https://clob.polymarket.com', 'min_volume_threshold': 1000.0, 'min_win_rate': 0.6, 'max_win_rate': 0.95}
+2026-04-21 01:39:35.737 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:39:35.738 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:39:36.042 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:39:36.042 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:39:36.344 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for TestTarget, using defaults
+2026-04-21 01:39:36.344 | DEBUG    | binance_square_bot.services.base:__init__:69 - TestTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': []}
+2026-04-21 01:39:36.347 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:39:36.351 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:39:36.353 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:39:36.354 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:39:36.355 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:39:36.356 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:39:36.361 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:39:36.364 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 01:39:36.368 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:39:36.371 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.374 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.375 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.377 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.379 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.380 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.381 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.383 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.384 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.385 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.387 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.388 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.390 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.391 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.392 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.394 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.395 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.396 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.398 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.399 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.400 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.402 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.404 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.406 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.407 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.409 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.410 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.412 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.413 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.414 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.416 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.417 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.419 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.420 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.421 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.423 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.424 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.425 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.427 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.428 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.429 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.431 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.432 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.434 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.435 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.436 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.438 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.439 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.440 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.442 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.443 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.444 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.445 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.447 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.448 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.450 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.451 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.453 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.454 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.455 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.457 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.458 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.459 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.461 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.462 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.464 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.465 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.467 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.468 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.469 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.471 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.472 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.473 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.475 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.477 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.478 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.479 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.481 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.483 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.485 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.486 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.488 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.489 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.491 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.492 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.493 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.495 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.497 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.498 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.500 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.501 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.502 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.504 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.505 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.507 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.508 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.510 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.511 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.513 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:39:36.515 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:51.177 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 01:42:51.231 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:42:51.235 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:42:51.235 | WARNING  | binance_square_bot.services.base:__init__:34 - No config registered for FnSource, using defaults
+2026-04-21 01:42:51.236 | DEBUG    | binance_square_bot.services.base:__init__:36 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 5, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 01:42:52.261 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:42:52.261 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:42:52.578 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:42:52.578 | WARNING  | binance_square_bot.services.base:__init__:34 - No config registered for PolymarketSource, using defaults
+2026-04-21 01:42:52.578 | DEBUG    | binance_square_bot.services.base:__init__:36 - PolymarketSource loaded config: {'enabled': True, 'daily_max_executions': 10, 'host': 'https://clob.polymarket.com', 'min_volume_threshold': 1000.0, 'min_win_rate': 0.6, 'max_win_rate': 0.95}
+2026-04-21 01:42:52.879 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:42:52.880 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:42:53.200 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:42:53.200 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:42:53.515 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for TestTarget, using defaults
+2026-04-21 01:42:53.515 | DEBUG    | binance_square_bot.services.base:__init__:69 - TestTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': []}
+2026-04-21 01:42:53.519 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:42:53.522 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:42:53.525 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:42:53.526 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:42:53.527 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:42:53.528 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 01:42:53.533 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:42:53.536 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 01:42:53.542 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 01:42:53.545 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.547 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.549 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.550 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.551 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.553 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.554 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.556 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.558 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.559 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.561 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.562 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.564 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.565 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.566 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.568 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.570 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.571 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.573 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.575 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.576 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.578 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.579 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.580 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.582 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.583 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.585 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.586 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.587 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.589 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.590 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.592 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.593 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.594 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.596 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.597 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.598 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.600 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.601 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.603 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.604 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.606 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.607 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.608 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.610 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.611 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.613 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.614 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.615 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.617 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.618 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.619 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.621 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.622 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.624 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.625 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.626 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.628 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.629 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.630 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.632 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.633 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.634 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.636 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.637 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.639 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.640 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.641 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.642 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.644 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.646 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.647 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.648 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.650 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.651 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.652 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.654 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.655 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.657 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.658 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.659 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.660 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.662 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.663 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.664 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.666 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.668 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.670 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.672 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.673 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.674 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.676 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.677 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.679 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.680 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.681 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.683 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.684 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.685 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:42:53.687 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 01:50:25.215 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 01:50:25.217 | WARNING  | binance_square_bot.services.base:__init__:34 - No config registered for FnSource, using defaults
+2026-04-21 01:50:25.217 | DEBUG    | binance_square_bot.services.base:__init__:36 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 01:50:26.734 | WARNING  | binance_square_bot.services.base:__init__:67 - No config registered for BinanceTarget, using defaults
+2026-04-21 01:50:26.734 | DEBUG    | binance_square_bot.services.base:__init__:69 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 01:50:27.028 | INFO     | binance_square_bot.services.cli.fn_cli:execute:30 - Starting Fn news workflow
+2026-04-21 02:02:00.672 | INFO     | test_logging:test_logger_usage:14 - Test log message
+2026-04-21 02:02:00.723 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:02:00.726 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:02:00.730 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:02:01.823 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 02:02:02.229 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:02:02.233 | DEBUG    | binance_square_bot.services.base:__init__:43 - PolymarketSource loaded config: {'enabled': False, 'daily_max_executions': 10, 'host': 'https://clob.polymarket.com', 'min_volume_threshold': 1000.0, 'min_win_rate': 0.6, 'max_win_rate': 0.95}
+2026-04-21 02:02:02.622 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 02:02:03.076 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 02:02:03.425 | DEBUG    | binance_square_bot.services.base:__init_subclass__:34 - Auto-registered source config: TestSource
+2026-04-21 02:02:03.426 | DEBUG    | binance_square_bot.services.base:__init_subclass__:74 - Auto-registered target config: TestTarget
+2026-04-21 02:02:03.429 | DEBUG    | binance_square_bot.services.base:__init__:83 - TestTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': []}
+2026-04-21 02:02:03.433 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 02:02:03.437 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 02:02:03.440 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 02:02:03.441 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 02:02:03.442 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 02:02:03.444 | DEBUG    | binance_square_bot.services.storage:increment_daily_execution:52 - Incremented execution count for TestSource
+2026-04-21 02:02:03.448 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 02:02:03.452 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key test...ey_1
+2026-04-21 02:02:03.459 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: :memory:
+2026-04-21 02:02:03.463 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.466 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.467 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.469 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.471 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.473 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.474 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.476 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.477 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.479 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.481 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.483 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.485 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.486 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.488 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.490 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.492 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.494 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.495 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.497 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.500 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.502 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.504 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.506 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.508 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.510 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.512 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.514 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.516 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.518 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.520 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.522 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.524 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.526 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.528 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.530 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.532 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.534 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.536 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.538 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.539 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.541 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.542 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.544 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.546 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.548 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.550 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.551 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.553 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.555 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.557 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.559 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.561 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.563 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.564 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.566 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.568 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.570 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.571 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.573 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.574 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.576 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.577 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.578 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.580 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.581 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.582 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.584 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.585 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.586 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.588 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.589 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.591 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.593 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.595 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.597 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.599 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.600 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.601 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.602 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.604 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.606 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.608 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.610 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.612 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.613 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.615 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.616 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.618 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.619 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.621 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.622 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.623 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.625 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.626 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.627 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.629 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.630 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.631 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:02:03.633 | DEBUG    | binance_square_bot.services.storage:increment_daily_publish_count:97 - Incremented publish count for BinanceTarget key limi..._key
+2026-04-21 02:05:12.270 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:05:26.030 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:05:43.257 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': ['b9db587a38bc43cf920a708c8423b4e6', '97d69e9c2e8e44a591d7f914e163bfa3', '838683a4e72541a19f0b62685ff4b4ad', '3afd0e5d560948c18eec40e154197890'], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 02:05:43.581 | INFO     | binance_square_bot.services.cli.fn_cli:execute:30 - Starting Fn news workflow
+2026-04-21 02:05:44.039 | INFO     | binance_square_bot.services.source.fn_source:fetch:91 - Fetched 1 articles from Fn news
+2026-04-21 02:05:48.122 | INFO     | binance_square_bot.services.source.fn_source:generate:204 - Generated 1 tweets from articles
+2026-04-21 02:08:13.586 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:08:16.427 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:08:19.564 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': ['b9db587a38bc43cf920a708c8423b4e6', '97d69e9c2e8e44a591d7f914e163bfa3', '838683a4e72541a19f0b62685ff4b4ad', '3afd0e5d560948c18eec40e154197890'], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add'}
+2026-04-21 02:08:19.860 | INFO     | binance_square_bot.services.cli.fn_cli:execute:30 - Starting Fn news workflow
+2026-04-21 02:08:20.726 | INFO     | binance_square_bot.services.source.fn_source:fetch:122 - Fetched 1 articles from Fn news
+2026-04-21 02:08:25.517 | INFO     | binance_square_bot.services.source.fn_source:generate:273 - Generated 1 tweets from articles
+2026-04-21 02:13:27.411 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:13:27.416 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:13:28.342 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:13:28.671 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:13:29.038 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 8 calendar events from Fn
+2026-04-21 02:14:11.094 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 8 tweets from calendar events
+2026-04-21 02:15:55.317 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:15:55.321 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 24, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:15:56.264 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:15:56.567 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:20:34.525 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:20:34.529 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:20:35.438 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:20:35.732 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:20:36.097 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 8 calendar events from Fn
+2026-04-21 02:20:36.099 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: 鲲 KUN 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会
+时间: 2026-04-22
+描述: 鲲 KUN 于 2026 年 4 月 22 日 19:00 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会，并将正式官宣 「1-1-4-6」 战略。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:20:41.975 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: Meteora MET 空投申领截止时间预计为 2026 年 4 月 23 日
+时间: 2026-04-23
+描述: Meteora MET 空投申领截止时间预计为 2026 年 4 月 23 日。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:20:48.379 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: 币安旧版 U 本位合约 WebSocket 架构 URL 将于 4 月 23 日下线
+时间: 2026-04-23
+描述: 币安旧版 U 本位合约 WebSocket 架构 URL 将于 2026 年 4 月 23 日永久下线。新版继续支持 ws、stream 两种接入模式及组合订阅。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:20:56.191 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: ETHGlobal 举办名为「Open Agents」的线上异步黑客松活动
+时间: 2026-04-24
+描述: ETHGlobal 将于 2026 年 4 月 24 日至 5 月 6 日期间举办名为「Open Agents」的线上异步黑客松活动。此次活动专注于 AI 代理、基础设施及链上执行等前沿领域，为全球开发者提供远程参与的机会，并设立了超过五万美元的丰厚奖金池，目前申请通道已正式开启。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:21:01.271 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: TRUMP 代币团队为持仓积分排名前 297 位的用户举办宴会，特朗普将出席
+时间: 2026-04-25
+描述: TRUMP 代币团队将于 4 月 25 日在佛罗里达州棕榈滩 Mar-a-Lago 举办加密与商业峰会暨宴会，特朗普将出席并担任主旨演讲嘉宾。本次活动采用排行榜机制，持仓积分排名前 297 位的合格参与者将获得出席资格。其中排名前 29 位的 VIP 用户还将额外享有与特朗普及其他嘉宾的专属招待会和 VIP 前排座席。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:21:08.900 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: TRUMP 代币团队将于 4 月 25 日在佛罗里达州棕榈滩海湖庄园举办加密与商业峰会暨宴会
+时间: 2026-04-25
+描述: TRUMP 代币团队将于 4 月 25 日在佛罗里达州棕榈滩海湖庄园举办加密与商业峰会暨宴会，特朗普将出席并担任主旨演讲嘉宾，泰森也将出席该宴会并发表演讲。此次活动采用排行榜机制，持仓积分排名前 297 位的合格参与者将获得出席资格。其中排名前 29 位的 VIP 用户还将额外享有与特朗普及其他嘉宾的专属招待会和 VIP 前排座席。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:21:13.802 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: PLANX 2026 将于 4 月 27 日至 28 日在迪拜举办
+时间: 2026-04-27
+描述: PLANX 2026 将于 4 月 27 日至 28 日在迪拜举办，PlanX 峰会将汇聚金融科技、移民服务、离岸架构搭建及数字金融领域的创新者、投资者与顾问，议题涵盖黄金签证、离岸银行、加密货币与 Web3、数字资产、稳定币、人工智慧等多个领域。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:21:18.011 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响。
+
+事件信息：
+事件名称: Bitcoin Las Vegas 2026 将于 4 月 27 日至 4 月 29 日在美国拉斯维加斯举行
+时间: 2026-04-27
+描述: Bitcoin Las Vegas 2026 将于 4 月 27 日至 4 月 29 日在美国拉斯维加斯举行。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:21:22.268 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 8 tweets from calendar events
+2026-04-21 02:23:11.278 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:23:11.281 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:23:12.176 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:23:12.465 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:23:12.857 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 1 calendar events from Fn
+2026-04-21 02:23:12.859 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响,要提及事件发生的时间。
+
+事件信息：
+事件名称: 鲲 KUN 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会
+时间: 2026-04-22
+描述: 鲲 KUN 于 2026 年 4 月 22 日 19:00 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会，并将正式官宣 「1-1-4-6」 战略。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:23:18.185 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 1 tweets from calendar events
+2026-04-21 02:23:44.760 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:23:44.764 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:23:45.642 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:23:45.932 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:23:46.286 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 1 calendar events from Fn
+2026-04-21 02:23:46.287 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:596 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响,要提及事件发生的时间。
+
+事件信息：
+事件名称: 鲲 KUN 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会
+时间: 2026-04-22
+描述: 鲲 KUN 于 2026 年 4 月 22 日 19:00 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会，并将正式官宣 「1-1-4-6」 战略。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:23:50.469 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 1 tweets from calendar events
+2026-04-21 02:24:53.543 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:24:53.547 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:24:54.453 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:24:54.755 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:24:55.091 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 1 calendar events from Fn
+2026-04-21 02:24:55.092 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:593 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响,要提及事件发生的时间。
+
+事件信息：
+事件名称: 鲲 KUN 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会
+时间: 2026-04-22
+描述: 鲲 KUN 于 2026 年 4 月 22 日 19:00 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会，并将正式官宣 「1-1-4-6」 战略。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:24:59.763 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 1 tweets from calendar events
+2026-04-21 02:25:20.406 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:25:20.410 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:25:21.307 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:25:21.600 | INFO     | binance_square_bot.services.cli.fn_cli:execute_calendar:123 - Starting Fn calendar workflow
+2026-04-21 02:25:21.924 | INFO     | binance_square_bot.services.source.fn_source:fetch_calendar:181 - Fetched 1 calendar events from Fn
+2026-04-21 02:25:21.925 | INFO     | binance_square_bot.services.source.fn_source:_build_calendar_prompt:593 - Prompt: 你是币安广场的加密货币KOL，擅长把行业日历事件转化为引人关注的观点型推文。
+
+核心目标：基于以下日历事件写一篇推文，分析这个事件可能带来的影响,要提及事件发生的时间。
+
+事件信息：
+事件名称: 鲲 KUN 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会
+时间: 2026-04-22
+描述: 鲲 KUN 于 2026 年 4 月 22 日 19:00 在曼谷举办主题为「链接亚洲 · 智付全球：开启「无人驾驶」的跨境支付新纪元」的线下活动及酒会，并将正式官宣 「1-1-4-6」 战略。
+
+写作要求：
+1. 开头直接点出这个事件的重要性或潜在影响
+2. 分析这个事件对行业或市场可能带来的变化
+3. 给出你的观察或预测
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，#Web3 #加密货币 等
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:25:26.457 | INFO     | binance_square_bot.services.source.fn_source:generate_calendar:529 - Generated 1 tweets from calendar events
+2026-04-21 02:26:07.449 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:26:07.453 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:26:08.342 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:26:08.638 | INFO     | binance_square_bot.services.cli.fn_cli:execute_airdrops:163 - Starting Fn airdrop workflow
+2026-04-21 02:26:09.032 | INFO     | binance_square_bot.services.source.fn_source:fetch_airdrops:246 - Fetched 1 airdrop events from Fn
+2026-04-21 02:26:09.034 | INFO     | binance_square_bot.services.source.fn_source:_build_airdrop_prompt:673 - Prompt: 你是币安广场的加密货币KOL，擅长把空投新闻转化为引人关注的观点型推文。
+
+核心目标：基于以下空投事件写一篇推文，分析这个空投的价值或机会。
+
+事件信息：
+标题: Bitget IPO Prime 首期项目 preSPAX 已开放认购
+简介: Bitget IPO Prime 首期项目 preSPAX 已开放认购，投入时间截止 4 月 21 日 14:00。代币分配阶段将于 4 月 21 日 14:00 至 18:00 进行；现货交易将于 4 月 21 日 20:00 开启。更多详情可参阅 Bitget 官方平台。
+链接: https://www.bitget.cloud/zh-CN/support/articles/12560603882368
+
+写作要求：
+1. 开头直接点出这个空投的亮点或关注点
+2. 分析这个空投的潜在价值或参与价值
+3. 给出你的观察或提醒注意的风险
+4. 结尾抛出问题引导读者评论
+5. 总字符数：100-800字
+6. 话题标签：最多2个，从#加密货币 #区块链 #Web3中随机选
+7. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+8. 段落之间空一行
+9. 不要使用表情符号
+10. 不要承诺收益，不要诱导投资
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:26:13.199 | INFO     | binance_square_bot.services.source.fn_source:generate_airdrops:608 - Generated 1 tweets from airdrop events
+2026-04-21 02:26:49.626 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:26:49.631 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:26:50.536 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:26:50.833 | INFO     | binance_square_bot.services.cli.fn_cli:execute_fundraising:203 - Starting Fn fundraising workflow
+2026-04-21 02:26:51.196 | INFO     | binance_square_bot.services.source.fn_source:fetch_fundraising:317 - Fetched 1 fundraising events from Fn
+2026-04-21 02:26:51.197 | INFO     | binance_square_bot.services.source.fn_source:_build_fundraising_prompt:760 - Prompt: 你是币安广场的加密货币KOL，擅长把融资新闻转化为引人关注的观点型推文。
+
+核心目标：基于以下融资事件写一篇推文，分析这个项目和融资背后的信号。
+
+事件信息：
+项目名称: Pumpcade
+融资金额: $500.0M
+融资轮次: Seed
+投资方: Foundation Capital、Jump Crypto
+项目简介: Pumpcade 是主打直播内嵌 60 秒超短期预测 / 微投注的 Web3 基础设施平台，支持实时赛事与加密资产等预测，由官方 API 自动结算无对手方风险。
+链接: https://cade.market
+
+写作要求：
+1. 开头直接点出这个融资事件的市场信号或行业意义
+2. 分析这个项目的方向或模式是否值得关注
+3. 分析投资方的背景或布局意图
+4. 给出你的观察或对赛道的判断
+5. 结尾抛出问题引导读者评论
+6. 总字符数：100-800字
+7. 话题标签：最多2个，#融资 #加密货币 等
+8. 段落之间空一行
+9. 不要使用表情符号
+10. 不要承诺收益，不要诱导投资
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上事件链接。
+
+2026-04-21 02:26:55.852 | INFO     | binance_square_bot.services.source.fn_source:generate_fundraising:687 - Generated 1 tweets from fundraising events
+2026-04-21 02:27:32.287 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:27:32.291 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:27:33.230 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:27:33.551 | INFO     | binance_square_bot.services.cli.fn_cli:execute_fundraising:203 - Starting Fn fundraising workflow
+2026-04-21 02:27:33.927 | INFO     | binance_square_bot.services.source.fn_source:fetch_fundraising:317 - Fetched 1 fundraising events from Fn
+2026-04-21 02:27:33.929 | INFO     | binance_square_bot.services.source.fn_source:_build_fundraising_prompt:758 - Prompt: 你是币安广场的加密货币KOL，擅长把融资新闻转化为引人关注的观点型推文。
+
+核心目标：基于以下融资事件写一篇推文，分析这个项目和融资背后的信号。
+
+事件信息：
+项目名称: Pumpcade
+融资金额: $500.0M
+融资轮次: Seed
+投资方: Foundation Capital、Jump Crypto
+项目简介: Pumpcade 是主打直播内嵌 60 秒超短期预测 / 微投注的 Web3 基础设施平台，支持实时赛事与加密资产等预测，由官方 API 自动结算无对手方风险。
+链接: https://cade.market
+
+写作要求：
+1. 开头直接点出这个融资事件的市场信号或行业意义
+2. 分析这个项目的方向或模式是否值得关注
+3. 分析投资方的背景或布局意图
+4. 给出你的观察或对赛道的判断
+5. 结尾抛出问题引导读者评论
+6. 总字符数：100-800字
+7. 话题标签：最多2个，#融资 #加密货币 等
+8. 代币标签：最多2个，根据新闻内容选择，没有就用$BTC $ETH
+9. 不要使用表情符号
+10. 不要承诺收益，不要诱导投资
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:27:38.800 | INFO     | binance_square_bot.services.source.fn_source:generate_fundraising:687 - Generated 1 tweets from fundraising events
+2026-04-21 02:29:01.959 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:29:01.963 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:29:02.854 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:29:03.156 | INFO     | binance_square_bot.services.cli.fn_cli:execute_fundraising:203 - Starting Fn fundraising workflow
+2026-04-21 02:29:03.492 | INFO     | binance_square_bot.services.source.fn_source:fetch_fundraising:317 - Fetched 1 fundraising events from Fn
+2026-04-21 02:29:03.493 | INFO     | binance_square_bot.services.source.fn_source:_build_fundraising_prompt:758 - Prompt: 你是币安广场的加密货币KOL，擅长把融资新闻转化为引人关注的观点型推文。
+
+核心目标：基于以下融资事件写一篇推文，分析这个项目和融资背后的信号。
+
+事件信息：
+项目名称: Pumpcade
+融资金额: $500.0M
+融资轮次: Seed
+投资方: Foundation Capital、Jump Crypto
+项目简介: Pumpcade 是主打直播内嵌 60 秒超短期预测 / 微投注的 Web3 基础设施平台，支持实时赛事与加密资产等预测，由官方 API 自动结算无对手方风险。
+链接: https://cade.market
+
+写作要求：
+1. 开头直接点出这个融资事件的市场信号或行业意义
+2. 分析这个项目的方向或模式是否值得关注
+3. 分析投资方的背景或布局意图
+4. 给出你的观察或对赛道的判断
+5. 结尾抛出问题引导读者评论
+6. 总字符数：100-800字
+7. 话题标签：最多3个，#融资 #加密货币 等
+8. 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+9. 不要使用表情符号
+10. 不要承诺收益，不要诱导投资
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:29:08.699 | INFO     | binance_square_bot.services.source.fn_source:generate_fundraising:687 - Generated 1 tweets from fundraising events
+2026-04-21 02:31:14.698 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:31:14.702 | DEBUG    | binance_square_bot.services.base:__init__:43 - FnSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.foresightnews.pro', 'timeout': 30}
+2026-04-21 02:31:15.609 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:31:15.903 | INFO     | binance_square_bot.services.cli.fn_cli:execute_fundraising:203 - Starting Fn fundraising workflow
+2026-04-21 02:31:16.253 | INFO     | binance_square_bot.services.source.fn_source:fetch_fundraising:320 - Fetched 1 fundraising events from Fn
+2026-04-21 02:31:16.255 | INFO     | binance_square_bot.services.source.fn_source:_build_fundraising_prompt:764 - Prompt: 你是币安广场的加密货币KOL，擅长把融资新闻转化为引人关注的观点型推文。
+
+核心目标：基于以下融资事件写一篇推文，分析这个项目和融资背后的信号。
+
+事件信息：
+项目名称: Pumpcade
+融资金额: $500.0M
+融资轮次: Seed
+投资方: Foundation Capital、Jump Crypto
+项目简介: Pumpcade 是主打直播内嵌 60 秒超短期预测 / 微投注的 Web3 基础设施平台，支持实时赛事与加密资产等预测，由官方 API 自动结算无对手方风险。
+
+写作要求：
+1. 开头直接点出这个融资事件的市场信号或行业意义
+2. 分析这个项目的方向或模式是否值得关注
+3. 分析投资方的背景或布局意图
+4. 给出你的观察或对赛道的判断
+5. 结尾抛出问题引导读者评论
+6. 总字符数：100-800字
+7. 话题标签：最多3个，#融资 #加密货币 等
+8. 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+9. 不要使用表情符号
+10. 不要承诺收益，不要诱导投资
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:31:20.706 | INFO     | binance_square_bot.services.source.fn_source:generate_fundraising:694 - Generated 1 tweets from fundraising events
+2026-04-21 02:38:52.472 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:38:52.477 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 24, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:38:53.411 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:38:53.719 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:38:54.040 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_trending_topics:107 - Followin trending topics API error: {'code': 4000, 'data': None, 'msg': '参数不正确'}
+2026-04-21 02:39:38.648 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:39:38.652 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 24, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:39:39.570 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:39:39.887 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:39:44.754 | INFO     | binance_square_bot.services.source.followin_source:_fetch_trending_topics:129 - Fetched 10 trending topics from Followin
+2026-04-21 02:40:15.248 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_token_discussion_summary:267 - Failed to fetch token summary 496402: Failed to perform, curl: (28) Operation timed out after 30002 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-21 02:40:21.674 | INFO     | binance_square_bot.services.source.followin_source:_fetch_io_flow_tokens:202 - Fetched 6 IO flow tokens from Followin
+2026-04-21 02:40:22.848 | INFO     | binance_square_bot.services.source.followin_source:_fetch_discussion_tokens:247 - Fetched 7 discussion tokens from Followin
+2026-04-21 02:40:22.849 | INFO     | binance_square_bot.services.source.followin_source:fetch:287 - Fetched total 6 items from Followin
+2026-04-21 02:40:22.852 | ERROR    | binance_square_bot.services.source.followin_source:generate:418 - Failed to generate tweet for item: 'FollowinSource' object has no attribute 'max_mentions'
+2026-04-21 02:40:22.852 | INFO     | binance_square_bot.services.source.followin_source:generate:421 - Generated 0 tweets from Followin items
+2026-04-21 02:42:42.617 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:42:42.620 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:42:43.511 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:42:43.805 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:42:48.156 | INFO     | binance_square_bot.services.source.followin_source:_fetch_trending_topics:131 - Fetched 10 trending topics from Followin
+2026-04-21 02:43:44.817 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:43:44.821 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:43:45.731 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:43:46.032 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:44:16.725 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_token_discussion_summary:269 - Failed to fetch token summary 496402: Failed to perform, curl: (28) Operation timed out after 30007 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-21 02:44:17.259 | INFO     | binance_square_bot.services.source.followin_source:_fetch_io_flow_tokens:204 - Fetched 7 IO flow tokens from Followin
+2026-04-21 02:44:18.178 | INFO     | binance_square_bot.services.source.followin_source:_fetch_discussion_tokens:249 - Fetched 7 discussion tokens from Followin
+2026-04-21 02:45:10.649 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:45:10.653 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2, 'gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh'}
+2026-04-21 02:45:11.577 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:45:11.877 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:45:33.071 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:45:33.076 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:45:33.983 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:45:34.290 | INFO     | binance_square_bot.services.cli.followin_cli:execute:30 - Starting Followin workflow
+2026-04-21 02:46:04.798 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_token_discussion_summary:269 - Failed to fetch token summary 496402: Failed to perform, curl: (28) Operation timed out after 30016 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-21 02:46:40.077 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_token_discussion_summary:269 - Failed to fetch token summary 378730: Failed to perform, curl: (28) Operation timed out after 30006 milliseconds with 0 bytes received. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-21 02:46:42.170 | INFO     | binance_square_bot.services.source.followin_source:_fetch_io_flow_tokens:204 - Fetched 6 IO flow tokens from Followin
+2026-04-21 02:46:50.324 | INFO     | binance_square_bot.services.source.followin_source:_fetch_discussion_tokens:249 - Fetched 7 discussion tokens from Followin
+2026-04-21 02:46:50.325 | INFO     | binance_square_bot.services.source.followin_source:fetch:289 - Fetched total 4 items from Followin
+2026-04-21 02:47:00.881 | WARNING  | binance_square_bot.services.source.followin_source:_generate_single_tweet:448 - Generation attempt 1 failed: 代币标签 $4 个超过最大限制 3
+2026-04-21 02:47:04.927 | WARNING  | binance_square_bot.services.source.followin_source:_generate_single_tweet:448 - Generation attempt 2 failed: 代币标签 $4 个超过最大限制 3
+2026-04-21 02:47:09.291 | INFO     | binance_square_bot.services.source.followin_source:generate:423 - Generated 2 tweets from Followin items
+2026-04-21 02:51:52.673 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:51:52.676 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:51:53.617 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:51:53.923 | INFO     | binance_square_bot.services.cli.followin_cli:execute_topics:123 - Starting Followin trending topics workflow
+2026-04-21 02:51:54.341 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8234: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.342 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8248: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.342 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8240: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.342 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8231: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.343 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8242: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.343 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8224: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.343 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8235: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.343 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8233: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.343 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8246: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.344 | WARNING  | binance_square_bot.services.source.followin_source:_fetch_topic_detail:159 - Failed to fetch topic detail 8237: 'Config' object has no attribute 'gtoken'
+2026-04-21 02:51:54.344 | INFO     | binance_square_bot.services.source.followin_source:_fetch_trending_topics:127 - Fetched 0 trending topics from Followin
+2026-04-21 02:51:54.344 | INFO     | binance_square_bot.services.source.followin_source:fetch_trending_topics:276 - Fetched 0 trending topics from Followin
+2026-04-21 02:52:43.533 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:52:43.537 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:52:44.431 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:52:44.774 | INFO     | binance_square_bot.services.cli.followin_cli:execute_topics:123 - Starting Followin trending topics workflow
+2026-04-21 02:52:48.690 | INFO     | binance_square_bot.services.source.followin_source:_fetch_trending_topics:126 - Fetched 10 trending topics from Followin
+2026-04-21 02:52:48.691 | INFO     | binance_square_bot.services.source.followin_source:fetch_trending_topics:272 - Fetched 2 trending topics from Followin
+2026-04-21 02:52:48.693 | INFO     | binance_square_bot.services.source.followin_source:_build_topic_prompt:348 - Prompt: 你是币安广场的加密货币KOL，擅长把热点话题转化为引人点击的观点型推文。
+
+核心目标：基于以下Followin热点话题和AI总结，写一篇有独立见解的推文，能引发评论讨论。
+
+写作风格：
+- 观点鲜明，立场明确
+- 用口语化表达，像和朋友聊天一样
+- 可以适当带点情绪
+- 多用短句，段落清晰
+
+内容结构：
+1. 犀利开头：一句话点出话题的核心影响
+2. 深度解读：这个话题为什么重要？市场会怎么反应？
+3. 独家角度：给出别人没注意到的观察
+4. 结尾互动：抛出问题引导读者评论
+
+格式要求：
+- 总字符数：100-800字
+- 话题标签：最多3个，#Web3 #加密货币 等
+- 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+- 不要使用表情符号
+- 段落之间空一行
+
+输入话题：
+标题: 
+AI总结: <h1>RAVE崩盘全解析：从28美元高点到0.5美元，割了多少人？</h1>
+<p><strong>核心结论</strong>：RAVE在2026-04-18峰值27.88美元后，不到2天暴跌超98%至0.48美元，24h成交量达<strong>3.65亿美元</strong>，暗示<strong>2-5万独特交易者</strong>参与，其中<strong>&gt;80%小户高买低卖被割</strong>，总现货亏损规模估算<strong>5-10亿美元</strong>（市值蒸发60亿减期货爆仓5200万）。事件源于持仓高度集中（top10控超70%流通供应）、疑似团队转账23M枚至Bitget，以及ZachXBT点名后交易所调查引发信任崩盘。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></p>
+<p>数据新鲜度高（截至2026-04-20 02:24 UTC），多源交叉验证一致，但链上精确PnL/独特地址统计缺失（Dune/Moralis无历史图表），估算基于成交量、持仓分布及新闻报道。</p>
+<h2>价格崩盘轨迹</h2>
+<p>RAVE从4月9日前后0.25美元起步，9天内拉升至28美元峰值（市值短暂超Litecoin），4月18日ZachXBT发帖后急速崩盘：当日高点27.88美元，到20日低点0.48美元，跌幅98.3%。24h跌幅<strong>75.27%</strong>，当前价<strong>0.534美元</strong>，市值<strong>1.32亿美元</strong>。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></p>
+<h3>关键OHLC数据（2026-04-18至20，1h间隔） <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></h3>
+<table>
+<thead>
+<tr>
+  <th>时间 (UTC)</th>
+  <th>开盘价</th>
+  <th>最高价</th>
+  <th>最低价</th>
+  <th>收盘价</th>
+  <th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18 02:00</td>
+  <td>25.02</td>
+  <td><strong>27.88</strong></td>
+  <td>25.02</td>
+  <td>26.74</td>
+  <td>峰值前加速拉升</td>
+</tr>
+<tr>
+  <td>2026-04-18 13:00</td>
+  <td>18.16</td>
+  <td>18.99</td>
+  <td><strong>12.71</strong></td>
+  <td>13.41</td>
+  <td>ZachXBT点名后首跌</td>
+</tr>
+<tr>
+  <td>2026-04-19 21:00</td>
+  <td>1.04</td>
+  <td>1.04</td>
+  <td><strong>0.63</strong></td>
+  <td>0.71</td>
+  <td>加速崩盘</td>
+</tr>
+<tr>
+  <td>2026-04-20 01:00</td>
+  <td>0.64</td>
+  <td>0.64</td>
+  <td><strong>0.48</strong></td>
+  <td>0.48</td>
+  <td>触底，团队转账后跌46%</td>
+</tr>
+</tbody>
+</table>
+<p>崩盘源于短挤（short squeeze）：空头持续加仓却屡爆，峰值后现货抛压主导，期货多空比1:3（多爆10.7万、空爆30万，总40.8万美元）。 <a href="https://www.coinglass.com/liquidations">Coinglass</a></p>
+<h2>交易量与爆仓规模</h2>
+<ul>
+<li><strong>现货24h成交</strong>：<strong>3.65亿美元</strong>（6.5x市值，极端活跃），暗示高频交易者涌入，但无DEX/Terminal具体分解。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></li>
+<li><strong>期货爆仓</strong>：仅<strong>40.8万美元</strong>（新闻估总52M），远低于市值蒸发60亿，证明<strong>现货亏损为主</strong>（高买低持未爆仓即亏）。</li>
+<li><strong>持仓变化</strong>：流通供应230.3M（总供1B，流通率23%），top持有人无卖出迹象（Coinbase热钱包仅转入），但项目方多签0x53d7d523...4小时前转<strong>2300万枚</strong>（2430万美元）至Bitget，价格同步跌46%（1.02→0.55美元）。 <a href="https://debank.com">DeBank</a></li>
+</ul>
+<p>这反映散户FOMO追高，庄家控盘出货：新闻确认90%供应疑团队Gnosis Safe控制，仅24%流通。</p>
+<h3>Top10持有人分布（Base链，当前状态） <a href="https://developers.moralis.com">Moralis</a></h3>
+<table>
+<thead>
+<tr>
+  <th>排名</th>
+  <th>地址</th>
+  <th>持仓量 (枚)</th>
+  <th>占比 (%)</th>
+  <th>USD价值 (当前)</th>
+  <th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>0x8a45a581...38c9c8</td>
+  <td>3,558M</td>
+  <td><strong>23.37</strong></td>
+  <td>1.87M</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>0xa52f7e1b...72ae9c43</td>
+  <td>1,235M</td>
+  <td>8.11</td>
+  <td>648K</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>3-9</td>
+  <td>多签/团队疑似</td>
+  <td>~7-1.1M各</td>
+  <td>7.7-7.2</td>
+  <td>619K-572K</td>
+  <td>Gnosis Safe?</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>0x0526bb9e...73190029</td>
+  <td>788M</td>
+  <td>5.17</td>
+  <td>413K</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td><strong>合计</strong></td>
+  <td>-</td>
+  <td>~16.3B</td>
+  <td><strong>&gt;70%</strong></td>
+  <td>~8.5M</td>
+  <td>高度集中</td>
+</tr>
+</tbody>
+</table>
+<h2>事件时间线与外部催化</h2>
+<p>ZachXBT指控团队pump-dump（悬赏2.5万美元），交易所回应引发抛售潮。团队否认但承认卖解锁代币，社交超2000条吐槽“凉透”“下一个RAVE”。 <a href="https://www.theblock.co/post/397991/ravedao-team-denies-role-in-rave-token-pump-as-binance-bitget-open-investigations">TheBlock</a></p>
+<table>
+<thead>
+<tr>
+  <th>日期时间 (UTC)</th>
+  <th>事件</th>
+  <th>价格反应</th>
+  <th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18 15:26</td>
+  <td>ZachXBT点名Binance/Bitget/Gate</td>
+  <td>开始跳水13→3美元</td>
+  <td><a href="https://x.com/zachxbt/status/2045403497563336916">X</a></td>
+</tr>
+<tr>
+  <td>04-18 19:18</td>
+  <td>Bitget启动调查</td>
+  <td>跌至1.4美元</td>
+  <td><a href="https://x.com/GracyBitget/status/2045461999145124132">X</a></td>
+</tr>
+<tr>
+  <td>04-18 22:08</td>
+  <td>Binance确认审查</td>
+  <td>加速至1美元</td>
+  <td><a href="https://x.com/_RichardTeng/status/2045504786158756165">X</a></td>
+</tr>
+<tr>
+  <td>04-20 凌晨03:53</td>
+  <td>团队转2300万枚至Bitget</td>
+  <td>再跌46%至0.55美元</td>
+  <td><a href="https://intel.arkm.com/explorer/address/0x53d7d52301366DC14E1916b14eFeC1aDD8F3487b">Arkham</a></td>
+</tr>
+<tr>
+  <td>04-20 当前</td>
+  <td>持续低迷，社交“罪恶一生结束”</td>
+  <td>0.53美元</td>
+  <td>X多帖</td>
+</tr>
+</tbody>
+</table>
+<h2>被割规模估算与数据限制</h2>
+<p><strong>独特交易者</strong>：无精确链上计数（Dune/Moralis历史空），但24h成交3.65亿USD，假设平均单笔1-2k USD（小户为主），估<strong>2-5万交易者</strong>参与崩盘窗。</p>
+<p><strong>割人比例</strong>：&gt;80%负PnL。高点FOMO买入（Twitter截图多空爆亏）、低点抛售，top持仓不动+团队转账暗示庄家盈利，小户全损。期货空头赚但多头亏，现货主导。</p>
+<p><strong>总损失</strong>：市值蒸发<strong>60亿美元</strong>，期货爆仓52M，现货亏<strong>5-10亿美元</strong>（成交量x平均亏50-80%）。Twitter案例：空头“又被拉爆”、多头醒来哭。</p>
+<p><strong>限制</strong>：工具无全局PnL/独特地址历史（仅当前持仓，Base块44754126-44926927无日志），BSC RPC POA失败；估算保守，实际或更高（未清仓持仓继续亏）。</p>
+<h2>风险评估与教训</h2>
+<table>
+<thead>
+<tr>
+  <th>风险因素</th>
+  <th>严重度</th>
+  <th>细节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>供应集中</td>
+  <td>高</td>
+  <td>top10&gt;70%，团队疑控90%</td>
+</tr>
+<tr>
+  <td>解锁抛压</td>
+  <td>高</td>
+  <td>团队计划卖解锁，流通仅23%</td>
+</tr>
+<tr>
+  <td>操纵调查</td>
+  <td>高</td>
+  <td>Binance/Bitget审查中，可能下架</td>
+</tr>
+<tr>
+  <td>流动性陷阱</td>
+  <td>中</td>
+  <td>成交暴增后枯竭，小户难出</td>
+</tr>
+</tbody>
+</table>
+<p><strong>教训</strong>：低流通+高FDV（~5.34亿）项目易控盘，遇ZachXBT式曝光即崩。散户避FOMO，关注持仓/转账信号。</p>
+<p><strong>展望</strong>：短期无反弹（社交凉透），若交易所冻结或下架，0.2美元再探。长期团队透明度决定存亡，但Web3娱乐叙事难救。</p>
+<p><strong>投资视角</strong>：已割勿追，猎下一个“RAVE”风险自担。数据截至2026-04-20 02:24 UTC，市场瞬变。</p>
+
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上链接。
+
+2026-04-21 02:52:54.383 | INFO     | binance_square_bot.services.source.followin_source:_build_topic_prompt:348 - Prompt: 你是币安广场的加密货币KOL，擅长把热点话题转化为引人点击的观点型推文。
+
+核心目标：基于以下Followin热点话题和AI总结，写一篇有独立见解的推文，能引发评论讨论。
+
+写作风格：
+- 观点鲜明，立场明确
+- 用口语化表达，像和朋友聊天一样
+- 可以适当带点情绪
+- 多用短句，段落清晰
+
+内容结构：
+1. 犀利开头：一句话点出话题的核心影响
+2. 深度解读：这个话题为什么重要？市场会怎么反应？
+3. 独家角度：给出别人没注意到的观察
+4. 结尾互动：抛出问题引导读者评论
+
+格式要求：
+- 总字符数：100-800字
+- 话题标签：最多3个，#Web3 #加密货币 等
+- 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+- 不要使用表情符号
+- 段落之间空一行
+
+输入话题：
+标题: 
+AI总结: <h1>Aave危机应对与wstETH解锁新流动性通道</h1>
+<h2>事件概述</h2>
+<p>Aave正面临Kelp DAO rsETH桥被黑客攻击引发的流动性危机。攻击者于2026-04-18从Kelp DAO的LayerZero跨链桥窃取116,500 rsETH（价值约2.91亿美元），并将其存入Aave V3作为抵押品借出WETH，导致Aave WETH池利用率飙升至100%，TVL从约264亿美元暴跌24.11%至197.76亿美元，用户净撤资规模达54亿至62亿美元。<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a> <a href="https://www.chaincatcher.com/en/article/2259655">ChainCatcher</a></p>
+<p>这一危机源于rsETH抵押品价值归零（Kelp DAO暂停rsETH合约），造成1.77亿至2亿美元坏账风险。Aave确认自身合约未被入侵，已冻结rsETH市场并移除其借贷能力，但用户撤资潮导致供应商无法赎回资金，稳定币池也面临压力。<a href="https://phemex.com/news/article/fluid-launches-aweth-redemption-protocol-to-mitigate-defi-risks-74422">Phemex</a></p>
+<p><strong>关键应对措施</strong>：DeFi协议Fluid推出aWETH赎回协议，用户可将ETH借款赎回为wstETH或weETH，初始容量10亿美元ETH。这直接为Aave用户解锁新流动性通道，缓解清算风险，并与Lido Finance和EtherFi合作稳定市场。<a href="https://www.chaincatcher.com/en/article/2259650">ChainCatcher</a> <a href="https://en.theblockbeats.news/flash/342020">BlockBeats</a></p>
+<h2>危机时间线</h2>
+<table>
+<thead>
+<tr>
+  <th>时间 (UTC)</th>
+  <th>事件</th>
+  <th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18</td>
+  <td>Kelp DAO rsETH桥被黑，攻击者窃取116,500 rsETH (~$291M)，存入Aave借WETH</td>
+  <td>Aave产生坏账风险，TVL开始下滑</td>
+</tr>
+<tr>
+  <td>2026-04-19</td>
+  <td>Aave WETH池利用率达100%，TVL跌24.11%至$19.78B，用户撤资$5.4B+；AAVE价格跌17.7%</td>
+  <td>供应商无法赎回，稳定币池压力增大</td>
+</tr>
+<tr>
+  <td>2026-04-20 00:00前后</td>
+  <td>Fluid推出aWETH赎回协议（wstETH/weETH通道，容量$1B ETH）；Aave冻结rsETH市场</td>
+  <td>恢复部分流动性，减少系统风险</td>
+</tr>
+<tr>
+  <td>2026-04-20 01:48</td>
+  <td>多协议响应：Ethena/LayerZero/Morpho/Curve等暂停桥接</td>
+  <td>隔离风险，避免扩散</td>
+</tr>
+<tr>
+  <td>2026-04-20 当前 (18:23 UTC)</td>
+  <td>OTC巨鲸撤资$493.6M（含98,032 wstETH）；Lido EarnETH金库曝险$21.6M</td>
+  <td>市场恐慌持续，但核心协议稳定</td>
+</tr>
+</tbody>
+</table>
+<p>数据来源：<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a> <a href="https://en.theblockbeats.news/flash/342035">BlockBeats</a> <a href="https://phemex.com/news/article/otc-whale-withdraws-4936m-in-crypto-amid-kelpdao-exploit-74450">Phemex</a></p>
+<h2>Aave的具体应对</h2>
+<p>Aave迅速行动，冻结Ethereum主网、Arbitrum、Base、Mantle和Linea上的rsETH和WETH储备，将rsETH借款能力设为零，并移除抵押支持。创始人Stani Kulechov确认事件源于Kelp桥外部漏洞，非Aave合约问题。Umbrella后备机制预计覆盖1.77亿-2亿美元坏账。</p>
+<p>尽管如此，100%利用率导致供应商赎回失败，用户报告USDC/USDT池延迟。TVL降幅反映恐慌性撤资，但协议设计（如隔离市场）限制了进一步损失。<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a></p>
+<h2>wstETH解锁新流动性通道：Fluid aWETH赎回协议</h2>
+<p><strong>核心创新</strong>：Fluid的aWETH赎回协议针对Aave ETH借款用户，提供无缝转换路径：</p>
+<ul>
+<li><strong>纯ETH借款用户</strong>：全额赎回为wstETH或weETH，立即恢复流动性。</li>
+<li><strong>ETH抵押+其他债务用户</strong>：抵押品转换为wstETH/weETH，债务不变，避免清算。</li>
+<li><strong>容量</strong>：初始上限10亿美元ETH，与Lido和EtherFi合作，旨在缓解Aave 100%利用率压力，支持DeFi健康发展。</li>
+</ul>
+<p>这一机制本质上通过Lido的wstETH（stETH包装版）注入流动性，绕过WETH池拥堵。协议推出后，迅速成为危机应对焦点，预计短期内缓解供应商赎回难题。<a href="https://phemex.com/news/article/fluid-launches-aweth-redemption-protocol-to-mitigate-defi-risks-74422">Phemex</a> <a href="https://www.chaincatcher.com/en/article/2259650">ChainCatcher</a></p>
+<table>
+<thead>
+<tr>
+  <th>赎回类型</th>
+  <th>操作</th>
+  <th>益处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>纯ETH借款</td>
+  <td>直接赎回wstETH/weETH</td>
+  <td>零债务，全流动性恢复</td>
+</tr>
+<tr>
+  <td>ETH抵押+多债</td>
+  <td>抵押转换wstETH/weETH</td>
+  <td>债务稳定，防清算</td>
+</tr>
+<tr>
+  <td>容量限制</td>
+  <td>$1B ETH</td>
+  <td>优先高风险用户</td>
+</tr>
+</tbody>
+</table>
+<h2>生态多方响应汇总</h2>
+<table>
+<thead>
+<tr>
+  <th>协议</th>
+  <th>响应措施</th>
+  <th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Ethena</td>
+  <td>延长LayerZero OFT桥暂停；USDe抵押率&gt;100%</td>
+  <td>零用户损失</td>
+</tr>
+<tr>
+  <td>LayerZero</td>
+  <td>与Kelp合作修复，发布事后报告</td>
+  <td>其他应用安全</td>
+</tr>
+<tr>
+  <td>Morpho</td>
+  <td>暂停Arbitrum MORPHO桥；曝险仅$1M</td>
+  <td>隔离市场设计生效</td>
+</tr>
+<tr>
+  <td>Curve Finance</td>
+  <td>暂停LayerZero基础设施（影响BNB等桥接）</td>
+  <td>crvUSD桥接受限</td>
+</tr>
+<tr>
+  <td>Lido</td>
+  <td>EarnETH金库暂停存取，曝险$21.6M（9%资产）；$3M首损保护</td>
+  <td>stETH/wstETH核心不受影响</td>
+</tr>
+<tr>
+  <td>Reserve</td>
+  <td>暂停eUSD/USD3铸造/再基/RSR解押</td>
+  <td>RSR超额抵押覆盖</td>
+</tr>
+<tr>
+  <td>EtherFi/Hyperliquid</td>
+  <td>确认零影响，暂停桥接</td>
+  <td>预防性措施</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://phemex.com/news/article/lidos-earneth-vault-faces-216m-risk-from-rseth-theft-74654">Phemex</a> <a href="https://en.theblockbeats.news/flash/342035">BlockBeats</a></p>
+<h2>市场影响与风险评估</h2>
+<ul>
+<li><strong>价格冲击</strong>：AAVE跌16%-17.7%至$90.13；ETH跌2%至$2300。巨鲸撤资$493.6M（含wstETH），损失237 ETH (~$54万滑点）。</li>
+<li><strong>TVL与撤资</strong>：Aave撤资超$10B（部分来源），DeFi整体桥接风险放大。</li>
+<li><strong>风险等级</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>风险因素</th>
+  <th>严重度</th>
+  <th>细节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>坏账扩散</td>
+  <td>高</td>
+  <td>$177M-$200M，Umbrella覆盖但需治理</td>
+</tr>
+<tr>
+  <td>流动性挤压</td>
+  <td>高</td>
+  <td>WETH 100%利用，赎回失败</td>
+</tr>
+<tr>
+  <td>桥接漏洞</td>
+  <td>高</td>
+  <td>LayerZero/OFT反复暴露，2026最大DeFi黑客</td>
+</tr>
+<tr>
+  <td>杠杆曝险</td>
+  <td>中</td>
+  <td>Lido EarnETH等，首损机制缓冲</td>
+</tr>
+<tr>
+  <td>监管/恐慌</td>
+  <td>中</td>
+  <td>Justin Sun谈判黑客，市场恢复依赖</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://bitcoinworld.co.in/kelpdao-hack-aave-whale-withdrawal/">BitcoinWorld</a> <a href="https://www.chaincatcher.com/en/article/2259655">ChainCatcher</a></p>
+<p><strong>积极信号</strong>：协议响应迅速，Fluid通道提供wstETH流动性缓冲；Aave TVL虽降但基数大（仍近$20B），桥接暂停隔离风险。黑客谈判可能回收部分资金。</p>
+<h2>展望与建议</h2>
+<p>Fluid的wstETH赎回协议是本次危机转折点，预计短期内释放$1B流动性，稳定Aave利用率。但桥接安全仍是DeFi痛点，2026已超多起类似事件（Kelp $290M、Orion $170M）。用户应优先使用赎回通道，避免杠杆ETH头寸；监控Aave治理提案和Kelp/LayerZero报告。</p>
+<p><strong>行动视角</strong>：</p>
+<ul>
+<li><strong>供应商</strong>：等待Fluid通道，利用wstETH桥接退出。</li>
+<li><strong>借款人</strong>：尽快赎回ETH为wstETH，防波动清算。</li>
+<li><strong>观察者</strong>：桥接TVL占比高（&gt;70%黑客），青睐原生资产协议。</li>
+</ul>
+<p>数据截至2026-04-20 18:23 UTC，所有新闻均为当日新鲜来源。若市场波动加剧，TVL/利用率可能进一步变化。</p>
+
+
+请直接输出推文内容，不要添加任何其他说明。末尾必须带上链接。
+
+2026-04-21 02:52:58.719 | INFO     | binance_square_bot.services.source.followin_source:generate:420 - Generated 2 tweets from Followin items
+2026-04-21 02:53:59.305 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:53:59.310 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:54:00.237 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:54:00.543 | INFO     | binance_square_bot.services.cli.followin_cli:execute_topics:123 - Starting Followin trending topics workflow
+2026-04-21 02:54:02.851 | INFO     | binance_square_bot.services.source.followin_source:_fetch_trending_topics:126 - Fetched 5 trending topics from Followin
+2026-04-21 02:54:02.851 | INFO     | binance_square_bot.services.source.followin_source:fetch_trending_topics:272 - Fetched 2 trending topics from Followin
+2026-04-21 02:54:02.853 | INFO     | binance_square_bot.services.source.followin_source:_build_topic_prompt:348 - Prompt: 你是币安广场的加密货币KOL，擅长把热点话题转化为引人点击的观点型推文。
+
+核心目标：基于以下Followin热点话题和AI总结，写一篇有独立见解的推文，能引发评论讨论。
+
+写作风格：
+- 观点鲜明，立场明确
+- 用口语化表达，像和朋友聊天一样
+- 可以适当带点情绪
+- 多用短句，段落清晰
+
+内容结构：
+1. 犀利开头：一句话点出话题的核心影响
+2. 深度解读：这个话题为什么重要？市场会怎么反应？
+3. 独家角度：给出别人没注意到的观察
+4. 结尾互动：抛出问题引导读者评论
+
+格式要求：
+- 总字符数：100-800字
+- 话题标签：最多3个，#Web3 #加密货币 等
+- 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+- 不要使用表情符号
+- 段落之间空一行
+
+输入话题：
+标题: 
+AI总结: <h1>RAVE崩盘全解析：从28美元高点到0.5美元，割了多少人？</h1>
+<p><strong>核心结论</strong>：RAVE在2026-04-18峰值27.88美元后，不到2天暴跌超98%至0.48美元，24h成交量达<strong>3.65亿美元</strong>，暗示<strong>2-5万独特交易者</strong>参与，其中<strong>&gt;80%小户高买低卖被割</strong>，总现货亏损规模估算<strong>5-10亿美元</strong>（市值蒸发60亿减期货爆仓5200万）。事件源于持仓高度集中（top10控超70%流通供应）、疑似团队转账23M枚至Bitget，以及ZachXBT点名后交易所调查引发信任崩盘。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></p>
+<p>数据新鲜度高（截至2026-04-20 02:24 UTC），多源交叉验证一致，但链上精确PnL/独特地址统计缺失（Dune/Moralis无历史图表），估算基于成交量、持仓分布及新闻报道。</p>
+<h2>价格崩盘轨迹</h2>
+<p>RAVE从4月9日前后0.25美元起步，9天内拉升至28美元峰值（市值短暂超Litecoin），4月18日ZachXBT发帖后急速崩盘：当日高点27.88美元，到20日低点0.48美元，跌幅98.3%。24h跌幅<strong>75.27%</strong>，当前价<strong>0.534美元</strong>，市值<strong>1.32亿美元</strong>。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></p>
+<h3>关键OHLC数据（2026-04-18至20，1h间隔） <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></h3>
+<table>
+<thead>
+<tr>
+  <th>时间 (UTC)</th>
+  <th>开盘价</th>
+  <th>最高价</th>
+  <th>最低价</th>
+  <th>收盘价</th>
+  <th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18 02:00</td>
+  <td>25.02</td>
+  <td><strong>27.88</strong></td>
+  <td>25.02</td>
+  <td>26.74</td>
+  <td>峰值前加速拉升</td>
+</tr>
+<tr>
+  <td>2026-04-18 13:00</td>
+  <td>18.16</td>
+  <td>18.99</td>
+  <td><strong>12.71</strong></td>
+  <td>13.41</td>
+  <td>ZachXBT点名后首跌</td>
+</tr>
+<tr>
+  <td>2026-04-19 21:00</td>
+  <td>1.04</td>
+  <td>1.04</td>
+  <td><strong>0.63</strong></td>
+  <td>0.71</td>
+  <td>加速崩盘</td>
+</tr>
+<tr>
+  <td>2026-04-20 01:00</td>
+  <td>0.64</td>
+  <td>0.64</td>
+  <td><strong>0.48</strong></td>
+  <td>0.48</td>
+  <td>触底，团队转账后跌46%</td>
+</tr>
+</tbody>
+</table>
+<p>崩盘源于短挤（short squeeze）：空头持续加仓却屡爆，峰值后现货抛压主导，期货多空比1:3（多爆10.7万、空爆30万，总40.8万美元）。 <a href="https://www.coinglass.com/liquidations">Coinglass</a></p>
+<h2>交易量与爆仓规模</h2>
+<ul>
+<li><strong>现货24h成交</strong>：<strong>3.65亿美元</strong>（6.5x市值，极端活跃），暗示高频交易者涌入，但无DEX/Terminal具体分解。 <a href="https://www.coingecko.com/en/coins/ravedao">CoinGecko</a></li>
+<li><strong>期货爆仓</strong>：仅<strong>40.8万美元</strong>（新闻估总52M），远低于市值蒸发60亿，证明<strong>现货亏损为主</strong>（高买低持未爆仓即亏）。</li>
+<li><strong>持仓变化</strong>：流通供应230.3M（总供1B，流通率23%），top持有人无卖出迹象（Coinbase热钱包仅转入），但项目方多签0x53d7d523...4小时前转<strong>2300万枚</strong>（2430万美元）至Bitget，价格同步跌46%（1.02→0.55美元）。 <a href="https://debank.com">DeBank</a></li>
+</ul>
+<p>这反映散户FOMO追高，庄家控盘出货：新闻确认90%供应疑团队Gnosis Safe控制，仅24%流通。</p>
+<h3>Top10持有人分布（Base链，当前状态） <a href="https://developers.moralis.com">Moralis</a></h3>
+<table>
+<thead>
+<tr>
+  <th>排名</th>
+  <th>地址</th>
+  <th>持仓量 (枚)</th>
+  <th>占比 (%)</th>
+  <th>USD价值 (当前)</th>
+  <th>标签</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td>0x8a45a581...38c9c8</td>
+  <td>3,558M</td>
+  <td><strong>23.37</strong></td>
+  <td>1.87M</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td>0xa52f7e1b...72ae9c43</td>
+  <td>1,235M</td>
+  <td>8.11</td>
+  <td>648K</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>3-9</td>
+  <td>多签/团队疑似</td>
+  <td>~7-1.1M各</td>
+  <td>7.7-7.2</td>
+  <td>619K-572K</td>
+  <td>Gnosis Safe?</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td>0x0526bb9e...73190029</td>
+  <td>788M</td>
+  <td>5.17</td>
+  <td>413K</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td><strong>合计</strong></td>
+  <td>-</td>
+  <td>~16.3B</td>
+  <td><strong>&gt;70%</strong></td>
+  <td>~8.5M</td>
+  <td>高度集中</td>
+</tr>
+</tbody>
+</table>
+<h2>事件时间线与外部催化</h2>
+<p>ZachXBT指控团队pump-dump（悬赏2.5万美元），交易所回应引发抛售潮。团队否认但承认卖解锁代币，社交超2000条吐槽“凉透”“下一个RAVE”。 <a href="https://www.theblock.co/post/397991/ravedao-team-denies-role-in-rave-token-pump-as-binance-bitget-open-investigations">TheBlock</a></p>
+<table>
+<thead>
+<tr>
+  <th>日期时间 (UTC)</th>
+  <th>事件</th>
+  <th>价格反应</th>
+  <th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18 15:26</td>
+  <td>ZachXBT点名Binance/Bitget/Gate</td>
+  <td>开始跳水13→3美元</td>
+  <td><a href="https://x.com/zachxbt/status/2045403497563336916">X</a></td>
+</tr>
+<tr>
+  <td>04-18 19:18</td>
+  <td>Bitget启动调查</td>
+  <td>跌至1.4美元</td>
+  <td><a href="https://x.com/GracyBitget/status/2045461999145124132">X</a></td>
+</tr>
+<tr>
+  <td>04-18 22:08</td>
+  <td>Binance确认审查</td>
+  <td>加速至1美元</td>
+  <td><a href="https://x.com/_RichardTeng/status/2045504786158756165">X</a></td>
+</tr>
+<tr>
+  <td>04-20 凌晨03:53</td>
+  <td>团队转2300万枚至Bitget</td>
+  <td>再跌46%至0.55美元</td>
+  <td><a href="https://intel.arkm.com/explorer/address/0x53d7d52301366DC14E1916b14eFeC1aDD8F3487b">Arkham</a></td>
+</tr>
+<tr>
+  <td>04-20 当前</td>
+  <td>持续低迷，社交“罪恶一生结束”</td>
+  <td>0.53美元</td>
+  <td>X多帖</td>
+</tr>
+</tbody>
+</table>
+<h2>被割规模估算与数据限制</h2>
+<p><strong>独特交易者</strong>：无精确链上计数（Dune/Moralis历史空），但24h成交3.65亿USD，假设平均单笔1-2k USD（小户为主），估<strong>2-5万交易者</strong>参与崩盘窗。</p>
+<p><strong>割人比例</strong>：&gt;80%负PnL。高点FOMO买入（Twitter截图多空爆亏）、低点抛售，top持仓不动+团队转账暗示庄家盈利，小户全损。期货空头赚但多头亏，现货主导。</p>
+<p><strong>总损失</strong>：市值蒸发<strong>60亿美元</strong>，期货爆仓52M，现货亏<strong>5-10亿美元</strong>（成交量x平均亏50-80%）。Twitter案例：空头“又被拉爆”、多头醒来哭。</p>
+<p><strong>限制</strong>：工具无全局PnL/独特地址历史（仅当前持仓，Base块44754126-44926927无日志），BSC RPC POA失败；估算保守，实际或更高（未清仓持仓继续亏）。</p>
+<h2>风险评估与教训</h2>
+<table>
+<thead>
+<tr>
+  <th>风险因素</th>
+  <th>严重度</th>
+  <th>细节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>供应集中</td>
+  <td>高</td>
+  <td>top10&gt;70%，团队疑控90%</td>
+</tr>
+<tr>
+  <td>解锁抛压</td>
+  <td>高</td>
+  <td>团队计划卖解锁，流通仅23%</td>
+</tr>
+<tr>
+  <td>操纵调查</td>
+  <td>高</td>
+  <td>Binance/Bitget审查中，可能下架</td>
+</tr>
+<tr>
+  <td>流动性陷阱</td>
+  <td>中</td>
+  <td>成交暴增后枯竭，小户难出</td>
+</tr>
+</tbody>
+</table>
+<p><strong>教训</strong>：低流通+高FDV（~5.34亿）项目易控盘，遇ZachXBT式曝光即崩。散户避FOMO，关注持仓/转账信号。</p>
+<p><strong>展望</strong>：短期无反弹（社交凉透），若交易所冻结或下架，0.2美元再探。长期团队透明度决定存亡，但Web3娱乐叙事难救。</p>
+<p><strong>投资视角</strong>：已割勿追，猎下一个“RAVE”风险自担。数据截至2026-04-20 02:24 UTC，市场瞬变。</p>
+
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:54:09.250 | INFO     | binance_square_bot.services.source.followin_source:_build_topic_prompt:348 - Prompt: 你是币安广场的加密货币KOL，擅长把热点话题转化为引人点击的观点型推文。
+
+核心目标：基于以下Followin热点话题和AI总结，写一篇有独立见解的推文，能引发评论讨论。
+
+写作风格：
+- 观点鲜明，立场明确
+- 用口语化表达，像和朋友聊天一样
+- 可以适当带点情绪
+- 多用短句，段落清晰
+
+内容结构：
+1. 犀利开头：一句话点出话题的核心影响
+2. 深度解读：这个话题为什么重要？市场会怎么反应？
+3. 独家角度：给出别人没注意到的观察
+4. 结尾互动：抛出问题引导读者评论
+
+格式要求：
+- 总字符数：100-800字
+- 话题标签：最多3个，#Web3 #加密货币 等
+- 代币标签：最多3个，列出新闻内容提及的代币，没有就用$BTC $ETH
+- 不要使用表情符号
+- 段落之间空一行
+
+输入话题：
+标题: 
+AI总结: <h1>Aave危机应对与wstETH解锁新流动性通道</h1>
+<h2>事件概述</h2>
+<p>Aave正面临Kelp DAO rsETH桥被黑客攻击引发的流动性危机。攻击者于2026-04-18从Kelp DAO的LayerZero跨链桥窃取116,500 rsETH（价值约2.91亿美元），并将其存入Aave V3作为抵押品借出WETH，导致Aave WETH池利用率飙升至100%，TVL从约264亿美元暴跌24.11%至197.76亿美元，用户净撤资规模达54亿至62亿美元。<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a> <a href="https://www.chaincatcher.com/en/article/2259655">ChainCatcher</a></p>
+<p>这一危机源于rsETH抵押品价值归零（Kelp DAO暂停rsETH合约），造成1.77亿至2亿美元坏账风险。Aave确认自身合约未被入侵，已冻结rsETH市场并移除其借贷能力，但用户撤资潮导致供应商无法赎回资金，稳定币池也面临压力。<a href="https://phemex.com/news/article/fluid-launches-aweth-redemption-protocol-to-mitigate-defi-risks-74422">Phemex</a></p>
+<p><strong>关键应对措施</strong>：DeFi协议Fluid推出aWETH赎回协议，用户可将ETH借款赎回为wstETH或weETH，初始容量10亿美元ETH。这直接为Aave用户解锁新流动性通道，缓解清算风险，并与Lido Finance和EtherFi合作稳定市场。<a href="https://www.chaincatcher.com/en/article/2259650">ChainCatcher</a> <a href="https://en.theblockbeats.news/flash/342020">BlockBeats</a></p>
+<h2>危机时间线</h2>
+<table>
+<thead>
+<tr>
+  <th>时间 (UTC)</th>
+  <th>事件</th>
+  <th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>2026-04-18</td>
+  <td>Kelp DAO rsETH桥被黑，攻击者窃取116,500 rsETH (~$291M)，存入Aave借WETH</td>
+  <td>Aave产生坏账风险，TVL开始下滑</td>
+</tr>
+<tr>
+  <td>2026-04-19</td>
+  <td>Aave WETH池利用率达100%，TVL跌24.11%至$19.78B，用户撤资$5.4B+；AAVE价格跌17.7%</td>
+  <td>供应商无法赎回，稳定币池压力增大</td>
+</tr>
+<tr>
+  <td>2026-04-20 00:00前后</td>
+  <td>Fluid推出aWETH赎回协议（wstETH/weETH通道，容量$1B ETH）；Aave冻结rsETH市场</td>
+  <td>恢复部分流动性，减少系统风险</td>
+</tr>
+<tr>
+  <td>2026-04-20 01:48</td>
+  <td>多协议响应：Ethena/LayerZero/Morpho/Curve等暂停桥接</td>
+  <td>隔离风险，避免扩散</td>
+</tr>
+<tr>
+  <td>2026-04-20 当前 (18:23 UTC)</td>
+  <td>OTC巨鲸撤资$493.6M（含98,032 wstETH）；Lido EarnETH金库曝险$21.6M</td>
+  <td>市场恐慌持续，但核心协议稳定</td>
+</tr>
+</tbody>
+</table>
+<p>数据来源：<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a> <a href="https://en.theblockbeats.news/flash/342035">BlockBeats</a> <a href="https://phemex.com/news/article/otc-whale-withdraws-4936m-in-crypto-amid-kelpdao-exploit-74450">Phemex</a></p>
+<h2>Aave的具体应对</h2>
+<p>Aave迅速行动，冻结Ethereum主网、Arbitrum、Base、Mantle和Linea上的rsETH和WETH储备，将rsETH借款能力设为零，并移除抵押支持。创始人Stani Kulechov确认事件源于Kelp桥外部漏洞，非Aave合约问题。Umbrella后备机制预计覆盖1.77亿-2亿美元坏账。</p>
+<p>尽管如此，100%利用率导致供应商赎回失败，用户报告USDC/USDT池延迟。TVL降幅反映恐慌性撤资，但协议设计（如隔离市场）限制了进一步损失。<a href="https://news.bitcoin.com/defi-lender-aave-battles-withdrawal-crisis-after-kelpdao-rseth-exploit/">Bitcoin.com</a></p>
+<h2>wstETH解锁新流动性通道：Fluid aWETH赎回协议</h2>
+<p><strong>核心创新</strong>：Fluid的aWETH赎回协议针对Aave ETH借款用户，提供无缝转换路径：</p>
+<ul>
+<li><strong>纯ETH借款用户</strong>：全额赎回为wstETH或weETH，立即恢复流动性。</li>
+<li><strong>ETH抵押+其他债务用户</strong>：抵押品转换为wstETH/weETH，债务不变，避免清算。</li>
+<li><strong>容量</strong>：初始上限10亿美元ETH，与Lido和EtherFi合作，旨在缓解Aave 100%利用率压力，支持DeFi健康发展。</li>
+</ul>
+<p>这一机制本质上通过Lido的wstETH（stETH包装版）注入流动性，绕过WETH池拥堵。协议推出后，迅速成为危机应对焦点，预计短期内缓解供应商赎回难题。<a href="https://phemex.com/news/article/fluid-launches-aweth-redemption-protocol-to-mitigate-defi-risks-74422">Phemex</a> <a href="https://www.chaincatcher.com/en/article/2259650">ChainCatcher</a></p>
+<table>
+<thead>
+<tr>
+  <th>赎回类型</th>
+  <th>操作</th>
+  <th>益处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>纯ETH借款</td>
+  <td>直接赎回wstETH/weETH</td>
+  <td>零债务，全流动性恢复</td>
+</tr>
+<tr>
+  <td>ETH抵押+多债</td>
+  <td>抵押转换wstETH/weETH</td>
+  <td>债务稳定，防清算</td>
+</tr>
+<tr>
+  <td>容量限制</td>
+  <td>$1B ETH</td>
+  <td>优先高风险用户</td>
+</tr>
+</tbody>
+</table>
+<h2>生态多方响应汇总</h2>
+<table>
+<thead>
+<tr>
+  <th>协议</th>
+  <th>响应措施</th>
+  <th>影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Ethena</td>
+  <td>延长LayerZero OFT桥暂停；USDe抵押率&gt;100%</td>
+  <td>零用户损失</td>
+</tr>
+<tr>
+  <td>LayerZero</td>
+  <td>与Kelp合作修复，发布事后报告</td>
+  <td>其他应用安全</td>
+</tr>
+<tr>
+  <td>Morpho</td>
+  <td>暂停Arbitrum MORPHO桥；曝险仅$1M</td>
+  <td>隔离市场设计生效</td>
+</tr>
+<tr>
+  <td>Curve Finance</td>
+  <td>暂停LayerZero基础设施（影响BNB等桥接）</td>
+  <td>crvUSD桥接受限</td>
+</tr>
+<tr>
+  <td>Lido</td>
+  <td>EarnETH金库暂停存取，曝险$21.6M（9%资产）；$3M首损保护</td>
+  <td>stETH/wstETH核心不受影响</td>
+</tr>
+<tr>
+  <td>Reserve</td>
+  <td>暂停eUSD/USD3铸造/再基/RSR解押</td>
+  <td>RSR超额抵押覆盖</td>
+</tr>
+<tr>
+  <td>EtherFi/Hyperliquid</td>
+  <td>确认零影响，暂停桥接</td>
+  <td>预防性措施</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://phemex.com/news/article/lidos-earneth-vault-faces-216m-risk-from-rseth-theft-74654">Phemex</a> <a href="https://en.theblockbeats.news/flash/342035">BlockBeats</a></p>
+<h2>市场影响与风险评估</h2>
+<ul>
+<li><strong>价格冲击</strong>：AAVE跌16%-17.7%至$90.13；ETH跌2%至$2300。巨鲸撤资$493.6M（含wstETH），损失237 ETH (~$54万滑点）。</li>
+<li><strong>TVL与撤资</strong>：Aave撤资超$10B（部分来源），DeFi整体桥接风险放大。</li>
+<li><strong>风险等级</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+  <th>风险因素</th>
+  <th>严重度</th>
+  <th>细节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>坏账扩散</td>
+  <td>高</td>
+  <td>$177M-$200M，Umbrella覆盖但需治理</td>
+</tr>
+<tr>
+  <td>流动性挤压</td>
+  <td>高</td>
+  <td>WETH 100%利用，赎回失败</td>
+</tr>
+<tr>
+  <td>桥接漏洞</td>
+  <td>高</td>
+  <td>LayerZero/OFT反复暴露，2026最大DeFi黑客</td>
+</tr>
+<tr>
+  <td>杠杆曝险</td>
+  <td>中</td>
+  <td>Lido EarnETH等，首损机制缓冲</td>
+</tr>
+<tr>
+  <td>监管/恐慌</td>
+  <td>中</td>
+  <td>Justin Sun谈判黑客，市场恢复依赖</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://bitcoinworld.co.in/kelpdao-hack-aave-whale-withdrawal/">BitcoinWorld</a> <a href="https://www.chaincatcher.com/en/article/2259655">ChainCatcher</a></p>
+<p><strong>积极信号</strong>：协议响应迅速，Fluid通道提供wstETH流动性缓冲；Aave TVL虽降但基数大（仍近$20B），桥接暂停隔离风险。黑客谈判可能回收部分资金。</p>
+<h2>展望与建议</h2>
+<p>Fluid的wstETH赎回协议是本次危机转折点，预计短期内释放$1B流动性，稳定Aave利用率。但桥接安全仍是DeFi痛点，2026已超多起类似事件（Kelp $290M、Orion $170M）。用户应优先使用赎回通道，避免杠杆ETH头寸；监控Aave治理提案和Kelp/LayerZero报告。</p>
+<p><strong>行动视角</strong>：</p>
+<ul>
+<li><strong>供应商</strong>：等待Fluid通道，利用wstETH桥接退出。</li>
+<li><strong>借款人</strong>：尽快赎回ETH为wstETH，防波动清算。</li>
+<li><strong>观察者</strong>：桥接TVL占比高（&gt;70%黑客），青睐原生资产协议。</li>
+</ul>
+<p>数据截至2026-04-20 18:23 UTC，所有新闻均为当日新鲜来源。若市场波动加剧，TVL/利用率可能进一步变化。</p>
+
+
+请直接输出推文内容，不要添加任何其他说明。
+
+2026-04-21 02:54:14.668 | INFO     | binance_square_bot.services.source.followin_source:generate:420 - Generated 2 tweets from Followin items
+2026-04-21 02:54:22.095 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:54:22.098 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:54:23.009 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:54:23.383 | INFO     | binance_square_bot.services.cli.followin_cli:execute_io_flow:138 - Starting Followin IO flow tokens workflow
+2026-04-21 02:54:27.653 | INFO     | binance_square_bot.services.source.followin_source:_fetch_io_flow_tokens:196 - Fetched 5 IO flow tokens from Followin
+2026-04-21 02:54:27.654 | INFO     | binance_square_bot.services.source.followin_source:fetch_io_flow_tokens:279 - Fetched 2 IO flow tokens from Followin
+2026-04-21 02:54:37.998 | INFO     | binance_square_bot.services.source.followin_source:generate:420 - Generated 2 tweets from Followin items
+2026-04-21 02:54:49.979 | DEBUG    | binance_square_bot.services.storage:__init__:19 - Storage initialized with database: data/app.db
+2026-04-21 02:54:49.983 | DEBUG    | binance_square_bot.services.base:__init__:43 - FollowinSource loaded config: {'enabled': True, 'daily_max_executions': 30, 'base_url': 'https://api.followin.io', 'web_base_url': 'https://followin.io', 'timeout': 30, 'max_items_per_category': 2}
+2026-04-21 02:54:50.881 | DEBUG    | binance_square_bot.services.base:__init__:83 - BinanceTarget loaded config: {'enabled': True, 'daily_max_posts_per_key': 100, 'api_keys': [], 'api_url': 'https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add', 'stop_words': ['bitget', 'okx']}
+2026-04-21 02:54:51.175 | INFO     | binance_square_bot.services.cli.followin_cli:execute_discussion:153 - Starting Followin discussion tokens workflow
+2026-04-21 02:54:52.237 | INFO     | binance_square_bot.services.source.followin_source:_fetch_discussion_tokens:241 - Fetched 4 discussion tokens from Followin
+2026-04-21 02:54:52.238 | INFO     | binance_square_bot.services.source.followin_source:fetch_discussion_tokens:286 - Fetched 2 discussion tokens from Followin
+2026-04-21 02:55:01.893 | WARNING  | binance_square_bot.services.source.followin_source:_generate_single_tweet:445 - Generation attempt 1 failed: 代币标签 $4 个超过最大限制 3
+2026-04-21 02:55:06.112 | WARNING  | binance_square_bot.services.source.followin_source:_generate_single_tweet:445 - Generation attempt 2 failed: 代币标签 $5 个超过最大限制 3
+2026-04-21 02:55:12.390 | WARNING  | binance_square_bot.services.source.followin_source:_generate_single_tweet:445 - Generation attempt 3 failed: 代币标签 $4 个超过最大限制 3
+2026-04-21 02:55:12.390 | ERROR    | binance_square_bot.services.source.followin_source:_generate_single_tweet:448 - All 3 generation attempts failed
+2026-04-21 02:55:12.390 | INFO     | binance_square_bot.services.source.followin_source:generate:420 - Generated 1 tweets from Followin items

@@ -11,6 +11,7 @@
 - ✅ **定时自动运行** - GitHub Actions 每小时整点自动执行
 - ✅ **完整单元测试** - 所有模块覆盖单元测试，类型检查通过
 - ✅ **Polymarket 投资研报** - 自动获取 Polymarket 最新市场，筛选热门新市场和概率偏离机会，AI 生成投资研报并发布
+- ✅ **Followin 热点/币种分析** - 自动获取 Followin 热门话题、资金异动币种、讨论最热币种，AI 生成观点型推文
 
 ## 📋 环境要求
 
@@ -93,6 +94,18 @@ binance-square-bot polymarket-research run
 
 # 试运行（只获取筛选和生成，不发布）
 binance-square-bot polymarket-research run --dry-run
+
+# Followin 热点话题（试运行）
+binance-square-bot followin topics --dry-run
+
+# Followin 资金异动币种（试运行）
+binance-square-bot followin io-flow --dry-run
+
+# Followin 讨论最热币种（试运行）
+binance-square-bot followin discussion --dry-run
+
+# Followin 完整运行（所有数据源）
+binance-square-bot followin run
 ```
 
 ### GitHub Actions 定时运行
