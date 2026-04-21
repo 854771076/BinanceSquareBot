@@ -72,11 +72,16 @@ jobs:
 
           echo "🔄 Syncing with remote (branch: $BRANCH_NAME)..."
           git fetch origin $BRANCH_NAME
-          git stash --include-untracked || echo "Nothing to stash"
 
+          echo "💾 Saving updated app.db..."
+          cp data/app.db /tmp/app.db.tmp
+
+          echo "🧹 Cleaning all working directory changes..."
           git reset --hard origin/$BRANCH_NAME
+          git clean -fd
 
-          git stash pop || echo "Nothing to pop"
+          echo "📂 Restoring updated app.db..."
+          cp /tmp/app.db.tmp data/app.db
 
           git add data/app.db
 
