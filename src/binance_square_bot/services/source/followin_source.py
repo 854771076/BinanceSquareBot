@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime
 from typing import List, Optional
 from html.parser import HTMLParser
@@ -42,6 +43,9 @@ class FollowinSource(BaseSource):
         timeout: int = 30
         daily_max_executions: int = 30
         max_items_per_category: int = 2
+        max_retries: int = 3  # 请求失败重试次数
+        retry_delay: float = 2.0  # 重试间隔（秒）
+        request_delay: float = 1.0  # 每个请求之间的间隔（秒）
 
     def __init__(self):
         super().__init__()
@@ -69,6 +73,53 @@ class FollowinSource(BaseSource):
         self.max_mentions = config.max_mentions
 
         self.processed_ids = set()
+        self._last_request_time = 0.0
+
+    def _request_with_retry(self, method: str, url: str, is_session: bool = True, **kwargs) -> requests.Response:
+        """Make HTTP request with retry logic for rate limiting (429)."""
+        for attempt in range(self.config.max_retries):
+            # Rate limiting - delay between requests
+            elapsed = time.time() - self._last_request_time
+            if elapsed < self.config.request_delay:
+                time.sleep(self.config.request_delay - elapsed)
+
+            try:
+                if is_session:
+                    resp = self.session.request(method, url, **kwargs)
+                else:
+                    resp = requests.request(method, url, **kwargs)
+
+                self._last_request_time = time.time()
+                resp.raise_for_status()
+                return resp
+
+            except requests.HTTPError as e:
+                if e.response and e.response.status_code == 429:
+                    # Rate limited - wait longer and retry
+                    wait_time = self.config.retry_delay * (attempt + 1) * 2
+                    logger.warning(f"Rate limited (429) for {url}, retrying in {wait_time}s (attempt {attempt + 1}/{self.config.max_retries})")
+                    time.sleep(wait_time)
+                    continue
+                else:
+                    # Other HTTP errors - retry with normal delay
+                    if attempt < self.config.max_retries - 1:
+                        wait_time = self.config.retry_delay * (attempt + 1)
+                        logger.warning(f"HTTP error {e} for {url}, retrying in {wait_time}s (attempt {attempt + 1}/{self.config.max_retries})")
+                        time.sleep(wait_time)
+                        continue
+                    raise
+
+            except Exception as e:
+                # Connection errors, timeouts - retry
+                if attempt < self.config.max_retries - 1:
+                    wait_time = self.config.retry_delay * (attempt + 1)
+                    logger.warning(f"Request error {e} for {url}, retrying in {wait_time}s (attempt {attempt + 1}/{self.config.max_retries})")
+                    time.sleep(wait_time)
+                    continue
+                raise
+
+        # If all retries failed
+        raise Exception(f"All {self.config.max_retries} retries failed for {url}")
 
     class NextDataParser(HTMLParser):
         """Parse NEXT_DATA from HTML page."""
@@ -96,8 +147,10 @@ class FollowinSource(BaseSource):
         """Fetch trending topics list and details."""
         url = f"{self.config.base_url}/trending_topic/ranks"
         try:
-            resp = self.session.post(url, impersonate='chrome', timeout=self.config.timeout,json={})
-            resp.raise_for_status()
+            resp = self._request_with_retry(
+                'POST', url, is_session=True,
+                impersonate='chrome', timeout=self.config.timeout, json={}
+            )
             data = resp.json()
 
             if data.get('code') != 2000:
@@ -134,9 +187,10 @@ class FollowinSource(BaseSource):
         """Fetch trending topic AI summary from web page."""
         url = f"{self.config.web_base_url}/zh-Hans/trendingTopic/{topic_id}"
         try:
-
-            resp = requests.get(url,impersonate='chrome', timeout=self.config.timeout)
-            resp.raise_for_status()
+            resp = self._request_with_retry(
+                'GET', url, is_session=False,
+                impersonate='chrome', timeout=self.config.timeout
+            )
 
             parser = self.NextDataParser()
             parser.feed(resp.text)
@@ -160,8 +214,10 @@ class FollowinSource(BaseSource):
         url = f"{self.config.base_url}/tag/token/recommended"
         json_data = {'type': 'position_changes_1h', 'count': page_size}
         try:
-            resp = self.session.post(url, json=json_data, impersonate='chrome', timeout=self.config.timeout)
-            resp.raise_for_status()
+            resp = self._request_with_retry(
+                'POST', url, is_session=True,
+                json=json_data, impersonate='chrome', timeout=self.config.timeout
+            )
             data = resp.json()
 
             if data.get('code') != 2000:
@@ -205,8 +261,10 @@ class FollowinSource(BaseSource):
         url = f"{self.config.base_url}/tag/token/recommended"
         json_data = {'type': 'discussion', 'count': page_size}
         try:
-            resp = self.session.post(url, json=json_data, impersonate='chrome', timeout=self.config.timeout)
-            resp.raise_for_status()
+            resp = self._request_with_retry(
+                'POST', url, is_session=True,
+                json=json_data, impersonate='chrome', timeout=self.config.timeout
+            )
             data = resp.json()
 
             if data.get('code') != 2000:
@@ -250,8 +308,10 @@ class FollowinSource(BaseSource):
         url = f"{self.config.base_url}/tag/discussion/summary"
         json_data = {'id': token_id}
         try:
-            resp = self.session.post(url, json=json_data, impersonate='chrome', timeout=self.config.timeout)
-            resp.raise_for_status()
+            resp = self._request_with_retry(
+                'POST', url, is_session=True,
+                json=json_data, impersonate='chrome', timeout=self.config.timeout
+            )
             data = resp.json()
 
             if data.get('code') == 2000:
