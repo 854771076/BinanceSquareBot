@@ -43,17 +43,25 @@ class FnCliService:
             console.print("[yellow]No articles found[/yellow]")
             return {"articles_fetched": 0}
 
+        # 过滤掉当天已发布的
+        filtered_items = [
+            item for item in articles
+            if not self.storage.is_content_published_today("FnSource", "news", item.url)
+        ]
+        console.print(f"ℹ️ Filtered out {len(articles) - len(filtered_items)} already published items")
+        logger.info(f"Filtered out {len(articles) - len(filtered_items)} already published items")
+
         # Apply limit
-        if self.limit and len(articles) > self.limit:
-            articles = articles[:self.limit]
+        if self.limit and len(filtered_items) > self.limit:
+            filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} articles")
 
         # Generate tweets
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate(articles)
+        tweets = self.source.generate(filtered_items)
 
         stats = {
-            "articles_fetched": len(articles),
+            "articles_fetched": len(filtered_items),
             "tweets_generated": len(tweets),
             "published_success": 0,
             "published_failed": 0,
@@ -134,15 +142,23 @@ class FnCliService:
             console.print("[yellow]No calendar events found[/yellow]")
             return {"events_fetched": 0}
 
-        if self.limit and len(events) > self.limit:
-            events = events[:self.limit]
+        # 过滤掉当天已发布的
+        filtered_items = [
+            item for item in events
+            if not self.storage.is_content_published_today("FnSource", "calendar", item.url)
+        ]
+        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
+        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+
+        if self.limit and len(filtered_items) > self.limit:
+            filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_calendar(events)
+        tweets = self.source.generate_calendar(filtered_items)
 
         stats = {
-            "events_fetched": len(events),
+            "events_fetched": len(filtered_items),
             "tweets_generated": len(tweets),
             "published_success": 0,
             "published_failed": 0,
@@ -174,15 +190,23 @@ class FnCliService:
             console.print("[yellow]No airdrop events found[/yellow]")
             return {"events_fetched": 0}
 
-        if self.limit and len(events) > self.limit:
-            events = events[:self.limit]
+        # 过滤掉当天已发布的
+        filtered_items = [
+            item for item in events
+            if not self.storage.is_content_published_today("FnSource", "airdrop", item.url)
+        ]
+        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
+        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+
+        if self.limit and len(filtered_items) > self.limit:
+            filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_airdrops(events)
+        tweets = self.source.generate_airdrops(filtered_items)
 
         stats = {
-            "events_fetched": len(events),
+            "events_fetched": len(filtered_items),
             "tweets_generated": len(tweets),
             "published_success": 0,
             "published_failed": 0,
@@ -214,15 +238,23 @@ class FnCliService:
             console.print("[yellow]No fundraising events found[/yellow]")
             return {"events_fetched": 0}
 
-        if self.limit and len(events) > self.limit:
-            events = events[:self.limit]
+        # 过滤掉当天已发布的
+        filtered_items = [
+            item for item in events
+            if not self.storage.is_content_published_today("FnSource", "fundraising", item.url)
+        ]
+        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
+        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+
+        if self.limit and len(filtered_items) > self.limit:
+            filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_fundraising(events)
+        tweets = self.source.generate_fundraising(filtered_items)
 
         stats = {
-            "events_fetched": len(events),
+            "events_fetched": len(filtered_items),
             "tweets_generated": len(tweets),
             "published_success": 0,
             "published_failed": 0,
