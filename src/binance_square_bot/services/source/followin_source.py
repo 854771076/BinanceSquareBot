@@ -93,7 +93,7 @@ class FollowinSource(BaseSource):
                 resp.raise_for_status()
                 return resp
 
-            except requests.HTTPError as e:
+            except requests.errors.RequestsError as e:
                 if e.response and e.response.status_code == 429:
                     # Rate limited - wait longer and retry
                     wait_time = self.config.retry_delay * (attempt + 1) * 2

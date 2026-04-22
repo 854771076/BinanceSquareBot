@@ -98,7 +98,7 @@ class FnSource(BaseSource):
         result: dict[str, Any] = json.loads(decompressed.decode('utf-8'))
         return result
 
-    def fetch(self, page_size: int = 5) -> List[Article]:
+    def fetch(self, page_size: int = 2) -> List[Article]:
         """Fetch today's important news list."""
         date_str = datetime.now().date().strftime("%Y%m%d")
         url = f"{self.config.base_url}/v1/dayNews?is_important=true&date={date_str}"
@@ -159,7 +159,7 @@ class FnSource(BaseSource):
             logger.warning(f"Failed to parse article: {e}")
             return None
 
-    def fetch_calendar(self, page_size: int = 5) -> list[CalendarEvent]:
+    def fetch_calendar(self, page_size: int = 2) -> list[CalendarEvent]:
         """Fetch calendar events."""
         date_str = datetime.now().date().strftime("%Y%m%d")
         url = f"{self.config.base_url}/v1/calendars?week_date={date_str}"
@@ -223,7 +223,7 @@ class FnSource(BaseSource):
             logger.warning(f"Failed to parse calendar event: {e}")
             return None
 
-    def fetch_airdrops(self, page_size: int = 5) -> list[AirdropEvent]:
+    def fetch_airdrops(self, page_size: int = 2) -> list[AirdropEvent]:
         """Fetch airdrop events."""
         date_str = datetime.now().date().strftime("%Y%m%d")
         url = f"{self.config.base_url}/v1/airdropEvent?week_date={date_str}"
@@ -288,7 +288,7 @@ class FnSource(BaseSource):
             logger.warning(f"Failed to parse airdrop event: {e}")
             return None
 
-    def fetch_fundraising(self, page_size: int = 5) -> list[FundraisingEvent]:
+    def fetch_fundraising(self, page_size: int = 2) -> list[FundraisingEvent]:
         """Fetch fundraising (众筹) events."""
         url = f"{self.config.base_url}/v1/fundraising"
         params = {

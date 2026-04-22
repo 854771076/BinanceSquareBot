@@ -62,7 +62,7 @@ jobs:
           # 默认启用: Fn news, calendar, airdrop, fundraising + Followin all
           # 可选启用: Polymarket
           # --total-per-run 6: 每轮最多发布 6 篇, 避免一次性发布太多
-          poetry run binance-square-bot parallel --workers 8 --total-per-run 6
+          poetry run binance-square-bot parallel --workers 8 --total-per-run 10
 
       - name: Commit and push if changes
         env:
