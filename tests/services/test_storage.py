@@ -54,3 +54,24 @@ def test_can_publish_key_with_limit():
     # Now at limit
     assert storage.get_daily_publish_count(target_name, api_key) == 100
     assert storage.can_publish_key(target_name, api_key, 100) is False
+
+
+def test_content_deduplication():
+    """Test content deduplication functionality."""
+    storage = StorageService(db_path=":memory:")
+
+    source_name = "FnSource"
+    content_type = "news"
+    url = "https://example.com/article/123"
+
+    # Should not be published initially
+    assert not storage.is_content_published_today(source_name, content_type, url)
+
+    # Mark as published
+    storage.mark_content_published(source_name, content_type, url)
+
+    # Now should be published
+    assert storage.is_content_published_today(source_name, content_type, url)
+
+    # Different URL should not be published
+    assert not storage.is_content_published_today(source_name, content_type, "https://other.com")

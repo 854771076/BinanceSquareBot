@@ -100,6 +100,64 @@ class StorageService:
         """Check if a target + API key combination can publish today."""
         return self.get_daily_publish_count(target_name, api_key) < max_posts
 
+    # ===== Content Deduplication =====
+
+    def is_content_published_today(
+        self,
+        source_name: str,
+        content_type: str,
+        content_identifier: str,
+    ) -> bool:
+        """Check if content (URL or ID) was published today."""
+        from binance_square_bot.models.published_content import PublishedContentModel
+
+        content_hash = PublishedContentModel.hash_content(content_identifier)
+        date = PublishedContentModel.today()
+
+        with Database.get_session() as session:
+            exists = session.query(PublishedContentModel).filter(
+                PublishedContentModel.content_hash == content_hash,
+                PublishedContentModel.source_name == source_name,
+                PublishedContentModel.content_type == content_type,
+                PublishedContentModel.date == date,
+            ).first()
+            return exists is not None
+
+    def mark_content_published(
+        self,
+        source_name: str,
+        content_type: str,
+        content_identifier: str,
+    ) -> None:
+        """Mark content as published today."""
+        from binance_square_bot.models.published_content import PublishedContentModel
+        from datetime import datetime
+
+        content_hash = PublishedContentModel.hash_content(content_identifier)
+        date = PublishedContentModel.today()
+
+        with Database.get_session() as session:
+            # Check if already exists
+            exists = session.query(PublishedContentModel).filter(
+                PublishedContentModel.content_hash == content_hash,
+                PublishedContentModel.source_name == source_name,
+                PublishedContentModel.content_type == content_type,
+                PublishedContentModel.date == date,
+            ).first()
+
+            if exists:
+                return
+
+            record = PublishedContentModel(
+                content_hash=content_hash,
+                source_name=source_name,
+                content_type=content_type,
+                date=date,
+                published_at=datetime.now(),
+            )
+            session.add(record)
+            session.commit()
+
     # ===== Legacy URL Processing (for backward compatibility) =====
 
     def is_url_processed(self, url: str) -> bool:
