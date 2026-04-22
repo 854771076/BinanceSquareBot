@@ -39,6 +39,15 @@ class ParallelCliService:
         self.enable_followin_io_flow = enable_followin_io_flow
         self.enable_followin_discussion = enable_followin_discussion
         self.storage = StorageService()
+        self.source_limits = {
+            "FnSource_execute": 2,
+            "FnSource_execute_calendar": 1,
+            "FnSource_execute_airdrops": 1,
+            "FnSource_execute_fundraising": 1,
+            "FollowinSource_execute_topics": 1,
+            "FollowinSource_execute_io_flow": 1,
+            "FollowinSource_execute_discussion": 1,
+        }
 
     def execute_all(self) -> Dict[str, Any]:
         """Execute all enabled sources in parallel."""
@@ -51,6 +60,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FnSource(),
                 "execute": "execute",
+                "limit": self.source_limits["FnSource_execute"],
             })
             console.print("[blue]✅ FnSource (news) enabled[/blue]")
 
@@ -59,6 +69,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FnSource(),
                 "execute": "execute_calendar",
+                "limit": self.source_limits["FnSource_execute_calendar"],
             })
             console.print("[blue]✅ FnSource (calendar) enabled[/blue]")
 
@@ -67,6 +78,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FnSource(),
                 "execute": "execute_airdrops",
+                "limit": self.source_limits["FnSource_execute_airdrops"],
             })
             console.print("[blue]✅ FnSource (airdrop) enabled[/blue]")
 
@@ -75,6 +87,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FnSource(),
                 "execute": "execute_fundraising",
+                "limit": self.source_limits["FnSource_execute_fundraising"],
             })
             console.print("[blue]✅ FnSource (fundraising) enabled[/blue]")
 
@@ -91,6 +104,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FollowinSource(),
                 "execute": "execute_topics",
+                "limit": self.source_limits["FollowinSource_execute_topics"],
             })
             console.print("[blue]✅ FollowinSource (topics) enabled[/blue]")
 
@@ -99,6 +113,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FollowinSource(),
                 "execute": "execute_io_flow",
+                "limit": self.source_limits["FollowinSource_execute_io_flow"],
             })
             console.print("[blue]✅ FollowinSource (io-flow) enabled[/blue]")
 
@@ -107,6 +122,7 @@ class ParallelCliService:
             source_configs.append({
                 "source": FollowinSource(),
                 "execute": "execute_discussion",
+                "limit": self.source_limits["FollowinSource_execute_discussion"],
             })
             console.print("[blue]✅ FollowinSource (discussion) enabled[/blue]")
 
