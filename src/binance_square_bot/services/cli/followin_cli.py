@@ -169,6 +169,24 @@ class FollowinCliService:
             console.print("[yellow]No items found[/yellow]")
             return {"items_fetched": 0}
 
+        # Determine content_type based on storage_key
+        content_type_map = {
+            "FollowinSourceTopics": "topics",
+            "FollowinSourceIOFlow": "io_flow",
+            "FollowinSourceDiscussion": "discussion",
+        }
+        content_type = content_type_map.get(storage_key, "unknown")
+
+        # Filter out already published items (BEFORE limit application)
+        filtered_items = [
+            item for item in items
+            if not self.storage.is_content_published_today("FollowinSource", content_type, str(item.id))
+        ]
+        console.print(f"✓ Filtered out {len(items) - len(filtered_items)} already published items")
+        logger.info(f"Filtered out {len(items) - len(filtered_items)} already published items")
+
+        items = filtered_items
+
         if self.limit and len(items) > self.limit:
             items = items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} items")
