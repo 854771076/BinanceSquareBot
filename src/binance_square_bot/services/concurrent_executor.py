@@ -243,8 +243,9 @@ class SourceParallelPublisher:
 class SourceOrchestrator:
     """Orchestrate multiple sources running in parallel."""
 
-    def __init__(self, max_workers: int = 4):
+    def __init__(self, max_workers: int = 4, total_per_run: int | None = None):
         self.max_workers = max_workers
+        self.total_per_run = total_per_run
 
     def run_sources(
         self,
@@ -253,6 +254,7 @@ class SourceOrchestrator:
         api_keys_map: Dict[str, List[str]],
         storage: Any,
         dry_run: bool = False,
+        total_per_run: int | None = None,
     ) -> Dict[str, Any]:
         """Run multiple sources in parallel, then publish to targets.
 
@@ -314,6 +316,17 @@ class SourceOrchestrator:
         if not all_tweets:
             console.print("[yellow]⚠️ No tweets generated from any source[/yellow]")
             return total_stats
+
+        # Apply total_per_run limit with random selection
+        effective_limit = total_per_run or self.total_per_run
+        total_generated = len(all_tweets)
+
+        if effective_limit and len(all_tweets) > effective_limit:
+            import random
+            random.shuffle(all_tweets)
+            all_tweets = all_tweets[:effective_limit]
+            console.print(f"[blue]🎯 Randomly selected {effective_limit} tweets for publication (total generated: {total_generated})[/blue]")
+            logger.info(f"Randomly selected {effective_limit} tweets out of {total_generated} generated")
 
         # Publish to all targets concurrently
         console.print(f"[blue]📤 Publishing {len(all_tweets)} tweets to {len(targets)} targets[/blue]")
