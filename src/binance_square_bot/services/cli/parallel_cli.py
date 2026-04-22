@@ -19,6 +19,7 @@ class ParallelCliService:
         self,
         dry_run: bool = False,
         max_workers: int = 4,
+        total_per_run: int = 6,
         enable_fn: bool = True,
         enable_fn_calendar: bool = True,
         enable_fn_airdrop: bool = True,
@@ -30,6 +31,7 @@ class ParallelCliService:
     ):
         self.dry_run = dry_run
         self.max_workers = max_workers
+        self.total_per_run = total_per_run
         self.enable_fn = enable_fn
         self.enable_fn_calendar = enable_fn_calendar
         self.enable_fn_airdrop = enable_fn_airdrop
@@ -144,6 +146,7 @@ class ParallelCliService:
             api_keys_map=api_keys_map,
             storage=self.storage,
             dry_run=self.dry_run,
+            total_per_run=self.total_per_run,
         )
 
         logger.info(f"Parallel execution complete: {results}")

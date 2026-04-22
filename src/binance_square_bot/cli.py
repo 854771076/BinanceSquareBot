@@ -199,6 +199,7 @@ def followin_discussion(
 def parallel_run(
     dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
     max_workers: int = typer.Option(4, "--workers", "-w", help="Max concurrent workers"),
+    total_per_run: int = typer.Option(6, "--total-per-run", "-t", help="Max total articles to publish per run"),
     disable_fn: bool = typer.Option(False, "--no-fn", help="Disable Fn news source"),
     disable_fn_calendar: bool = typer.Option(False, "--no-fn-calendar", help="Disable Fn calendar events"),
     disable_fn_airdrop: bool = typer.Option(False, "--no-fn-airdrop", help="Disable Fn airdrop events"),
@@ -212,6 +213,7 @@ def parallel_run(
     service = ParallelCliService(
         dry_run=dry_run,
         max_workers=max_workers,
+        total_per_run=total_per_run,
         enable_fn=not disable_fn,
         enable_fn_calendar=not disable_fn_calendar,
         enable_fn_airdrop=not disable_fn_airdrop,
