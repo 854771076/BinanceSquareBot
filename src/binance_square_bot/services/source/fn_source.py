@@ -508,9 +508,6 @@ class FnSource(BaseSource):
 
                 self._validate_format(content)
 
-                # Ensure URL is present
-                if article.url not in content:
-                    content += f"\n\n{article.url}"
 
                 return content
 
