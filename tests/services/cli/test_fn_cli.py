@@ -42,7 +42,7 @@ def test_execute_filter_out_already_published():
 
     # Should have filtered out 1 article, leaving 2
     assert result["articles_fetched"] == 2
-    assert result["tweets_generated"] == 2
+    assert len(result["tweets_generated"]) == 2
 
 
 def test_execute_calendar_filter_out_already_published():
@@ -62,7 +62,7 @@ def test_execute_calendar_filter_out_already_published():
                     result = service.execute_calendar()
 
     assert result["events_fetched"] == 1
-    assert result["tweets_generated"] == 1
+    assert len(result["tweets_generated"]) == 1
 
 
 def test_execute_airdrops_filter_out_already_published():
@@ -82,7 +82,7 @@ def test_execute_airdrops_filter_out_already_published():
                     result = service.execute_airdrops()
 
     assert result["events_fetched"] == 1
-    assert result["tweets_generated"] == 1
+    assert len(result["tweets_generated"]) == 1
 
 
 def test_execute_fundraising_filter_out_already_published():
@@ -102,7 +102,7 @@ def test_execute_fundraising_filter_out_already_published():
                     result = service.execute_fundraising()
 
     assert result["events_fetched"] == 1
-    assert result["tweets_generated"] == 1
+    assert len(result["tweets_generated"]) == 1
 
 
 def test_filter_content_type_parameters():
@@ -152,3 +152,40 @@ def test_filter_content_type_parameters():
                 with patch.object(service.storage, 'can_execute_source', return_value=True):
                     service.execute_fundraising()
     assert call_args == [("FnSource", "fundraising")]
+
+
+def test_mark_content_published_after_successful_publish():
+    """Test that content is marked as published after successful publish."""
+    service = FnCliService(dry_run=False, limit=10)
+
+    # Create mock article
+    article = MockArticle("https://example.com/test-article")
+
+    # Mock API key configuration
+    original_api_keys = service.target.config.api_keys
+    service.target.config.api_keys = ["test_api_key"]
+
+    # Track calls to mark_content_published
+    marked_content = []
+
+    def mock_mark_published(source_name, content_type, content_identifier):
+        marked_content.append((source_name, content_type, content_identifier))
+
+    with patch.object(service.storage, 'mark_content_published', side_effect=mock_mark_published):
+        with patch.object(service.storage, 'can_publish_key', return_value=True):
+            with patch.object(service.storage, 'can_execute_source', return_value=True):
+                with patch.object(service.storage, 'increment_daily_publish_count'):
+                    with patch.object(service.storage, 'increment_daily_execution'):
+                        with patch.object(service.storage, 'is_content_published_today', return_value=False):
+                            with patch.object(service.source, 'fetch', return_value=[article]):
+                                with patch.object(service.source, 'generate', return_value=["test tweet content"]):
+                                    with patch.object(service.target, 'filter', return_value="filtered tweet"):
+                                        with patch.object(service.target, 'publish', return_value=(True, None)):
+                                            service.execute()
+
+    # Verify mark_content_published was called with correct parameters
+    assert len(marked_content) == 1
+    assert marked_content[0] == ("FnSource", "news", "https://example.com/test-article")
+
+    # Restore original config
+    service.target.config.api_keys = original_api_keys

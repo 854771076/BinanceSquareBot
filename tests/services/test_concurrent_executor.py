@@ -116,12 +116,13 @@ class TestSourceOrchestrator:
         instance_limit = orchestrator.total_per_run  # 5
         method_limit = 3
 
-        effective_limit = method_limit or instance_limit  # Should be 3
+        # Fixed logic: explicit None check instead of 'or' operator
+        effective_limit = method_limit if method_limit is not None else instance_limit  # Should be 3
 
         assert effective_limit == 3
 
         random.seed(123)
-        if effective_limit and len(all_tweets) > effective_limit:
+        if effective_limit is not None and len(all_tweets) > effective_limit:
             random.shuffle(all_tweets)
             selected = all_tweets[:effective_limit]
 
@@ -157,3 +158,82 @@ class TestSourceParallelPublisher:
         """Test custom max_workers is set correctly."""
         publisher = SourceParallelPublisher(max_workers=7)
         assert publisher.max_workers == 7
+
+    def test_mark_content_published_after_successful_publish(self):
+        """Test that content is marked as published after successful publish in SourceParallelPublisher."""
+        publisher = SourceParallelPublisher(max_workers=1)
+
+        # Create mock target
+        @dataclass
+        class MockTarget:
+            @dataclass
+            class Config:
+                api_keys = ["test_key"]
+                daily_max_posts_per_key = 100
+            config = Config()
+
+            def filter(self, text):
+                return text
+
+            def publish(self, content, api_key):
+                return (True, None)  # Success
+
+        # Create mock storage
+        mock_storage = Mock()
+        mock_storage.can_publish_key.return_value = True
+        mock_storage.increment_daily_publish_count.return_value = None
+        mock_storage.mark_content_published.return_value = None
+
+        # Create tweet dicts with metadata
+        tweets = [
+            {
+                "text": "tweet content 1",
+                "source_name": "FnSource",
+                "content_type": "news",
+                "identifier": "https://example.com/1",
+            },
+            {
+                "text": "tweet content 2",
+                "source_name": "FollowinSource",
+                "content_type": "topics",
+                "identifier": "123",
+            },
+        ]
+
+        targets = [MockTarget()]
+        api_keys_map = {"MockTarget": ["test_key"]}
+
+        # Execute publish
+        result = publisher.publish_to_targets(
+            tweets=tweets,
+            targets=targets,
+            api_keys_map=api_keys_map,
+            storage=mock_storage,
+            delay_between_publishes=0,
+        )
+
+        # Verify mark_content_published was called for each tweet
+        assert mock_storage.mark_content_published.call_count == 2
+
+        # Check the actual calls - call_args_list contains Call objects
+        calls = mock_storage.mark_content_published.call_args_list
+        # Each call is a tuple of (args, kwargs), extract kwargs
+        call_kwargs = [c.kwargs for c in calls]
+
+        # Verify first tweet was marked
+        assert any(
+            c.get("source_name") == "FnSource"
+            and c.get("content_type") == "news"
+            and c.get("content_identifier") == "https://example.com/1"
+            for c in call_kwargs
+        )
+        # Verify second tweet was marked
+        assert any(
+            c.get("source_name") == "FollowinSource"
+            and c.get("content_type") == "topics"
+            and c.get("content_identifier") == "123"
+            for c in call_kwargs
+        )
+
+        # Verify success count
+        assert result["published_success"] == 2

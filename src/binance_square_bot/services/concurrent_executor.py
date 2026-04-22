@@ -1,4 +1,5 @@
 import time
+import random
 from typing import Dict, Any, List, Callable, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -116,7 +117,9 @@ class ConcurrentExecutor:
         if "items_fetched" in data:
             parts.append(f"items: {data['items_fetched']}")
         if "tweets_generated" in data:
-            parts.append(f"tweets: {data['tweets_generated']}")
+            tweets = data["tweets_generated"]
+            count = len(tweets) if isinstance(tweets, list) else tweets
+            parts.append(f"tweets: {count}")
         if "published_success" in data:
             parts.append(f"published: {data['published_success']}")
         if "published_failed" in data and data["published_failed"] > 0:
@@ -135,7 +138,7 @@ class SourceParallelPublisher:
 
     def publish_to_targets(
         self,
-        tweets: List[str],
+        tweets: List[Dict[str, Any]],
         targets: List[Any],
         api_keys_map: Dict[str, List[str]],
         storage: Any,
@@ -144,7 +147,7 @@ class SourceParallelPublisher:
         """Publish tweets to multiple targets and API keys concurrently.
 
         Args:
-            tweets: List of tweet contents to publish
+            tweets: List of tweet dicts with metadata and text
             targets: List of target instances
             api_keys_map: Dict mapping target class name to list of API keys
             storage: Storage service for rate limiting
@@ -197,7 +200,8 @@ class SourceParallelPublisher:
                     def publish_task():
                         task_stats = {"success": 0, "failed": 0}
                         for tweet in tweet_list:
-                            filtered_tweet = tgt.filter(tweet)
+                            tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
+                            filtered_tweet = tgt.filter(tweet_text)
                             success, error = tgt.publish(filtered_tweet, key)
 
                             if success:
@@ -206,6 +210,13 @@ class SourceParallelPublisher:
                                     tgt.__class__.__name__,
                                     key,
                                 )
+                                # Mark content as published (if metadata available)
+                                if isinstance(tweet, dict) and "source_name" in tweet:
+                                    storage.mark_content_published(
+                                        source_name=tweet["source_name"],
+                                        content_type=tweet.get("content_type", "unknown"),
+                                        content_identifier=tweet.get("identifier", ""),
+                                    )
                             else:
                                 task_stats["failed"] += 1
 
@@ -306,7 +317,7 @@ class SourceOrchestrator:
             return total_stats
 
         # Aggregate all generated tweets from all sources
-        all_tweets: List[str] = []
+        all_tweets: List[Dict[str, Any]] = []
         for result in source_results.values():
             if result.success:
                 tweets = result.data.get("tweets_generated", [])
@@ -318,11 +329,11 @@ class SourceOrchestrator:
             return total_stats
 
         # Apply total_per_run limit with random selection
-        effective_limit = total_per_run or self.total_per_run
+        # Fix zero-value bug: use explicit None check
+        effective_limit = total_per_run if total_per_run is not None else self.total_per_run
         total_generated = len(all_tweets)
 
-        if effective_limit and len(all_tweets) > effective_limit:
-            import random
+        if effective_limit is not None and len(all_tweets) > effective_limit:
             random.shuffle(all_tweets)
             all_tweets = all_tweets[:effective_limit]
             console.print(f"[blue]🎯 Randomly selected {effective_limit} tweets for publication (total generated: {total_generated})[/blue]")

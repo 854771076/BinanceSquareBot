@@ -50,11 +50,22 @@ class FollowinCliService:
 
         # Generate tweets
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate(items)
+        tweet_texts = self.source.generate(items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FollowinSource",
+                    "content_type": "unknown",
+                    "identifier": str(items[i].id),
+                })
 
         stats = {
             "items_fetched": len(items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -64,7 +75,7 @@ class FollowinCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         # Publish to all enabled API keys
@@ -88,12 +99,20 @@ class FollowinCliService:
                 continue
 
             for tweet in tweets:
-                filtered_tweet = self.target.filter(tweet)
+                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
+                filtered_tweet = self.target.filter(tweet_text)
                 success, error = self.target.publish(filtered_tweet, api_key)
 
                 if success:
                     stats["published_success"] += 1
                     self.storage.increment_daily_publish_count("BinanceTarget", api_key)
+                    # Mark content as published (if metadata available)
+                    if isinstance(tweet, dict) and "source_name" in tweet:
+                        self.storage.mark_content_published(
+                            source_name=tweet["source_name"],
+                            content_type=tweet.get("content_type", "unknown"),
+                            content_identifier=tweet.get("identifier", ""),
+                        )
                     console.print("[green]✅ Published successfully[/green]")
                 else:
                     stats["published_failed"] += 1
@@ -110,7 +129,7 @@ class FollowinCliService:
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
         table.add_row("Items Fetched", str(stats["items_fetched"]))
-        table.add_row("Tweets Generated", str(stats["tweets_generated"]))
+        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
         table.add_row("Published Successfully", str(stats["published_success"]))
         table.add_row("Publish Failed", str(stats["published_failed"]))
         console.print(table)
@@ -192,11 +211,22 @@ class FollowinCliService:
             console.print(f"ℹ️ Limited to {self.limit} items")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate(items)
+        tweet_texts = self.source.generate(items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FollowinSource",
+                    "content_type": content_type,
+                    "identifier": str(items[i].id),
+                })
 
         stats = {
             "items_fetched": len(items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -206,7 +236,7 @@ class FollowinCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         api_keys = self.target.config.api_keys
@@ -228,12 +258,20 @@ class FollowinCliService:
                 continue
 
             for tweet in tweets:
-                filtered_tweet = self.target.filter(tweet)
+                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
+                filtered_tweet = self.target.filter(tweet_text)
                 success, error = self.target.publish(filtered_tweet, api_key)
 
                 if success:
                     stats["published_success"] += 1
                     self.storage.increment_daily_publish_count("BinanceTarget", api_key)
+                    # Mark content as published (if metadata available)
+                    if isinstance(tweet, dict) and "source_name" in tweet:
+                        self.storage.mark_content_published(
+                            source_name=tweet["source_name"],
+                            content_type=tweet.get("content_type", "unknown"),
+                            content_identifier=tweet.get("identifier", ""),
+                        )
                     console.print("[green]✅ Published successfully[/green]")
                 else:
                     stats["published_failed"] += 1
@@ -247,7 +285,7 @@ class FollowinCliService:
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
         table.add_row("Items Fetched", str(stats["items_fetched"]))
-        table.add_row("Tweets Generated", str(stats["tweets_generated"]))
+        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
         table.add_row("Published Successfully", str(stats["published_success"]))
         table.add_row("Publish Failed", str(stats["published_failed"]))
         console.print(table)

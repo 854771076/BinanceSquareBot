@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Any
+from typing import Dict, Any, List
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
@@ -58,11 +58,22 @@ class FnCliService:
 
         # Generate tweets
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate(filtered_items)
+        tweet_texts = self.source.generate(filtered_items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(filtered_items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FnSource",
+                    "content_type": "news",
+                    "identifier": filtered_items[i].url,
+                })
 
         stats = {
             "articles_fetched": len(filtered_items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -72,7 +83,7 @@ class FnCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         # Publish to all enabled API keys
@@ -96,12 +107,20 @@ class FnCliService:
                 continue
 
             for tweet in tweets:
-                filtered_tweet = self.target.filter(tweet)
+                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
+                filtered_tweet = self.target.filter(tweet_text)
                 success, error = self.target.publish(filtered_tweet, api_key)
 
                 if success:
                     stats["published_success"] += 1
                     self.storage.increment_daily_publish_count("BinanceTarget", api_key)
+                    # Mark content as published (if metadata available)
+                    if isinstance(tweet, dict) and "source_name" in tweet:
+                        self.storage.mark_content_published(
+                            source_name=tweet["source_name"],
+                            content_type=tweet.get("content_type", "unknown"),
+                            content_identifier=tweet.get("identifier", ""),
+                        )
                     console.print("[green]✅ Published successfully[/green]")
                 else:
                     stats["published_failed"] += 1
@@ -118,7 +137,7 @@ class FnCliService:
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
         table.add_row("Articles Fetched", str(stats["articles_fetched"]))
-        table.add_row("Tweets Generated", str(stats["tweets_generated"]))
+        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
         table.add_row("Published Successfully", str(stats["published_success"]))
         table.add_row("Publish Failed", str(stats["published_failed"]))
         console.print(table)
@@ -155,11 +174,22 @@ class FnCliService:
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_calendar(filtered_items)
+        tweet_texts = self.source.generate_calendar(filtered_items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(filtered_items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FnSource",
+                    "content_type": "calendar",
+                    "identifier": filtered_items[i].url,
+                })
 
         stats = {
             "events_fetched": len(filtered_items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -169,7 +199,7 @@ class FnCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Calendar Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         return self._publish_tweets(tweets, stats, "FnSourceCalendar")
@@ -203,11 +233,22 @@ class FnCliService:
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_airdrops(filtered_items)
+        tweet_texts = self.source.generate_airdrops(filtered_items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(filtered_items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FnSource",
+                    "content_type": "airdrop",
+                    "identifier": filtered_items[i].url,
+                })
 
         stats = {
             "events_fetched": len(filtered_items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -217,7 +258,7 @@ class FnCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Airdrop Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         return self._publish_tweets(tweets, stats, "FnSourceAirdrops")
@@ -251,11 +292,22 @@ class FnCliService:
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweets = self.source.generate_fundraising(filtered_items)
+        tweet_texts = self.source.generate_fundraising(filtered_items)
+
+        # Add metadata to tweets
+        tweets: List[Dict[str, Any]] = []
+        for i, tweet_text in enumerate(tweet_texts):
+            if i < len(filtered_items):
+                tweets.append({
+                    "text": tweet_text,
+                    "source_name": "FnSource",
+                    "content_type": "fundraising",
+                    "identifier": filtered_items[i].url,
+                })
 
         stats = {
             "events_fetched": len(filtered_items),
-            "tweets_generated": len(tweets),
+            "tweets_generated": tweets,
             "published_success": 0,
             "published_failed": 0,
             "dry_run": self.dry_run,
@@ -265,12 +317,12 @@ class FnCliService:
             console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
             for i, tweet in enumerate(tweets, 1):
                 console.print(f"\n--- Fundraising Tweet {i} ---")
-                console.print(tweet)
+                console.print(tweet["text"])
             return stats
 
         return self._publish_tweets(tweets, stats, "FnSourceFundraising")
 
-    def _publish_tweets(self, tweets: list[str], stats: Dict[str, Any], source_key: str) -> Dict[str, Any]:
+    def _publish_tweets(self, tweets: List[Dict[str, Any]], stats: Dict[str, Any], source_key: str) -> Dict[str, Any]:
         """Helper method to publish tweets."""
         api_keys = self.target.config.api_keys
         if not api_keys:
@@ -291,12 +343,20 @@ class FnCliService:
                 continue
 
             for tweet in tweets:
-                filtered_tweet = self.target.filter(tweet)
+                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
+                filtered_tweet = self.target.filter(tweet_text)
                 success, error = self.target.publish(filtered_tweet, api_key)
 
                 if success:
                     stats["published_success"] += 1
                     self.storage.increment_daily_publish_count("BinanceTarget", api_key)
+                    # Mark content as published (if metadata available)
+                    if isinstance(tweet, dict) and "source_name" in tweet:
+                        self.storage.mark_content_published(
+                            source_name=tweet["source_name"],
+                            content_type=tweet.get("content_type", "unknown"),
+                            content_identifier=tweet.get("identifier", ""),
+                        )
                     console.print("[green]✅ Published successfully[/green]")
                 else:
                     stats["published_failed"] += 1
@@ -310,7 +370,7 @@ class FnCliService:
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
         table.add_row("Events Fetched", str(stats["events_fetched"]))
-        table.add_row("Tweets Generated", str(stats["tweets_generated"]))
+        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
         table.add_row("Published Successfully", str(stats["published_success"]))
         table.add_row("Publish Failed", str(stats["published_failed"]))
         console.print(table)
