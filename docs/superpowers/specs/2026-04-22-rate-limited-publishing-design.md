@@ -14,6 +14,7 @@
 - ✅ 每个来源可以独立控制每次运行的生成数量
 - ✅ 总发布量可控且可配置
 - ✅ 改动最小，复用现有架构
+- ✅ 新增：按天去重（当天发布过的URL/ID不再重复生成和发布）
 
 ## 设计方案
 
@@ -150,16 +151,143 @@ class SourceOrchestrator:
 ### 单元测试
 1. 测试来源层限流是否生效
 2. 测试发布层随机选择逻辑
-3. 测试 total_per_run=0/None 的边界情况
+3. 测试 `total_per_run=0/None` 的边界情况
+4. 测试内容去重：`is_content_published_today()` 和 `mark_content_published()`
+5. 测试去重过滤逻辑
 
 ### 集成测试
 1. dry-run 模式下验证限流效果
-2. 验证日志输出正确显示限流信息
+2. 验证日志输出正确显示限流和去重信息
+3. 验证完整流程：fetch → 去重过滤 → 限流 → 发布 → 记录
+
+---
+
+## 新增功能：按天去重（ID/URL）
+
+**需求：** 当天发布过的文章（通过URL或ID识别），不再生成和发布。
+
+### 5.1 新增数据表 `published_content`
+
+**文件：** `src/binance_square_bot/models/published_content.py`
+
+```python
+class PublishedContentModel(Base):
+    __tablename__ = "published_content"
+
+    content_hash = Column(String(64), primary_key=True)  # URL或ID的SHA256 hash
+    source_name = Column(String(100), primary_key=True, index=True)  # FnSource, FollowinSource等
+    content_type = Column(String(50), primary_key=True, index=True)   # news, calendar, airdrop, fundraising, topics, io_flow, discussion
+    date = Column(String(20), primary_key=True, index=True)           # YYYY-MM-DD
+    published_at = Column(DateTime)
+```
+
+- **复合主键：** (content_hash, source_name, content_type, date)
+- 保证同一天、同一来源、同一类型的同一内容不会重复发布
+
+### 5.2 StorageService 新增方法
+
+**文件：** `src/binance_square_bot/services/storage.py:100-150`
+
+```python
+# ===== 内容去重 =====
+
+def is_content_published_today(
+    self,
+    source_name: str,
+    content_type: str,
+    content_identifier: str,
+) -> bool:
+    """Check if content (URL or ID) was published today."""
+    content_hash = hashlib.sha256(content_identifier.encode()).hexdigest()
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    with Database.get_session() as session:
+        exists = session.query(PublishedContentModel).filter(
+            PublishedContentModel.content_hash == content_hash,
+            PublishedContentModel.source_name == source_name,
+            PublishedContentModel.content_type == content_type,
+            PublishedContentModel.date == date,
+        ).first()
+        return exists is not None
+
+def mark_content_published(
+    self,
+    source_name: str,
+    content_type: str,
+    content_identifier: str,
+) -> None:
+    """Mark content as published today."""
+    content_hash = hashlib.sha256(content_identifier.encode()).hexdigest()
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    with Database.get_session() as session:
+        # Check if already exists
+        exists = session.query(PublishedContentModel).filter(
+            PublishedContentModel.content_hash == content_hash,
+            PublishedContentModel.source_name == source_name,
+            PublishedContentModel.content_type == content_type,
+            PublishedContentModel.date == date,
+        ).first()
+
+        if exists:
+            return
+
+        record = PublishedContentModel(
+            content_hash=content_hash,
+            source_name=source_name,
+            content_type=content_type,
+            date=date,
+            published_at=datetime.now(),
+        )
+        session.add(record)
+        session.commit()
+```
+
+### 5.3 各Source层过滤
+
+需要修改每个Source的CLI Service，在fetch后、生成前过滤：
+
+**文件：** `src/binance_square_bot/services/cli/fn_cli.py`, `followin_cli.py`
+
+例子（Fn新闻）：
+```python
+def execute(self) -> Dict[str, Any]:
+    source = FnSource()
+    articles = source.fetch_news()
+
+    # 过滤掉当天已发布的
+    filtered_articles = [
+        a for a in articles
+        if not self.storage.is_content_published_today("FnSource", "news", a.url)
+    ]
+    logger.info(f"Filtered out {len(articles) - len(filtered_articles)} already published articles")
+
+    # 应用limit限制
+    if self.limit:
+        filtered_articles = filtered_articles[:self.limit]
+
+    # ... 继续生成逻辑 ...
+```
+
+### 5.4 发布成功后记录
+
+**文件：** `src/binance_square_bot/services/concurrent_executor.py:150-240`
+
+在 `SourceParallelPublisher.publish_to_targets()` 中，发布成功后记录。
+
+**注意：** 因为当前的tweet只是纯文本，没有保留原始URL/ID信息，我们需要修改数据结构，让tweet携带identifier元数据：
+
+```python
+# 修改：从 List[str] 改为 List[Dict[str, str]]
+# 每个tweet变成: {"text": "内容", "identifier": "url_or_id", "source_name": "...", "content_type": "..."}
+```
+
+---
 
 ## 向后兼容性
 
 - 所有新增参数都有默认值，现有配置和调用方式完全不受影响
-- 不改变数据库结构
+- 新增数据库表会自动创建（`Base.metadata.create_all()`），无需手动执行SQL
 - 不改变发布重试和错误处理逻辑
 
 ## 后续优化方向（可选）
