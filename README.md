@@ -12,7 +12,7 @@
 - ✅ **完整单元测试** - 所有模块覆盖单元测试，类型安全有保证
 - ✅ **Polymarket 投资研报** - 自动获取 Polymarket 最新市场，筛选热门新市场和概率偏离机会，AI 生成投资研报并发布
 - ✅ **Followin 热点/币种分析** - 自动获取 Followin 热门话题、资金异动币种、讨论最热币种，AI 生成观点型推文
-- ✅ **限流发布** - 每小时发布上限可配，默认每小时发布总量上限 + 各来源独立配额控制
+- ✅ **限流发布** - 每小时发布上限可配，默认每轮发布总量上限10篇 + 各来源独立配额控制
 - ✅ **内容去重** - 按天按来源去重，已发布过的 URL/ID 当天不会重复生成和发布
 - ✅ **随机选择发布** - 生成多篇推文后随机选择发布，发布行为更自然，不像是机器刷屏
 
@@ -112,6 +112,9 @@ binance-square-bot followin run
 
 # 🚀 并行执行所有源（推荐）
 binance-square-bot parallel --workers 4
+
+# 限制每轮发布总数（默认10，可根据需要调整）
+binance-square-bot parallel --total-per-run 5
 
 # 并行试运行
 binance-square-bot parallel --dry-run
