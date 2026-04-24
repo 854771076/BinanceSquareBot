@@ -2,8 +2,8 @@ name: Run BinanceSquareBot
 
 on:
   schedule:
-    # 每小时整点执行
-    - cron: "0 * * * *"
+    # 每天9点到22点30分执行一次
+    - cron: "30 9-22 * * *"
   workflow_dispatch: # 支持手动触发并行执行
 
 permissions:
@@ -62,7 +62,7 @@ jobs:
           # 默认启用: Fn news, calendar, airdrop, fundraising + Followin all
           # 可选启用: Polymarket
           # --total-per-run 6: 每轮最多发布 6 篇, 避免一次性发布太多
-          poetry run binance-square-bot parallel --workers 8 --total-per-run 10
+          poetry run binance-square-bot parallel --workers 8 --total-per-run 15
 
       - name: Commit and push if changes
         env:
