@@ -16,9 +16,6 @@ headers = {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-site',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0',
-    'x-bparam': '{"a":"web","b":"Windows","c":"zh-Hans","d":8,"e":"","f":"","g":"","h":"3.4.0","i":"official"}',
-    'x-gtoken': 'jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh',
-    'x-token': 'null',
 }
 
 json_data = {

@@ -386,7 +386,7 @@ class FollowinSource(BaseSource):
 
 格式要求：
 - 总字符数：100-800字
-- 话题标签：最多{self.max_hashtags}个，#Web3 #加密货币 等
+- 话题标签：最多{self.max_hashtags}个，#Web3 #加密货币 等贴合文章内容的标签
 - 代币标签：最多{self.max_mentions}个，列出新闻内容提及的代币，没有就用$BTC $ETH
 - 不要使用表情符号
 - 段落之间空一行
@@ -414,8 +414,7 @@ AI总结: {topic.summary}
 
         price_info = ""
         if token.token_quote and isinstance(token.token_quote, dict):
-            change_24h = token.token_quote.get('change_24h', 0)
-            price_info = f"\n24h涨跌幅: {change_24h:.2f}%"
+            price_info =  token.token_quote
 
         base_prompt = f"""你是币安广场的加密货币KOL，人称"链上侦探"，擅长把{category_name}币种转化为犀利的市场分析推文。
 
@@ -436,7 +435,7 @@ AI总结: {topic.summary}
 
 格式要求：
 - 总字符数：100-800字
-- 话题标签：最多{self.max_hashtags}个，#Web3 #加密货币 #{token.symbol} 等
+- 话题标签：最多{self.max_hashtags}个，#Web3 #加密货币 #{token.symbol} 等贴合文章内容的标签
 - 代币标签：最多{self.max_mentions}个，${token.symbol} 等,从新闻内容中提取, 没有就用$BTC $ETH
 - 不要使用表情符号
 - 段落之间空一行
@@ -444,7 +443,8 @@ AI总结: {topic.summary}
 输入数据：
 币种: {token.name} (${token.symbol})
 类型: {category_name}
-讨论摘要: {token.summary}{price_info}
+讨论摘要: {token.summary}
+价格数据：{price_info}
 
 请直接输出推文内容，不要添加任何其他说明。
 """
