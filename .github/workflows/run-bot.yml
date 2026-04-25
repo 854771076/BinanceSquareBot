@@ -3,7 +3,7 @@ name: Run BinanceSquareBot
 on:
   schedule:
     # 每天9点到22点30分执行一次
-    - cron: "30 9-22 * * *"
+    - cron: "30 * * * *"
   workflow_dispatch: # 支持手动触发并行执行
 
 permissions:
