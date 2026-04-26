@@ -8,7 +8,7 @@ from pydantic import BaseModel, SecretStr
 from loguru import logger
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
-
+import requests as req
 from binance_square_bot.services.base import BaseSource
 from binance_square_bot.config import config
 
@@ -205,10 +205,8 @@ class FollowinSource(BaseSource):
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0',
                 # 'cookie': 'TZ=8; G=jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh; _ga=GA1.1.1217072458.1776697862; _ga_RDXGD4Z1XV=GS2.1.s1776697862$o1$g1$t1776698019$j60$l0$h0',
             }
-            resp = self._request_with_retry(
-                'GET', url, is_session=True,
-                impersonate='chrome', timeout=self.config.timeout, headers=headers
-            )
+            resp = req.get(url, headers=headers)
+            resp.raise_for_status()
 
             parser = self.NextDataParser()
             parser.feed(resp.text)
