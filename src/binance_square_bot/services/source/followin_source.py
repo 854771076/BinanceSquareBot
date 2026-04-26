@@ -42,7 +42,7 @@ class FollowinSource(BaseSource):
         web_base_url: str = "https://followin.io"
         timeout: int = 30
         daily_max_executions: int = 30
-        max_items_per_category: int = 2
+        max_items_per_category: int = 5
         max_retries: int = 3  # 请求失败重试次数
         retry_delay: float = 2.0  # 重试间隔（秒）
         request_delay: float = 1.0  # 每个请求之间的间隔（秒）
@@ -165,9 +165,15 @@ class FollowinSource(BaseSource):
                 if topic_id in self.processed_ids:
                     continue
 
-                title = item.get('name', '').strip()
-                summary = self._fetch_topic_detail(topic_id)
-
+                title = item.get('title', '').strip()
+                # summary = self._fetch_topic_detail(topic_id)
+                tags_str = ','.join([tag.get('name', '').strip() for tag in item.get('tags', [])])
+                topic_type = item.get('topic_type', '').strip()
+                summary = f'''
+                {title}
+                {tags_str}
+                {topic_type}
+                '''
                 if summary:
                     result.append(FollowinTopic(
                         id=topic_id,
