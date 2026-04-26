@@ -187,9 +187,27 @@ class FollowinSource(BaseSource):
         """Fetch trending topic AI summary from web page."""
         url = f"{self.config.web_base_url}/zh-Hans/trendingTopic/{topic_id}"
         try:
+            headers = {
+                'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                'cache-control': 'no-cache',
+                'pragma': 'no-cache',
+                'priority': 'u=0, i',
+                'referer': 'https://followin.io/zh-Hans/trendingTopicList',
+                'sec-ch-ua': '"Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
+                'sec-fetch-dest': 'document',
+                'sec-fetch-mode': 'navigate',
+                'sec-fetch-site': 'same-origin',
+                'sec-fetch-user': '?1',
+                'upgrade-insecure-requests': '1',
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0',
+                # 'cookie': 'TZ=8; G=jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh; _ga=GA1.1.1217072458.1776697862; _ga_RDXGD4Z1XV=GS2.1.s1776697862$o1$g1$t1776698019$j60$l0$h0',
+            }
             resp = self._request_with_retry(
                 'GET', url, is_session=False,
-                impersonate='chrome', timeout=self.config.timeout
+                impersonate='chrome', timeout=self.config.timeout, headers=headers
             )
 
             parser = self.NextDataParser()
@@ -237,7 +255,10 @@ class FollowinSource(BaseSource):
                     continue
 
                 summary = self._fetch_token_discussion_summary(token_id)
-                token_quote = token_quotes.get(token_key, [None])[0] if token_key in token_quotes else None
+                try:
+                    token_quote = token_quotes.get(token_key, [None])[0] if token_key in token_quotes else None
+                except:
+                    continue
 
                 if summary:
                     result.append(FollowinToken(

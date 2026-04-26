@@ -39,7 +39,7 @@ if response.json()['code'] == 2000:
     for id in [item['id'] for item in data['list'][:10]]:
         result.append({
             "id": id,
-            "token_quote":data['token_quotes'][str(id)][0],
+            "token_quote":data['token_quotes'][str(id)][0] if data['token_quotes'][str(id)] else None,
         })
 
 print(result)

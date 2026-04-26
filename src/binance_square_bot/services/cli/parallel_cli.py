@@ -43,11 +43,11 @@ class ParallelCliService:
         self.storage = StorageService()
         self.source_limits = {
             "FnSource_execute": 2,
-            "FnSource_execute_calendar": 1,
-            "FnSource_execute_airdrops": 1,
-            "FnSource_execute_fundraising": 1,
-            "FollowinSource_execute_topics": 1,
-            "FollowinSource_execute_io_flow": 5,
+            "FnSource_execute_calendar": 2,
+            "FnSource_execute_airdrops": 2,
+            "FnSource_execute_fundraising": 2,
+            "FollowinSource_execute_topics": 5,
+            "FollowinSource_execute_io_flow": 3,
             "FollowinSource_execute_discussion": 3,
         }
 

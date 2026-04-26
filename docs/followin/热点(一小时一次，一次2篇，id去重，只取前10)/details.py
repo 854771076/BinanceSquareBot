@@ -51,7 +51,7 @@ class NextDataParser(HTMLParser):
             self.next_data = data
 
 
-response = requests.get('https://followin.io/zh-Hans/trendingTopic/8234', cookies=cookies, headers=headers)
+response = requests.get('https://followin.io/zh-Hans/trendingTopic/8436', headers=headers)
 response.raise_for_status()
 
 parser = NextDataParser()
