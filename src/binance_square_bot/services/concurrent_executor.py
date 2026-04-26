@@ -146,6 +146,9 @@ class SourceParallelPublisher:
     ) -> Dict[str, Any]:
         """Publish tweets to multiple targets and API keys concurrently.
 
+        Each unique content (by content_identifier) will be published to EXACTLY ONE API key only,
+        preventing duplicate articles across different accounts.
+
         Args:
             tweets: List of tweet dicts with metadata and text
             targets: List of target instances
@@ -156,15 +159,47 @@ class SourceParallelPublisher:
         Returns:
             Aggregated statistics
         """
+        # Step 1: Deduplicate tweets by content_identifier to prevent duplicates
+        unique_tweets: List[Dict[str, Any]] = []
+        seen_identifiers = set()
+        for tweet in tweets:
+            if isinstance(tweet, dict) and "identifier" in tweet:
+                identifier = tweet["identifier"]
+                if identifier not in seen_identifiers:
+                    seen_identifiers.add(identifier)
+                    unique_tweets.append(tweet)
+            else:
+                # For tweets without identifier, treat them as unique
+                unique_tweets.append(tweet)
+
+        if len(unique_tweets) < len(tweets):
+            console.print(f"[blue]🔍 Deduplicated {len(tweets) - len(unique_tweets)} duplicate tweets[/blue]")
+
+        # Step 2: Filter out already published content
+        filtered_tweets: List[Dict[str, Any]] = []
+        for tweet in unique_tweets:
+            if isinstance(tweet, dict) and "source_name" in tweet and "identifier" in tweet:
+                if storage.is_content_published_today(
+                    source_name=tweet["source_name"],
+                    content_type=tweet.get("content_type", "unknown"),
+                    content_identifier=tweet["identifier"],
+                ):
+                    console.print(f"[yellow]⏭️ Skipping already published: {tweet['identifier'][:50]}...[/yellow]")
+                    continue
+            filtered_tweets.append(tweet)
+
+        if len(filtered_tweets) < len(unique_tweets):
+            console.print(f"[blue]📋 Filtered out {len(unique_tweets) - len(filtered_tweets)} already published tweets[/blue]")
+
         total_stats = {
-            "total_tweets": len(tweets),
+            "total_tweets": len(filtered_tweets),
             "total_targets": len(targets),
             "published_success": 0,
             "published_failed": 0,
             "target_results": {},
         }
 
-        # Create publish tasks for each (target, api_key, tweet) combination
+        # Create publish tasks - distributes tweets evenly across API keys
         publish_tasks: List[Callable] = []
         task_names: List[str] = []
 
@@ -176,26 +211,44 @@ class SourceParallelPublisher:
                 console.print(f"[yellow]⚠️ No API keys configured for {target_name}, skipping[/yellow]")
                 continue
 
-            target_results = {
-                "api_keys_used": 0,
-                "published_success": 0,
-                "published_failed": 0,
-            }
-
+            # Get available API keys (not exceeding daily limit)
+            available_keys = []
             for api_key in api_keys:
-                # Check publish limit for this API key
-                if not storage.can_publish_key(
+                if storage.can_publish_key(
                     target_name,
                     api_key,
                     target.config.daily_max_posts_per_key,
                 ):
+                    available_keys.append(api_key)
+                else:
                     key_mask = mask_api_key(api_key)
                     console.print(f"[yellow]⚠️ Daily limit reached for key {key_mask}, skipping[/yellow]")
+
+            if not available_keys:
+                console.print(f"[yellow]⚠️ No available API keys for {target_name}[/yellow]")
+                continue
+
+            target_results = {
+                "api_keys_used": len(available_keys),
+                "published_success": 0,
+                "published_failed": 0,
+            }
+
+            # Distribute tweets evenly across available API keys (each tweet to ONE key only)
+            tweets_per_key: Dict[str, List[Dict[str, Any]]] = {key: [] for key in available_keys}
+            for idx, tweet in enumerate(filtered_tweets):
+                key_index = idx % len(available_keys)
+                assigned_key = available_keys[key_index]
+                tweets_per_key[assigned_key].append(tweet)
+
+            console.print(f"[blue]📤 Distributing {len(filtered_tweets)} tweets across {len(available_keys)} API keys[/blue]")
+
+            # Create publish task for each API key with its assigned tweets only
+            for api_key in available_keys:
+                assigned_tweets = tweets_per_key[api_key]
+                if not assigned_tweets:
                     continue
 
-                target_results["api_keys_used"] += 1
-
-                # Create a task that publishes all tweets with this API key
                 def create_publish_task(tgt, key, tweet_list):
                     def publish_task():
                         task_stats = {"success": 0, "failed": 0}
@@ -226,8 +279,8 @@ class SourceParallelPublisher:
 
                     return publish_task
 
-                task_name = f"{target_name}_{api_key[:8]}..."
-                publish_tasks.append(create_publish_task(target, api_key, tweets))
+                task_name = f"{target_name}_{api_key[:8]}_({len(assigned_tweets)}tweets)"
+                publish_tasks.append(create_publish_task(target, api_key, assigned_tweets))
                 task_names.append(task_name)
 
             total_stats["target_results"][target_name] = target_results

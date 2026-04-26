@@ -14,6 +14,7 @@
 - ✅ **Followin 热点/币种分析** - 自动获取 Followin 热门话题、资金异动币种、讨论最热币种，AI 生成观点型推文
 - ✅ **限流发布** - 每小时发布上限可配，默认每轮发布总量上限10篇 + 各来源独立配额控制
 - ✅ **内容去重** - 按天按来源去重，已发布过的 URL/ID 当天不会重复生成和发布
+- ✅ **防重复发布** - 相同内容只会分配给**单个 API 密钥**发布，避免多账号发布重复文章
 - ✅ **随机选择发布** - 生成多篇推文后随机选择发布，发布行为更自然，不像是机器刷屏
 
 ## 📋 环境要求
@@ -133,13 +134,12 @@ binance-square-bot parallel --workers 8 --no-fn --enable-polymarket
 
    进入你的 GitHub 仓库 → Settings → **Secrets and variables** → Actions → New repository secret，添加以下密钥：
 
-   | Secret Name | Value | Required |
-   |-------------|-------|----------|
-   | `BINANCE_API_KEYS` | 币安API密钥列表，JSON格式，例如：`["key1", "key2"]` | ✅ Required |
-   | `LLM_API_KEY` | OpenAI API 密钥（或兼容接口的密钥） | ✅ Required |
-   | `LLM_BASE_URL` | LLM API 地址（如使用第三方接口） | ⚙️ Optional |
-   | `LLM_MODEL` | LLM 模型名称 | ⚙️ Optional |
-
+   | Secret Name                 | Value                                               | Required      |
+   | --------------------------- | --------------------------------------------------- | ------------- |
+   | `BINANCE_TARGET_API_KEYS` | 币安API密钥列表，JSON格式，例如：`"key1", "key2"` | ✅ Required   |
+   | `LLM_API_KEY`             | OpenAI API 密钥（或兼容接口的密钥）                 | ✅ Required   |
+   | `LLM_BASE_URL`            | LLM API 地址（如使用第三方接口）                    | ⚙️ Optional |
+   | `LLM_MODEL`               | LLM 模型名称                                        | ⚙️ Optional |
 2. **确认仓库权限**
 
    当前 workflow 已配置 `permissions: contents: write`，对于大多数情况可以直接工作。如果仍然遇到推送权限错误 `403 Permission denied`，需要创建个人访问令牌 (PAT)：
@@ -172,13 +172,22 @@ BinanceSquareBot/
 │       │   ├── article.py       # Article数据模型
 │       │   └── tweet.py         # Tweet数据模型
 │       └── services/
-│           ├── storage.py       # SQLite存储去重
+│           ├── storage.py       # SQLite存储去重和发布统计
 │           ├── spider.py        # ForesightNews爬虫
 │           ├── generator.py     # AI推文生成 (LangGraph)
 │           ├── polymarket_fetcher.py       # Polymarket 数据获取
 │           ├── polymarket_filter.py        # Polymarket 市场筛选打分
 │           ├── research_generator.py      # Polymarket 投资研报生成
-│           └── binance_publisher.py      # 币安广场发布服务（多API密钥）
+│           ├── binance_publisher.py      # 币安广场发布服务（多API密钥）
+│           ├── concurrent_executor.py    # 并行执行编排器（源并行 + 多API密钥发布）
+│           ├── cli/                      # CLI服务
+│           │   └── parallel_cli.py       # 并行执行CLI服务
+│           ├── source/                   # 各数据源适配器
+│           │   ├── fn_source.py          # ForesightNews 源
+│           │   ├── polymarket_source.py  # Polymarket 源
+│           │   └── followin_source.py    # Followin 源
+│           └── target/                   # 发布目标适配器
+│               └── binance_target.py     # 币安广场目标
 ├── tests/
 │   ├── test_storage.py          # 存储服务测试
 │   ├── test_generator.py        # 格式校验测试
@@ -216,26 +225,38 @@ python -m tests.live_test_spider
 
 ## 📝 工作流程
 
+### 并行执行模式（推荐）
+
 ```
-启动
+启动 parallel 命令
   ↓
-爬取 ForesightNews 今日重要新闻
+各数据源并行执行（FnNews、Calendar、Airdrop、Fundraising、Polymarket、Followin...）
   ↓
-SQLite 去重过滤出新文章
+    ├─ 爬取最新内容
+    ├─ 过滤已发布内容（按天按来源去重）
+    └─ AI 生成推文
   ↓
-遍历 API 密钥
+聚合所有生成的推文
   ↓
-遍历新文章
+按 content_identifier 去重（避免同源重复）
   ↓
-LangGraph 生成推文:
-    ├─ 构建 Prompt
-    ├─ LLM 生成
-    ├─ 格式校验
-    ├─ 通过 → 发布
-    └─ 失败 → 重试 (最多 MAX_RETRIES 次)
+检查并过滤当天已发布内容
   ↓
-统计输出结果
+随机打乱 + 按 total_per_run 限制数量
+  ↓
+推文均匀分配给各 API 密钥（每篇推文只分配给 1 个密钥）
+  ↓
+各 API 密钥并行发布
+  ↓
+发布成功后标记内容为已发布 + 统计输出
 ```
+
+### 关键特性
+
+- **内容级去重**：相同 content_identifier 只保留一条
+- **单账号发布**：每篇推文仅分配给一个 API 密钥，彻底避免重复文章
+- **均匀分配**：推文按轮询方式均匀分配给各可用账号
+- **并发安全**：发布前检查、发布后立即标记，避免竞态条件
 
 ## 📄 License
 

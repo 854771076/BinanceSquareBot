@@ -19,7 +19,7 @@ class ParallelCliService:
         self,
         dry_run: bool = False,
         max_workers: int = 4,
-        total_per_run: int = 6,
+        total_per_run: int = 15,
         enable_fn: bool = True,
         enable_fn_calendar: bool = True,
         enable_fn_airdrop: bool = True,
@@ -47,7 +47,7 @@ class ParallelCliService:
             "FnSource_execute_airdrops": 1,
             "FnSource_execute_fundraising": 1,
             "FollowinSource_execute_topics": 1,
-            "FollowinSource_execute_io_flow": 3,
+            "FollowinSource_execute_io_flow": 5,
             "FollowinSource_execute_discussion": 3,
         }
 
