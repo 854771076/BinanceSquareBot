@@ -206,7 +206,7 @@ class FollowinSource(BaseSource):
                 # 'cookie': 'TZ=8; G=jIPvKoLaE6yxNmfAaHnftppSotawKqSbtxMsvFIoaGx1msr0aG-_qRfneiOt3Ieh; _ga=GA1.1.1217072458.1776697862; _ga_RDXGD4Z1XV=GS2.1.s1776697862$o1$g1$t1776698019$j60$l0$h0',
             }
             resp = self._request_with_retry(
-                'GET', url, is_session=False,
+                'GET', url, is_session=True,
                 impersonate='chrome', timeout=self.config.timeout, headers=headers
             )
 
