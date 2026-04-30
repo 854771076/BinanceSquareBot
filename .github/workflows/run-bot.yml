@@ -57,7 +57,7 @@ jobs:
 
           # FollowinSource 配置
           FOLLOWIN_SOURCE_ENABLED: true
-          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 24
+          FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 50
         run: |
           # 默认启用: Fn news, calendar, airdrop, fundraising + Followin all
           # 可选启用: Polymarket
