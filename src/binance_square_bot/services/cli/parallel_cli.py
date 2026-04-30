@@ -47,8 +47,8 @@ class ParallelCliService:
             "FnSource_execute_airdrops": 2,
             "FnSource_execute_fundraising": 2,
             "FollowinSource_execute_topics": 5,
-            "FollowinSource_execute_io_flow": 3,
-            "FollowinSource_execute_discussion": 3,
+            "FollowinSource_execute_io_flow": 5,
+            "FollowinSource_execute_discussion": 5,
         }
 
     def execute_all(self) -> Dict[str, Any]:
