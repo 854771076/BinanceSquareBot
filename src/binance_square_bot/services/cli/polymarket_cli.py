@@ -47,7 +47,16 @@ class PolymarketCliService:
         console.print(f"✓ Fetched {len(markets)} markets")
 
         candidates = self._candidate_markets(markets)
-        items = [polymarket_to_item(market) for market in candidates]
+        unpublished_candidates = [
+            market
+            for market in candidates
+            if not self.storage.is_content_published_today(
+                "PolymarketSource",
+                "polymarket_research",
+                market.condition_id,
+            )
+        ]
+        items = [polymarket_to_item(market) for market in unpublished_candidates]
         stats = self._base_stats(len(markets), items)
 
         if not items:

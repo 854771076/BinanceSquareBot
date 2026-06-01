@@ -41,6 +41,7 @@ class DummyStorage:
         self.can_execute_source = MagicMock(return_value=True)
         self.increment_daily_execution = MagicMock()
         self.can_publish_key = MagicMock(return_value=True)
+        self.is_content_published_today = MagicMock(return_value=False)
         self.mark_content_published = MagicMock()
         self.increment_daily_publish_count = MagicMock()
 
@@ -219,6 +220,29 @@ def test_execute_filters_sorts_candidates_by_volume_and_limits_to_top_five() -> 
     assert result["markets_fetched"] == 9
     assert result["items_fetched"] == 5
     assert result["items_generated"] == items
+
+
+def test_execute_filters_already_published_markets_before_mapping() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    published_market = market("published-1", volume=9_000.0)
+    unpublished_market = market("unpublished-1", volume=8_000.0)
+    source.fetch.return_value = [published_market, unpublished_market]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == "published-1"
+    )
+
+    result = service.execute()
+
+    publisher.publish_items.assert_called_once()
+    items = publisher.publish_items.call_args.args[0]
+    assert [item.identifier for item in items] == ["unpublished-1"]
+    assert result["markets_fetched"] == 2
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    assert storage.is_content_published_today.call_args_list == [
+        (("PolymarketSource", "polymarket_research", "published-1"),),
+        (("PolymarketSource", "polymarket_research", "unpublished-1"),),
+    ]
 
 
 def test_execute_non_dry_without_api_keys_skips_publish_and_increment() -> None:
