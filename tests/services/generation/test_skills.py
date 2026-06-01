@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pytest
 
+from binance_square_bot.services.generation import skills
 from binance_square_bot.services.generation.models import TweetSourceItem
 from binance_square_bot.services.generation.skills import select_skill_path, skills_root
 
@@ -16,9 +19,11 @@ def _item(source_name: str, content_type: str) -> TweetSourceItem:
 
 def test_skills_root_points_to_repository_agent_skills_directory():
     root = skills_root()
+    expected_root = Path(skills.__file__).resolve().parents[4] / "agent_skills"
 
     assert root.name == "agent_skills"
-    assert root.parent.name == "deepagents-tweet-generation"
+    assert root.exists()
+    assert root == expected_root
 
 
 @pytest.mark.parametrize(

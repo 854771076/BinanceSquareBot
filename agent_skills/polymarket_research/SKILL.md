@@ -9,5 +9,5 @@ Rules:
 - Explain what the market is pricing, where uncertainty remains, and what risks readers should consider. Do not promise profit or push a trade.
 - Include a concise risk disclaimer that the post is for learning and discussion, not investment advice.
 - Use at most two Binance Square hashtags, preferably from #Polymarket #预测市场 #加密货币 when relevant.
-- Use at most two token tags; include a relevant token only if grounded, otherwise use $BTC or $ETH sparingly if needed.
+- Use at most two token tags; token tags must be explicitly present or clearly grounded in the supplied data, otherwise omit token tags.
 - Vary account-specific versions by changing opening style, analytical structure, tone, and closing question while preserving all market data.
