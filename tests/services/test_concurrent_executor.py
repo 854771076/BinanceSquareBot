@@ -375,3 +375,70 @@ class TestSourceParallelPublisher:
             "items"
         ]
         assert published_items == [fresh]
+
+    def test_legacy_dict_items_are_converted_before_account_publishing(self):
+        """Legacy dict content items are normalized for AccountItemPublisher."""
+        legacy_item = {
+            "text": "Legacy generated tweet text should not become summary first",
+            "source_name": "FnSource",
+            "content_type": "news",
+            "identifier": "legacy-1",
+            "title": "Legacy Title",
+            "summary": "Legacy Summary",
+            "url": "https://example.com/legacy-1",
+            "metadata": {"topic": "crypto"},
+        }
+        target = MockTarget()
+        storage = Mock()
+        storage.can_publish_key.return_value = True
+        storage.is_content_published_today.return_value = False
+
+        with patch(
+            "binance_square_bot.services.concurrent_executor.AccountItemPublisher"
+        ) as publisher_cls:
+            publisher_cls.return_value.publish_items.return_value = {
+                "published_success": 1,
+                "published_failed": 0,
+            }
+
+            SourceParallelPublisher(max_workers=1).publish_to_targets(
+                tweets=[legacy_item],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                delay_between_publishes=0,
+            )
+
+        published_items = publisher_cls.return_value.publish_items.call_args.kwargs[
+            "items"
+        ]
+        assert len(published_items) == 1
+        published_item = published_items[0]
+        assert isinstance(published_item, TweetSourceItem)
+        assert published_item.source_name == "FnSource"
+        assert published_item.content_type == "news"
+        assert published_item.identifier == "legacy-1"
+        assert published_item.title == "Legacy Title"
+        assert published_item.summary == "Legacy Summary"
+        assert published_item.url == "https://example.com/legacy-1"
+        assert published_item.metadata == {"topic": "crypto"}
+
+    def test_legacy_string_items_are_skipped_before_account_publishing(self):
+        """Unsupported legacy string tweets are dropped instead of published raw."""
+        target = MockTarget()
+        storage = Mock()
+
+        with patch(
+            "binance_square_bot.services.concurrent_executor.AccountItemPublisher"
+        ) as publisher_cls:
+            result = SourceParallelPublisher(max_workers=1).publish_to_targets(
+                tweets=["legacy generated tweet"],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                delay_between_publishes=0,
+            )
+
+        publisher_cls.assert_not_called()
+        assert result["total_items"] == 0
+        assert result["total_tweets"] == 0

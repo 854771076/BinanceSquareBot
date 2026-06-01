@@ -168,8 +168,9 @@ class SourceParallelPublisher:
         The parameter name remains ``tweets`` for backward compatibility, but the
         values are treated as normalized TweetSourceItem content items.
         """
-        unique_items = self._deduplicate_items(tweets)
-        self._print_dedupe_summary(len(tweets), len(unique_items))
+        normalized_items = self._normalize_items(tweets)
+        unique_items = self._deduplicate_items(normalized_items)
+        self._print_dedupe_summary(len(normalized_items), len(unique_items))
 
         filtered_items = self._filter_already_published(unique_items, storage)
         self._print_filter_summary(len(unique_items), len(filtered_items))
@@ -296,6 +297,57 @@ class SourceParallelPublisher:
             )
 
         return publish_task
+
+    def _normalize_items(self, items: list[Any]) -> list[TweetSourceItem]:
+        normalized_items: list[TweetSourceItem] = []
+        skipped_count = 0
+
+        for item in items:
+            normalized_item = self._normalize_item(item)
+            if normalized_item is None:
+                skipped_count += 1
+                console.print(
+                    "[yellow]⚠️ Skipping unsupported legacy publish item "
+                    f"of type {type(item).__name__}[/yellow]"
+                )
+                logger.warning(
+                    "Skipping unsupported legacy publish item of type %s",
+                    type(item).__name__,
+                )
+                continue
+            normalized_items.append(normalized_item)
+
+        if skipped_count:
+            console.print(
+                f"[yellow]⚠️ Skipped {skipped_count} unsupported publish items[/yellow]"
+            )
+            logger.warning("Skipped %s unsupported publish items", skipped_count)
+
+        return normalized_items
+
+    def _normalize_item(self, item: Any) -> TweetSourceItem | None:
+        if isinstance(item, TweetSourceItem):
+            return item
+        if isinstance(item, dict):
+            return self._legacy_dict_to_item(item)
+        return None
+
+    def _legacy_dict_to_item(self, item: dict[str, Any]) -> TweetSourceItem | None:
+        required_keys = ("source_name", "content_type", "identifier")
+        if not all(key in item for key in required_keys):
+            return None
+
+        identifier = str(item["identifier"])
+        metadata = item.get("metadata")
+        return TweetSourceItem(
+            source_name=str(item["source_name"]),
+            content_type=str(item["content_type"]),
+            identifier=identifier,
+            title=str(item.get("title") or identifier),
+            summary=str(item.get("summary") or item.get("text") or ""),
+            url=item.get("url"),
+            metadata=metadata if isinstance(metadata, dict) else {},
+        )
 
     def _available_api_keys(
         self,
