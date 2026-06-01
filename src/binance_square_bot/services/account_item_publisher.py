@@ -28,15 +28,6 @@ class AccountItemPublisher:
         dry_run: bool = False,
     ) -> dict[str, int | bool]:
         target_name = target.__class__.__name__
-        available_keys = [
-            api_key
-            for api_key in api_keys
-            if storage.can_publish_key(
-                target_name,
-                api_key,
-                target.config.daily_max_posts_per_key,
-            )
-        ]
         stats: dict[str, int | bool] = {
             "items_total": len(items),
             "api_keys_total": len(api_keys),
@@ -50,13 +41,22 @@ class AccountItemPublisher:
 
         for item in items:
             item_success = False
-            for account_index, api_key in enumerate(available_keys, start=1):
+            available_account_index = 0
+            for api_key in api_keys:
+                if not storage.can_publish_key(
+                    target_name,
+                    api_key,
+                    target.config.daily_max_posts_per_key,
+                ):
+                    continue
+
+                available_account_index += 1
                 api_key_mask = key_masks[api_key]
                 try:
                     tweet = self.generator.generate_for_account(
                         item=item,
                         api_key_mask=api_key_mask,
-                        account_index=account_index,
+                        account_index=available_account_index,
                         api_key=api_key,
                     )
                 except Exception as exc:
@@ -105,6 +105,6 @@ class AccountItemPublisher:
 
 def _sanitize_message(message: str, key_masks: dict[str, str]) -> str:
     safe_message = message
-    for api_key, api_key_mask in key_masks.items():
-        safe_message = safe_message.replace(api_key, api_key_mask)
+    for api_key in sorted(key_masks, key=len, reverse=True):
+        safe_message = safe_message.replace(api_key, key_masks[api_key])
     return safe_message

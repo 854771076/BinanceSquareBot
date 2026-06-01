@@ -23,7 +23,10 @@ class FakeGenerator:
         )
         key = (item.identifier, api_key)
         if key in self.failures:
-            message = self.failure_messages.get(key, f"generation failed for {api_key_mask}")
+            message = self.failure_messages.get(
+                key,
+                f"generation failed for {api_key_mask}",
+            )
             raise ValueError(message)
         return self.outputs.get(key, f"tweet-{item.identifier}-{account_index}")
 
@@ -252,6 +255,40 @@ def test_skips_unavailable_keys_for_generation_and_publishing():
     assert target.publish_calls == [("filtered:tweet-available-only-1", api_keys[1])]
 
 
+def test_rechecks_key_quota_before_each_item_generation_attempt():
+    items = [make_item("first-item"), make_item("second-item")]
+    api_key = "KEY_ONE_SECRET_1234"
+    generator = FakeGenerator()
+    target = FakeTarget()
+    storage = FakeStorage()
+
+    def can_publish_until_first_success(target_name, api_key_value, max_posts):
+        storage.can_publish_key_calls.append((target_name, api_key_value, max_posts))
+        return not storage.increment_calls
+
+    storage.can_publish_key = can_publish_until_first_success
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items(items, target, [api_key], storage)
+
+    assert stats["generated_success"] == 1
+    assert stats["published_success"] == 1
+    assert [call["item"].identifier for call in generator.calls] == ["first-item"]
+    assert target.publish_calls == [("filtered:tweet-first-item-1", api_key)]
+    assert storage.can_publish_key_calls == [
+        ("FakeTarget", api_key, 3),
+        ("FakeTarget", api_key, 3),
+    ]
+    assert storage.increment_calls == [("FakeTarget", api_key)]
+    assert storage.mark_calls == [
+        {
+            "source_name": "FnSource",
+            "content_type": "news",
+            "content_identifier": "first-item",
+        }
+    ]
+
+
 def test_generation_failure_for_one_key_continues_other_accounts():
     item = make_item("generation-failure")
     api_keys = ["KEY_ONE_SECRET_1234", "KEY_TWO_SECRET_5678"]
@@ -267,7 +304,9 @@ def test_generation_failure_for_one_key_continues_other_accounts():
     assert stats["published_success"] == 1
     assert stats["published_failed"] == 0
     assert len(generator.calls) == 2
-    assert target.publish_calls == [("filtered:tweet-generation-failure-2", api_keys[1])]
+    assert target.publish_calls == [
+        ("filtered:tweet-generation-failure-2", api_keys[1]),
+    ]
     assert storage.increment_calls == [("FakeTarget", api_keys[1])]
     assert storage.mark_calls == [
         {
@@ -297,6 +336,29 @@ def test_generation_failure_output_does_not_leak_full_api_key(capsys):
     assert stats["generated_failed"] == 1
     assert mask_api_key(api_key) in output
     assert api_key not in output
+
+
+def test_generation_failure_redacts_overlapping_api_keys_longest_first(capsys):
+    item = make_item("overlap-secret-failure")
+    api_keys = ["PREFIX_KEY", "PREFIX_KEY_WITH_EXTRA_SECRET"]
+    leaked_key = api_keys[1]
+    generator = FakeGenerator(
+        failures={("overlap-secret-failure", leaked_key)},
+        failure_messages={
+            ("overlap-secret-failure", leaked_key): f"provider rejected {leaked_key}",
+        },
+    )
+    target = FakeTarget()
+    storage = FakeStorage(unavailable_keys={api_keys[0]})
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items([item], target, api_keys, storage)
+
+    output = capsys.readouterr().out
+    assert stats["generated_failed"] == 1
+    assert mask_api_key(leaked_key) in output
+    assert leaked_key not in output
+    assert "WITH_EXTRA_SECRET" not in output
 
 
 def test_publish_failure_output_does_not_leak_full_api_key(capsys):
