@@ -7,7 +7,11 @@ from rich.table import Table
 from binance_square_bot.services.account_item_publisher import AccountItemPublisher
 from binance_square_bot.services.generation.mappers import followin_item_to_item
 from binance_square_bot.services.generation.models import TweetSourceItem
-from binance_square_bot.services.source.followin_source import FollowinSource
+from binance_square_bot.services.source.followin_source import (
+    FollowinSource,
+    FollowinToken,
+    FollowinTopic,
+)
 from binance_square_bot.services.storage import StorageService
 from binance_square_bot.services.target.binance_target import BinanceTarget
 
@@ -142,14 +146,14 @@ class FollowinCliService:
             console.print("[yellow]No items found[/yellow]")
             return self._empty_stats()
 
-        content_type = self._content_type_for_storage_key(storage_key)
-
         # Filter out already published items (BEFORE limit application)
         filtered_items = [
             item
             for item in items
             if not self.storage.is_content_published_today(
-                "FollowinSource", content_type, str(item.id)
+                "FollowinSource",
+                self._content_type_for_item(storage_key, item),
+                str(item.id),
             )
         ]
         filtered_count = len(items) - len(filtered_items)
@@ -160,7 +164,10 @@ class FollowinCliService:
             filtered_items = filtered_items[: self.limit]
             console.print(f"ℹ️ Limited to {self.limit} items")
 
-        mapped_items = [self._map_item(item, content_type) for item in filtered_items]
+        mapped_items = [
+            self._map_item(item, self._content_type_for_item(storage_key, item))
+            for item in filtered_items
+        ]
         stats = self._base_stats(mapped_items)
         api_keys = self.target.config.api_keys
         if not self.dry_run and not api_keys:
@@ -184,6 +191,21 @@ class FollowinCliService:
     def _map_item(self, item: Any, content_type: str) -> TweetSourceItem:
         mapped_item = followin_item_to_item(item)
         return mapped_item.model_copy(update={"content_type": content_type})
+
+    def _content_type_for_item(self, storage_key: str, item: Any) -> str:
+        storage_content_type = self._content_type_for_storage_key(storage_key)
+        if storage_content_type != "unknown":
+            return storage_content_type
+
+        if isinstance(item, FollowinTopic):
+            return "topics"
+        if isinstance(item, FollowinToken):
+            if item.category == "discussion":
+                return "discussion"
+            if item.category == "io_flow":
+                return "io_flow"
+
+        return "unknown"
 
     def _content_type_for_storage_key(self, storage_key: str) -> str:
         content_type_map = {

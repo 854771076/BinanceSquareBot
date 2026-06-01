@@ -252,43 +252,45 @@ def test_publish_items_filters_before_limit() -> None:
     storage.is_content_published_today.assert_any_call("FollowinSource", "topics", "5")
 
 
-def test_execute_full_workflow_uses_followin_source_storage_key() -> None:
-    service, source, _, storage, publisher = make_service(dry_run=False, limit=1)
-    old_topic = FollowinTopic(
+def test_execute_full_workflow_uses_skill_selectable_content_types() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
+    topic = FollowinTopic(
         id=1,
-        title="Old topic",
-        summary="Old summary",
-        url="https://test/old",
+        title="Topic",
+        summary="Topic summary",
+        url="https://test/topic",
     )
-    fresh_topic = FollowinTopic(
+    io_flow_token = FollowinToken(
         id=2,
-        title="Fresh topic",
-        summary="Fresh summary",
-        url="https://test/fresh",
+        name="IO Token",
+        symbol="IO",
+        summary="IO summary",
+        category="io_flow",
     )
-    source.fetch.return_value = [old_topic, fresh_topic]
-    storage.is_content_published_today.side_effect = (
-        lambda source_name, content_type, identifier: identifier == "1"
+    discussion_token = FollowinToken(
+        id=3,
+        name="Discussion Token",
+        symbol="DISC",
+        summary="Discussion summary",
+        category="discussion",
     )
+    source.fetch.return_value = [topic, io_flow_token, discussion_token]
 
     result = service.execute()
 
     source.generate.assert_not_called()
     publisher.publish_items.assert_called_once()
     items = publisher.publish_items.call_args.args[0]
-    assert items == [
-        TweetSourceItem(
-            source_name="FollowinSource",
-            content_type="unknown",
-            identifier="2",
-            title="Fresh topic",
-            summary="Fresh summary",
-            url="https://test/fresh",
-        )
-    ]
-    assert result["items_fetched"] == 1
+    assert [item.content_type for item in items] == ["topics", "io_flow", "discussion"]
+    assert "unknown" not in {item.content_type for item in items}
+    assert result["items_fetched"] == 3
     assert result["items_generated"] == items
     storage.can_execute_source.assert_called_once_with("FollowinSource", 30)
+    storage.is_content_published_today.assert_any_call("FollowinSource", "topics", "1")
+    storage.is_content_published_today.assert_any_call("FollowinSource", "io_flow", "2")
+    storage.is_content_published_today.assert_any_call(
+        "FollowinSource", "discussion", "3"
+    )
     storage.increment_daily_execution.assert_called_once_with("FollowinSource")
 
 
