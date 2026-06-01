@@ -2,12 +2,10 @@ import base64
 import json
 import zlib
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, List, NoReturn, Optional
 from curl_cffi import requests
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
 from loguru import logger
-from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 
 from binance_square_bot.services.base import BaseSource
 from binance_square_bot.config import config
@@ -72,14 +70,6 @@ class FnSource(BaseSource):
             'Origin': 'https://foresightnews.pro',
             'Accept': 'application/json, text/plain, */*',
         })
-        self.llm = ChatOpenAI(
-            api_key=SecretStr(config.llm_api_key),
-            base_url=config.llm_base_url,
-            model=config.llm_model,
-            temperature=0.8,
-            top_p=0.92,
-        )
-        self.max_retries = config.max_retries
         self.min_chars = config.min_chars
         self.max_chars = config.max_chars
         self.max_hashtags = config.max_hashtags
@@ -473,92 +463,28 @@ class FnSource(BaseSource):
 """
         return base_prompt
 
-    def generate(self, articles: List[Article]) -> List[str]:
-        """Generate AI tweet content from articles."""
-        tweets = []
-        for article in articles:
-            try:
-                tweet = self._generate_single_tweet(article)
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for article '{article.title}': {e}")
-                continue
+    def _raise_deprecated_generation(self) -> NoReturn:
+        """Raise for legacy source-level generation methods."""
+        raise RuntimeError(
+            "FnSource source-level tweet generation is deprecated. "
+            "Use DeepAgentTweetGenerator with TweetSourceItem instead."
+        )
 
-        logger.info(f"Generated {len(tweets)} tweets from articles")
-        return tweets
+    def generate(self, articles: List[Article]) -> List[str]:
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_tweet(self, article: Article) -> Optional[str]:
-        """Generate a single tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = self._build_prompt(article, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for item in response.content:
-                        if isinstance(item, str):
-                            content = item.strip()
-                            break
-
-                self._validate_format(content)
-
-
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} generation attempts failed for article")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def generate_calendar(self, events: list[CalendarEvent]) -> list[str]:
-        """Generate AI tweet content from calendar events."""
-        tweets = []
-        for event in events:
-            try:
-                tweet = self._generate_single_calendar_tweet(event)
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for calendar event '{event.title}': {e}")
-                continue
-
-        logger.info(f"Generated {len(tweets)} tweets from calendar events")
-        return tweets
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_calendar_tweet(self, event: CalendarEvent) -> Optional[str]:
-        """Generate a single calendar tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = self._build_calendar_prompt(event, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for item in response.content:
-                        if isinstance(item, str):
-                            content = item.strip()
-                            break
-
-                self._validate_format(content)
-
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Calendar generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} calendar generation attempts failed")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _build_calendar_prompt(self, event: CalendarEvent, errors: Optional[List[str]] = None) -> str:
         """Build the prompt for calendar event."""
@@ -597,48 +523,12 @@ class FnSource(BaseSource):
         return base_prompt
 
     def generate_airdrops(self, events: list[AirdropEvent]) -> list[str]:
-        """Generate AI tweet content from airdrop events."""
-        tweets = []
-        for event in events:
-            try:
-                tweet = self._generate_single_airdrop_tweet(event)
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for airdrop event '{event.title}': {e}")
-                continue
-
-        logger.info(f"Generated {len(tweets)} tweets from airdrop events")
-        return tweets
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_airdrop_tweet(self, event: AirdropEvent) -> Optional[str]:
-        """Generate a single airdrop tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = self._build_airdrop_prompt(event, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for item in response.content:
-                        if isinstance(item, str):
-                            content = item.strip()
-                            break
-
-                self._validate_format(content)
-
-
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Airdrop generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} airdrop generation attempts failed")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _build_airdrop_prompt(self, event: AirdropEvent, errors: Optional[List[str]] = None) -> str:
         """Build the prompt for airdrop event."""
@@ -676,48 +566,12 @@ class FnSource(BaseSource):
         return base_prompt
 
     def generate_fundraising(self, events: list[FundraisingEvent]) -> list[str]:
-        """Generate AI tweet content from fundraising events."""
-        tweets = []
-        for event in events:
-            try:
-                tweet = self._generate_single_fundraising_tweet(event)
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for fundraising event '{event.project_name}': {e}")
-                continue
-
-        logger.info(f"Generated {len(tweets)} tweets from fundraising events")
-        return tweets
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_fundraising_tweet(self, event: FundraisingEvent) -> Optional[str]:
-        """Generate a single fundraising tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = self._build_fundraising_prompt(event, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for item in response.content:
-                        if isinstance(item, str):
-                            content = item.strip()
-                            break
-
-                self._validate_format(content)
-
-
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Fundraising generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} fundraising generation attempts failed")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _build_fundraising_prompt(self, event: FundraisingEvent, errors: Optional[List[str]] = None) -> str:
         """Build the prompt for fundraising event."""

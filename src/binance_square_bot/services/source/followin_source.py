@@ -1,13 +1,11 @@
 import json
 import time
 from datetime import datetime
-from typing import List, Optional
+from typing import List, NoReturn, Optional
 from html.parser import HTMLParser
 from curl_cffi import requests
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
 from loguru import logger
-from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 import requests as req
 from binance_square_bot.services.base import BaseSource
 from binance_square_bot.config import config
@@ -59,14 +57,6 @@ class FollowinSource(BaseSource):
             'pragma': 'no-cache',
             'referer': 'https://followin.io/',
         })
-        self.llm = ChatOpenAI(
-            api_key=SecretStr(config.llm_api_key),
-            base_url=config.llm_base_url,
-            model=config.llm_model,
-            temperature=0.8,
-            top_p=0.92,
-        )
-        self.max_retries = config.max_retries
         self.min_chars = config.min_chars
         self.max_chars = config.max_chars
         self.max_hashtags = config.max_hashtags
@@ -485,52 +475,17 @@ AI总结: {topic.summary}
 """
         return base_prompt
 
+    def _raise_deprecated_generation(self) -> NoReturn:
+        """Raise for legacy source-level generation methods."""
+        raise RuntimeError(
+            "FollowinSource source-level tweet generation is deprecated. "
+            "Use DeepAgentTweetGenerator with TweetSourceItem instead."
+        )
+
     def generate(self, items: List) -> List[str]:
-        """Generate AI tweet content from all items."""
-        tweets = []
-
-        for item in items:
-            try:
-                if isinstance(item, FollowinTopic):
-                    tweet = self._generate_single_tweet(item, self._build_topic_prompt)
-                elif isinstance(item, FollowinToken):
-                    tweet = self._generate_single_tweet(item, self._build_token_prompt)
-                else:
-                    continue
-
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for item: {e}")
-                continue
-
-        logger.info(f"Generated {len(tweets)} tweets from Followin items")
-        return tweets
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_tweet(self, item, prompt_builder) -> Optional[str]:
-        """Generate a single tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = prompt_builder(item, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for part in response.content:
-                        if isinstance(part, str):
-                            content = part.strip()
-                            break
-
-                self._validate_format(content)
-
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} generation attempts failed")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()

@@ -1,10 +1,8 @@
-from typing import List, Optional
+from typing import List, NoReturn, Optional
 from datetime import datetime
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
 import httpx
 from loguru import logger
-from langchain_core.messages import HumanMessage
-from langchain_openai import ChatOpenAI
 
 from binance_square_bot.services.base import BaseSource
 from binance_square_bot.config import config
@@ -37,16 +35,6 @@ class PolymarketSource(BaseSource):
     def __init__(self):
         super().__init__()
         self.client = httpx.Client(timeout=30.0)
-        self.llm = ChatOpenAI(
-            api_key=SecretStr(config.llm_api_key),
-            base_url=config.llm_base_url,
-            model=config.llm_model,
-            temperature=0.8,
-            top_p=0.92,
-            frequency_penalty=0.2,
-            presence_penalty=0.15
-        )
-        self.max_retries = config.max_retries
         self.min_chars = config.min_chars
         self.max_chars = config.max_chars
         self.max_hashtags = config.max_hashtags
@@ -212,63 +200,17 @@ class PolymarketSource(BaseSource):
             logger.error(f"Failed to fetch markets: {e}")
             return []
 
+    def _raise_deprecated_generation(self) -> NoReturn:
+        """Raise for legacy source-level generation methods."""
+        raise RuntimeError(
+            "PolymarketSource source-level tweet generation is deprecated. "
+            "Use DeepAgentTweetGenerator with TweetSourceItem instead."
+        )
+
     def generate(self, markets: List[PolymarketMarket]) -> List[str]:
-        """Generate AI research tweets from high-confidence markets."""
-        # Filter for high volume and extreme probability
-        candidate_markets = [
-            m for m in markets
-            if m.volume >= self.config.min_volume_threshold
-            and (
-                m.yes_price >= self.config.min_win_rate
-                or m.no_price >= self.config.min_win_rate
-            )
-            and (
-                m.yes_price <= self.config.max_win_rate
-                or m.no_price <= self.config.max_win_rate
-            )
-        ]
-
-        # Sort by volume descending
-        candidate_markets.sort(key=lambda m: m.volume, reverse=True)
-
-        tweets = []
-        for market in candidate_markets[:5]:  # Top 5 by volume
-            try:
-                tweet = self._generate_single_tweet(market)
-                if tweet:
-                    tweets.append(tweet)
-            except Exception as e:
-                logger.error(f"Failed to generate tweet for market '{market.question}': {e}")
-                continue
-
-        logger.info(f"Generated {len(tweets)} research tweets from markets")
-        return tweets
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
 
     def _generate_single_tweet(self, market: PolymarketMarket) -> Optional[str]:
-        """Generate a single research tweet with retry."""
-        validation_errors: List[str] = []
-        for attempt in range(self.max_retries):
-            try:
-                prompt = self._build_prompt(market, validation_errors if validation_errors else None)
-                response = self.llm.invoke([HumanMessage(content=prompt)])
-
-                # Handle response content - could be str or list
-                if isinstance(response.content, str):
-                    content = response.content.strip()
-                else:
-                    content = ""
-                    for item in response.content:
-                        if isinstance(item, str):
-                            content = item.strip()
-                            break
-
-                # Validate format
-                self._validate_format(content)
-                return content
-
-            except ValueError as e:
-                logger.warning(f"Generation attempt {attempt + 1} failed: {e}")
-                validation_errors.append(str(e))
-
-        logger.error(f"All {self.max_retries} generation attempts failed for market")
-        return None
+        """Deprecated: use DeepAgentTweetGenerator with TweetSourceItem."""
+        self._raise_deprecated_generation()
