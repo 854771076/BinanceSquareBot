@@ -1,12 +1,18 @@
 # src/binance_square_bot/services/cli/polymarket_cli.py
-import time
-from typing import Dict, Any
+from typing import Any
+
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
 
+from binance_square_bot.services.account_item_publisher import AccountItemPublisher
+from binance_square_bot.services.generation.mappers import polymarket_to_item
+from binance_square_bot.services.generation.models import TweetSourceItem
+from binance_square_bot.services.source.polymarket_source import (
+    PolymarketMarket,
+    PolymarketSource,
+)
 from binance_square_bot.services.storage import StorageService
-from binance_square_bot.services.source.polymarket_source import PolymarketSource
 from binance_square_bot.services.target.binance_target import BinanceTarget
 
 console = Console()
@@ -14,119 +20,122 @@ console = Console()
 
 class PolymarketCliService:
     """CLI business logic for Polymarket research workflow."""
-    
-    def __init__(self, dry_run: bool = False):
+
+    def __init__(self, dry_run: bool = False) -> None:
         self.dry_run = dry_run
         self.storage = StorageService()
-        self.source = PolymarketSource()
-        self.target = BinanceTarget()
-    
-    def execute(self) -> Dict[str, Any]:
+        self.source = PolymarketSource()  # type: ignore[no-untyped-call]
+        self.target = BinanceTarget()  # type: ignore[no-untyped-call]
+        self.publisher = AccountItemPublisher()
+
+    def execute(self) -> dict[str, Any]:
         """Execute the full fetch-generate-publish workflow for Polymarket research."""
         logger.info("Starting Polymarket research workflow")
-        
+
         # Check execution limit
         if not self.storage.can_execute_source(
-            "PolymarketSource",
-            self.source.config.daily_max_executions
+            "PolymarketSource", self.source.config.daily_max_executions
         ):
-            console.print("[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]")
+            console.print(
+                "[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]"
+            )
             return {"error": "daily limit reached"}
-        
+
         # Fetch markets
         console.print("[blue]🔍 Fetching Polymarket markets...[/blue]")
         markets = self.source.fetch()
         console.print(f"✓ Fetched {len(markets)} markets")
-        
-        # Generate research tweets
-        console.print("[blue]✍️ Generating research tweets...[/blue]")
-        tweets = self.source.generate(markets)
-        
-        stats = {
-            "markets_fetched": len(markets),
-            "tweets_generated": len(tweets),
-            "published_success": 0,
-            "published_failed": 0,
-            "dry_run": self.dry_run,
-        }
-        
-        if not tweets:
+
+        candidates = self._candidate_markets(markets)
+        items = [polymarket_to_item(market) for market in candidates]
+        stats = self._base_stats(len(markets), items)
+
+        if not items:
             console.print("[yellow]No suitable markets found for research[/yellow]")
             return stats
-        
-        if self.dry_run:
-            console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} research tweets.[/yellow]")
-            for i, tweet in enumerate(tweets, 1):
-                console.print(f"\n--- Research Tweet {i} ---")
-                console.print(tweet)
-            return stats
-        
-        # Publish to all enabled API keys
+
         api_keys = self.target.config.api_keys
-        if not api_keys:
+        if not self.dry_run and not api_keys:
             console.print("[red]❌ No API keys configured[/red]")
             return stats
 
-        console.print(f"[blue]📤 Publishing to {len(api_keys)} API keys...[/blue]")
+        publish_stats = self.publisher.publish_items(
+            items,
+            self.target,
+            api_keys,
+            self.storage,
+            dry_run=self.dry_run,
+        )
+        stats.update(publish_stats)
 
-        for api_key in api_keys:
-            if not self.storage.can_publish_key(
-                "BinanceTarget",
-                api_key,
-                self.target.config.daily_max_posts_per_key
-            ):
-                from binance_square_bot.services.target.binance_target import mask_api_key
-                key_mask = mask_api_key(api_key)
-                console.print(f"[yellow]⚠️ Daily limit reached for key {key_mask}, skipping[/yellow]")
-                continue
-            
-            for tweet in tweets:
-                filtered_tweet = self.target.filter(tweet)
-                success, error = self.target.publish(filtered_tweet, api_key)
-                
-                if success:
-                    stats["published_success"] += 1
-                    self.storage.increment_daily_publish_count("BinanceTarget", api_key)
-                    console.print("[green]✅ Published successfully[/green]")
-                else:
-                    stats["published_failed"] += 1
-                    console.print(f"[red]❌ Publish failed: {error}[/red]")
-                
-                time.sleep(1.0)
-        
-        # Increment execution count
-        self.storage.increment_daily_execution("PolymarketSource")
-        
+        if not self.dry_run:
+            self.storage.increment_daily_execution("PolymarketSource")
+
         # Print summary
         table = Table(title="Polymarket Research Summary")
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
         table.add_row("Markets Fetched", str(stats["markets_fetched"]))
-        table.add_row("Tweets Generated", str(stats["tweets_generated"]))
-        table.add_row("Published Successfully", str(stats["published_success"]))
-        table.add_row("Publish Failed", str(stats["published_failed"]))
+        table.add_row("Items Generated", str(len(stats["items_generated"])))
+        table.add_row("Generated Successfully", str(stats.get("generated_success", 0)))
+        table.add_row("Published Successfully", str(stats.get("published_success", 0)))
+        table.add_row("Publish Failed", str(stats.get("published_failed", 0)))
         console.print(table)
-        
+
         logger.info(f"Polymarket research workflow complete: {stats}")
         return stats
-    
-    def scan(self, top_n: int = 5) -> Dict[str, Any]:
+
+    def _candidate_markets(
+        self, markets: list[PolymarketMarket]
+    ) -> list[PolymarketMarket]:
+        candidates = [
+            market
+            for market in markets
+            if market.volume >= self.source.config.min_volume_threshold
+            and (
+                market.yes_price >= self.source.config.min_win_rate
+                or market.no_price >= self.source.config.min_win_rate
+            )
+            and (
+                market.yes_price <= self.source.config.max_win_rate
+                or market.no_price <= self.source.config.max_win_rate
+            )
+        ]
+        candidates.sort(key=lambda market: market.volume, reverse=True)
+        return candidates[:5]
+
+    def _base_stats(
+        self, markets_fetched: int, items: list[TweetSourceItem]
+    ) -> dict[str, Any]:
+        return {
+            "markets_fetched": markets_fetched,
+            "items_fetched": len(items),
+            "items_generated": items,
+            "dry_run": self.dry_run,
+        }
+
+    def scan(self, top_n: int = 5) -> dict[str, Any]:
         """Scan markets and show top candidates without generating/publishing."""
         console.print("[blue]🔍 Scanning Polymarket markets...[/blue]")
         markets = self.source.fetch()
-        
+
         # Filter by minimum volume
-        min_volume = PolymarketSource.Config.model_fields['min_volume_threshold'].default
+        min_volume = PolymarketSource.Config.model_fields[
+            "min_volume_threshold"
+        ].default
         candidates = [m for m in markets if m.volume >= min_volume]
         candidates.sort(key=lambda m: m.volume, reverse=True)
-        
-        console.print(f"\n[bold cyan]Top {min(top_n, len(candidates))} candidate markets:[/bold cyan]\n")
+
+        candidate_count = min(top_n, len(candidates))
+        console.print(
+            f"\n[bold cyan]Top {candidate_count} candidate markets:[/bold cyan]\n"
+        )
         for i, market in enumerate(candidates[:top_n], 1):
             console.print(f"[bold]{i}. {market.question}[/]")
             console.print(f"   condition_id: {market.condition_id}")
             console.print(f"   YES: {market.yes_price:.1%}, NO: {market.no_price:.1%}")
             console.print(f"   Volume: ${market.volume:,.0f}")
             console.print("")
-        
+
         console.print(f"Total candidate markets: {len(candidates)} / {len(markets)}")
         return {"total_markets": len(markets), "candidates": len(candidates)}
