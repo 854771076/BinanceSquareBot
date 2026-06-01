@@ -23,6 +23,17 @@ Choose one structure that fits the supplied item:
 - Context-first: what happened, what it may signal, what readers should monitor.
 - Contrarian angle: why this item may be more or less important than it looks, with a careful caveat.
 
+## Natural hook and market rhythm
+
+- Open with a concrete hook: a market signal, tension, contradiction, or watch variable. Do not simply restate the headline.
+- Add light long/short rhythm without giving trading advice:
+  - positive side: what supports attention, momentum, funding, adoption, liquidity, or narrative strength;
+  - cautious side: what remains unproven, overheated, illiquid, uncertain, or dependent on follow-up data.
+- Use neutral phrasing such as 积极的一面是, 谨慎看, 多头需要证明, or 风险在于.
+- Do not tell readers to buy, sell, long, short, chase, or avoid.
+- End with a specific watch point or tension. Avoid generic endings like 你怎么看？
+- Make readers want to follow the next variable, not rush into a trade.
+
 ## Evidence and grounding rules
 
 - Ground every claim in the supplied title, summary, URL, and metadata.
