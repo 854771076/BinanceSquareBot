@@ -1,4 +1,9 @@
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
+
+from deepagents import create_deep_agent
+from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 from binance_square_bot.config import get_config
 from binance_square_bot.services.generation.models import TweetSourceItem
@@ -9,7 +14,8 @@ AgentFactory = Callable[..., Any]
 
 
 SYSTEM_PROMPT = """You are a Binance Square crypto content writer.
-Generate one publish-ready Chinese Binance Square post from the user's structured payload.
+Generate one publish-ready Chinese Binance Square post from the user's
+structured payload.
 Return only the final post text, without Markdown fences, labels, or explanations.
 """
 
@@ -36,7 +42,7 @@ class DeepAgentTweetGenerator:
             max_hashtags=config.max_hashtags,
             max_mentions=config.max_mentions,
         )
-        agent = self._create_agent(item, config.llm_model)
+        agent = self._create_agent(item, config)
 
         validation_error: str | None = None
         for attempt in range(config.max_retries):
@@ -47,7 +53,7 @@ class DeepAgentTweetGenerator:
                 attempt=attempt,
                 validation_error=validation_error,
             )
-            result = agent.invoke({"messages": task})
+            result = agent.invoke({"messages": [{"role": "user", "content": task}]})
             content = self._extract_content(result)
             try:
                 validator.validate(content)
@@ -56,18 +62,20 @@ class DeepAgentTweetGenerator:
                 continue
             return content.strip()
 
+        error_detail = validation_error or "unknown validation error"
         raise ValueError(
             "DeepAgents generation failed after "
-            f"{config.max_retries} attempts: {validation_error or 'unknown validation error'}"
+            f"{config.max_retries} attempts: {error_detail}"
         )
 
-    def _create_agent(self, item: TweetSourceItem, model: str) -> Any:
+    def _create_agent(self, item: TweetSourceItem, config: Any) -> Any:
         skill_path = select_skill_path(item)
         return self._agent_factory(
-            model=model,
+            model=config.llm_model,
             system_prompt=SYSTEM_PROMPT,
             tools=[],
             skills=[str(skill_path)],
+            config=config,
         )
 
     def _build_task(
@@ -98,22 +106,36 @@ class DeepAgentTweetGenerator:
         if isinstance(result, str):
             return result.strip()
 
+        if isinstance(result, list):
+            text_blocks = []
+            for block in result:
+                if isinstance(block, str):
+                    text_blocks.append(block)
+                elif isinstance(block, dict) and isinstance(block.get("text"), str):
+                    text_blocks.append(block["text"])
+            return "\n".join(text_blocks).strip()
+
         if isinstance(result, dict):
             messages = result.get("messages")
             if isinstance(messages, list) and messages:
                 return DeepAgentTweetGenerator._extract_content(messages[-1])
             content = result.get("content")
             if content is not None:
-                return str(content).strip()
+                return DeepAgentTweetGenerator._extract_content(content)
 
         content = getattr(result, "content", None)
         if content is not None:
-            return str(content).strip()
+            return DeepAgentTweetGenerator._extract_content(content)
 
         return str(result).strip()
 
     @staticmethod
     def _default_agent_factory(**kwargs: Any) -> Any:
-        from deepagents import create_deep_agent
-
+        config = kwargs.pop("config")
+        model = ChatOpenAI(
+            api_key=SecretStr(config.llm_api_key),
+            base_url=config.llm_base_url,
+            model=config.llm_model,
+        )
+        kwargs["model"] = model
         return create_deep_agent(**kwargs)
