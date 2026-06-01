@@ -1,9 +1,17 @@
-import time
-from typing import Dict, Any, List
+from typing import Any, Dict
+
 from loguru import logger
 from rich.console import Console
 from rich.table import Table
 
+from binance_square_bot.services.account_item_publisher import AccountItemPublisher
+from binance_square_bot.services.generation.mappers import (
+    fn_airdrop_to_item,
+    fn_article_to_item,
+    fn_calendar_to_item,
+    fn_fundraising_to_item,
+)
+from binance_square_bot.services.generation.models import TweetSourceItem
 from binance_square_bot.services.storage import StorageService
 from binance_square_bot.services.source.fn_source import FnSource
 from binance_square_bot.services.target.binance_target import BinanceTarget
@@ -20,6 +28,7 @@ class FnCliService:
         self.storage = StorageService()
         self.source = FnSource()
         self.target = BinanceTarget()
+        self.publisher = AccountItemPublisher()
 
     def execute(self) -> Dict[str, Any]:
         """Execute the full crawl-generate-publish workflow.
@@ -41,7 +50,7 @@ class FnCliService:
 
         if not articles:
             console.print("[yellow]No articles found[/yellow]")
-            return {"articles_fetched": 0}
+            return self._empty_stats()
 
         # 过滤掉当天已发布的
         filtered_items = [
@@ -56,94 +65,12 @@ class FnCliService:
             filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} articles")
 
-        # Generate tweets
-        console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweet_texts = self.source.generate(filtered_items)
-
-        # Add metadata to tweets
-        tweets: List[Dict[str, Any]] = []
-        for i, tweet_text in enumerate(tweet_texts):
-            if i < len(filtered_items):
-                tweets.append({
-                    "text": tweet_text,
-                    "source_name": "FnSource",
-                    "content_type": "news",
-                    "identifier": filtered_items[i].url,
-                })
-
-        stats = {
-            "articles_fetched": len(filtered_items),
-            "tweets_generated": tweets,
-            "published_success": 0,
-            "published_failed": 0,
-            "dry_run": self.dry_run,
-        }
-
-        if self.dry_run:
-            console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
-            for i, tweet in enumerate(tweets, 1):
-                console.print(f"\n--- Tweet {i} ---")
-                console.print(tweet["text"])
-            return stats
-
-        # Publish to all enabled API keys
-        api_keys = self.target.config.api_keys
-        if not api_keys:
-            console.print("[red]❌ No API keys configured[/red]")
-            return stats
-
-        console.print(f"[blue]📤 Publishing to {len(api_keys)} API keys...[/blue]")
-
-        for api_key in api_keys:
-            # Check per-key publish limit
-            if not self.storage.can_publish_key(
-                "BinanceTarget",
-                api_key,
-                self.target.config.daily_max_posts_per_key
-            ):
-                from binance_square_bot.services.target.binance_target import mask_api_key
-                key_mask = mask_api_key(api_key)
-                console.print(f"[yellow]⚠️ Daily limit reached for key {key_mask}, skipping[/yellow]")
-                continue
-
-            for tweet in tweets:
-                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
-                filtered_tweet = self.target.filter(tweet_text)
-                success, error = self.target.publish(filtered_tweet, api_key)
-
-                if success:
-                    stats["published_success"] += 1
-                    self.storage.increment_daily_publish_count("BinanceTarget", api_key)
-                    # Mark content as published (if metadata available)
-                    if isinstance(tweet, dict) and "source_name" in tweet:
-                        self.storage.mark_content_published(
-                            source_name=tweet["source_name"],
-                            content_type=tweet.get("content_type", "unknown"),
-                            content_identifier=tweet.get("identifier", ""),
-                        )
-                    console.print("[green]✅ Published successfully[/green]")
-                else:
-                    stats["published_failed"] += 1
-                    console.print(f"[red]❌ Publish failed: {error}[/red]")
-
-                # Add delay between publishes
-                time.sleep(1.0)
-
-        # Increment execution count after successful run
-        self.storage.increment_daily_execution("FnSource")
-
-        # Print summary
-        table = Table(title="Execution Summary")
-        table.add_column("Metric", style="cyan")
-        table.add_column("Value", style="magenta")
-        table.add_row("Articles Fetched", str(stats["articles_fetched"]))
-        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
-        table.add_row("Published Successfully", str(stats["published_success"]))
-        table.add_row("Publish Failed", str(stats["published_failed"]))
-        console.print(table)
-
-        logger.info(f"Fn news workflow complete: {stats}")
-        return stats
+        items = [fn_article_to_item(item) for item in filtered_items]
+        stats = self._base_stats(items)
+        result = self._publish_items(items, stats, "FnSource")
+        self._print_summary(result, "Articles")
+        logger.info(f"Fn news workflow complete: {result}")
+        return result
 
     def execute_calendar(self) -> Dict[str, Any]:
         """Execute the calendar events workflow."""
@@ -159,7 +86,7 @@ class FnCliService:
 
         if not events:
             console.print("[yellow]No calendar events found[/yellow]")
-            return {"events_fetched": 0}
+            return self._empty_stats()
 
         # 过滤掉当天已发布的
         filtered_items = [
@@ -173,36 +100,12 @@ class FnCliService:
             filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
-        console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweet_texts = self.source.generate_calendar(filtered_items)
-
-        # Add metadata to tweets
-        tweets: List[Dict[str, Any]] = []
-        for i, tweet_text in enumerate(tweet_texts):
-            if i < len(filtered_items):
-                tweets.append({
-                    "text": tweet_text,
-                    "source_name": "FnSource",
-                    "content_type": "calendar",
-                    "identifier": filtered_items[i].url,
-                })
-
-        stats = {
-            "events_fetched": len(filtered_items),
-            "tweets_generated": tweets,
-            "published_success": 0,
-            "published_failed": 0,
-            "dry_run": self.dry_run,
-        }
-
-        if self.dry_run:
-            console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
-            for i, tweet in enumerate(tweets, 1):
-                console.print(f"\n--- Calendar Tweet {i} ---")
-                console.print(tweet["text"])
-            return stats
-
-        return self._publish_tweets(tweets, stats, "FnSourceCalendar")
+        items = [fn_calendar_to_item(item) for item in filtered_items]
+        stats = self._base_stats(items)
+        result = self._publish_items(items, stats, "FnSourceCalendar")
+        self._print_summary(result, "Events")
+        logger.info(f"FnSourceCalendar workflow complete: {result}")
+        return result
 
     def execute_airdrops(self) -> Dict[str, Any]:
         """Execute the airdrop events workflow."""
@@ -218,7 +121,7 @@ class FnCliService:
 
         if not events:
             console.print("[yellow]No airdrop events found[/yellow]")
-            return {"events_fetched": 0}
+            return self._empty_stats()
 
         # 过滤掉当天已发布的
         filtered_items = [
@@ -232,36 +135,12 @@ class FnCliService:
             filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
-        console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweet_texts = self.source.generate_airdrops(filtered_items)
-
-        # Add metadata to tweets
-        tweets: List[Dict[str, Any]] = []
-        for i, tweet_text in enumerate(tweet_texts):
-            if i < len(filtered_items):
-                tweets.append({
-                    "text": tweet_text,
-                    "source_name": "FnSource",
-                    "content_type": "airdrop",
-                    "identifier": filtered_items[i].url,
-                })
-
-        stats = {
-            "events_fetched": len(filtered_items),
-            "tweets_generated": tweets,
-            "published_success": 0,
-            "published_failed": 0,
-            "dry_run": self.dry_run,
-        }
-
-        if self.dry_run:
-            console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
-            for i, tweet in enumerate(tweets, 1):
-                console.print(f"\n--- Airdrop Tweet {i} ---")
-                console.print(tweet["text"])
-            return stats
-
-        return self._publish_tweets(tweets, stats, "FnSourceAirdrops")
+        items = [fn_airdrop_to_item(item) for item in filtered_items]
+        stats = self._base_stats(items)
+        result = self._publish_items(items, stats, "FnSourceAirdrops")
+        self._print_summary(result, "Events")
+        logger.info(f"FnSourceAirdrops workflow complete: {result}")
+        return result
 
     def execute_fundraising(self) -> Dict[str, Any]:
         """Execute the fundraising (众筹) events workflow."""
@@ -277,7 +156,7 @@ class FnCliService:
 
         if not events:
             console.print("[yellow]No fundraising events found[/yellow]")
-            return {"events_fetched": 0}
+            return self._empty_stats()
 
         # 过滤掉当天已发布的
         filtered_items = [
@@ -291,89 +170,54 @@ class FnCliService:
             filtered_items = filtered_items[:self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
-        console.print("[blue]✍️ Generating tweets...[/blue]")
-        tweet_texts = self.source.generate_fundraising(filtered_items)
+        items = [fn_fundraising_to_item(item) for item in filtered_items]
+        stats = self._base_stats(items)
+        result = self._publish_items(items, stats, "FnSourceFundraising")
+        self._print_summary(result, "Events")
+        logger.info(f"FnSourceFundraising workflow complete: {result}")
+        return result
 
-        # Add metadata to tweets
-        tweets: List[Dict[str, Any]] = []
-        for i, tweet_text in enumerate(tweet_texts):
-            if i < len(filtered_items):
-                tweets.append({
-                    "text": tweet_text,
-                    "source_name": "FnSource",
-                    "content_type": "fundraising",
-                    "identifier": filtered_items[i].url,
-                })
-
-        stats = {
-            "events_fetched": len(filtered_items),
-            "tweets_generated": tweets,
-            "published_success": 0,
-            "published_failed": 0,
+    def _empty_stats(self) -> Dict[str, Any]:
+        return {
+            "items_fetched": 0,
+            "items_generated": [],
             "dry_run": self.dry_run,
         }
 
-        if self.dry_run:
-            console.print(f"[yellow]🏁 Dry run complete. Generated {len(tweets)} tweets.[/yellow]")
-            for i, tweet in enumerate(tweets, 1):
-                console.print(f"\n--- Fundraising Tweet {i} ---")
-                console.print(tweet["text"])
-            return stats
+    def _base_stats(self, items: list[TweetSourceItem]) -> Dict[str, Any]:
+        return {
+            "items_fetched": len(items),
+            "items_generated": items,
+            "dry_run": self.dry_run,
+        }
 
-        return self._publish_tweets(tweets, stats, "FnSourceFundraising")
+    def _publish_items(
+        self,
+        items: list[TweetSourceItem],
+        stats: Dict[str, Any],
+        source_key: str,
+    ) -> Dict[str, Any]:
+        publish_stats = self.publisher.publish_items(
+            items,
+            self.target,
+            self.target.config.api_keys,
+            self.storage,
+            dry_run=self.dry_run,
+        )
+        stats.update(publish_stats)
 
-    def _publish_tweets(self, tweets: List[Dict[str, Any]], stats: Dict[str, Any], source_key: str) -> Dict[str, Any]:
-        """Helper method to publish tweets."""
-        api_keys = self.target.config.api_keys
-        if not api_keys:
-            console.print("[red]❌ No API keys configured[/red]")
-            return stats
+        if not self.dry_run:
+            self.storage.increment_daily_execution(source_key)
 
-        console.print(f"[blue]📤 Publishing to {len(api_keys)} API keys...[/blue]")
+        return stats
 
-        for api_key in api_keys:
-            if not self.storage.can_publish_key(
-                "BinanceTarget",
-                api_key,
-                self.target.config.daily_max_posts_per_key
-            ):
-                from binance_square_bot.services.target.binance_target import mask_api_key
-                key_mask = mask_api_key(api_key)
-                console.print(f"[yellow]⚠️ Daily limit reached for key {key_mask}, skipping[/yellow]")
-                continue
-
-            for tweet in tweets:
-                tweet_text = tweet["text"] if isinstance(tweet, dict) else tweet
-                filtered_tweet = self.target.filter(tweet_text)
-                success, error = self.target.publish(filtered_tweet, api_key)
-
-                if success:
-                    stats["published_success"] += 1
-                    self.storage.increment_daily_publish_count("BinanceTarget", api_key)
-                    # Mark content as published (if metadata available)
-                    if isinstance(tweet, dict) and "source_name" in tweet:
-                        self.storage.mark_content_published(
-                            source_name=tweet["source_name"],
-                            content_type=tweet.get("content_type", "unknown"),
-                            content_identifier=tweet.get("identifier", ""),
-                        )
-                    console.print("[green]✅ Published successfully[/green]")
-                else:
-                    stats["published_failed"] += 1
-                    console.print(f"[red]❌ Publish failed: {error}[/red]")
-
-                time.sleep(1.0)
-
-        self.storage.increment_daily_execution(source_key)
-
+    def _print_summary(self, stats: Dict[str, Any], fetched_label: str) -> None:
         table = Table(title="Execution Summary")
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")
-        table.add_row("Events Fetched", str(stats["events_fetched"]))
-        table.add_row("Tweets Generated", str(len(stats["tweets_generated"])))
-        table.add_row("Published Successfully", str(stats["published_success"]))
-        table.add_row("Publish Failed", str(stats["published_failed"]))
+        table.add_row(f"{fetched_label} Fetched", str(stats["items_fetched"]))
+        table.add_row("Items Generated", str(len(stats["items_generated"])))
+        table.add_row("Generated Successfully", str(stats.get("generated_success", 0)))
+        table.add_row("Published Successfully", str(stats.get("published_success", 0)))
+        table.add_row("Publish Failed", str(stats.get("published_failed", 0)))
         console.print(table)
-
-        logger.info(f"{source_key} workflow complete: {stats}")
-        return stats

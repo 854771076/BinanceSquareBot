@@ -1,191 +1,338 @@
-from unittest.mock import patch, MagicMock
+from datetime import datetime
+from unittest.mock import MagicMock, patch
+
 from binance_square_bot.services.cli.fn_cli import FnCliService
+from binance_square_bot.services.generation.models import TweetSourceItem
+from binance_square_bot.services.source.fn_source import (
+    AirdropEvent,
+    Article,
+    CalendarEvent,
+    FundraisingEvent,
+)
+
+
+class DummySourceConfig:
+    daily_max_executions = 30
+
+
+class DummySource:
+    def __init__(self):
+        self.config = DummySourceConfig()
+        self.fetch = MagicMock(return_value=[])
+        self.fetch_calendar = MagicMock(return_value=[])
+        self.fetch_airdrops = MagicMock(return_value=[])
+        self.fetch_fundraising = MagicMock(return_value=[])
+        self.generate = MagicMock(side_effect=AssertionError("source.generate must not be called"))
+        self.generate_calendar = MagicMock(
+            side_effect=AssertionError("source.generate_calendar must not be called")
+        )
+        self.generate_airdrops = MagicMock(
+            side_effect=AssertionError("source.generate_airdrops must not be called")
+        )
+        self.generate_fundraising = MagicMock(
+            side_effect=AssertionError("source.generate_fundraising must not be called")
+        )
+
+
+class DummyTargetConfig:
+    api_keys = ["api-key-1", "api-key-2"]
+    daily_max_posts_per_key = 5
+
+
+class DummyTarget:
+    def __init__(self):
+        self.config = DummyTargetConfig()
+        self.filter = MagicMock()
+        self.publish = MagicMock()
+
+
+class DummyStorage:
+    def __init__(self):
+        self.can_execute_source = MagicMock(return_value=True)
+        self.is_content_published_today = MagicMock(return_value=False)
+        self.increment_daily_execution = MagicMock()
+        self.can_publish_key = MagicMock(return_value=True)
+        self.mark_content_published = MagicMock()
+        self.increment_daily_publish_count = MagicMock()
+
+
+class PublisherFactory:
+    def __init__(self, stats=None):
+        self.instance = MagicMock()
+        self.instance.publish_items.return_value = stats or {
+            "generated_success": 0,
+            "generated_failed": 0,
+            "published_success": 0,
+            "published_failed": 0,
+            "dry_run": False,
+        }
+
+    def __call__(self):
+        return self.instance
+
+
+def make_service(*, dry_run=True, limit=10, publisher_stats=None):
+    source = DummySource()
+    target = DummyTarget()
+    storage = DummyStorage()
+    if publisher_stats is None:
+        publisher_stats = {
+            "generated_success": 0,
+            "generated_failed": 0,
+            "published_success": 0,
+            "published_failed": 0,
+            "dry_run": dry_run,
+        }
+    publisher_factory = PublisherFactory(publisher_stats)
+
+    with patch(
+        "binance_square_bot.services.cli.fn_cli.StorageService",
+        return_value=storage,
+    ), patch(
+        "binance_square_bot.services.cli.fn_cli.FnSource",
+        return_value=source,
+    ), patch(
+        "binance_square_bot.services.cli.fn_cli.BinanceTarget",
+        return_value=target,
+    ), patch(
+        "binance_square_bot.services.cli.fn_cli.AccountItemPublisher",
+        new=publisher_factory,
+        create=True,
+    ):
+        service = FnCliService(dry_run=dry_run, limit=limit)
+
+    return service, source, target, storage, publisher_factory.instance
 
 
 def test_fn_cli_service_init():
-    """Test FnCliService can be initialized."""
-    service = FnCliService(dry_run=True, limit=5)
+    """Test FnCliService can be initialized without real source/target side effects."""
+    service, _, _, _, _ = make_service(dry_run=True, limit=5)
+
     assert service.dry_run is True
     assert service.limit == 5
 
 
-class MockArticle:
-    """Mock Article class for testing."""
-    def __init__(self, url):
-        self.url = url
+def test_execute_uses_account_item_publisher_with_filtered_mapped_articles():
+    publisher_stats = {"generated_success": 2, "published_failed": 1, "dry_run": False}
+    service, source, target, storage, publisher = make_service(
+        dry_run=False,
+        limit=1,
+        publisher_stats=publisher_stats,
+    )
+    old_article = Article(
+        title="Old article",
+        url="https://example.com/old",
+        content="Old summary",
+        published_at=datetime(2026, 6, 1, 8, 0),
+    )
+    new_article = Article(
+        title="New article",
+        url="https://example.com/new",
+        content="New summary",
+        published_at=datetime(2026, 6, 1, 9, 0),
+    )
+    extra_article = Article(
+        title="Extra article",
+        url="https://example.com/extra",
+        content="Extra summary",
+    )
+    source.fetch.return_value = [old_article, new_article, extra_article]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == old_article.url
+    )
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_called_once()
+    items, publish_target, api_keys, publish_storage = publisher.publish_items.call_args.args
+    assert publish_target is target
+    assert api_keys == target.config.api_keys
+    assert publish_storage is storage
+    assert publisher.publish_items.call_args.kwargs == {"dry_run": False}
+    assert items == [
+        TweetSourceItem(
+            source_name="FnSource",
+            content_type="news",
+            identifier=new_article.url,
+            title=new_article.title,
+            summary=new_article.content,
+            url=new_article.url,
+            metadata={"published_at": new_article.published_at.isoformat()},
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    assert result["dry_run"] is False
+    assert result["generated_success"] == 2
+    assert result["published_failed"] == 1
+    storage.increment_daily_execution.assert_called_once_with("FnSource")
 
 
-class MockEvent:
-    """Mock Event class for testing."""
-    def __init__(self, url):
-        self.url = url
+def test_execute_dry_run_passes_dry_run_true_to_publisher_and_does_not_increment_execution():
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    article = Article(
+        title="Dry run article",
+        url="https://example.com/dry",
+        content="Dry run summary",
+    )
+    source.fetch.return_value = [article]
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_called_once()
+    assert publisher.publish_items.call_args.kwargs == {"dry_run": True}
+    items, publish_target, api_keys, publish_storage = publisher.publish_items.call_args.args
+    assert publish_target is target
+    assert api_keys == target.config.api_keys
+    assert publish_storage is storage
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    assert result["dry_run"] is True
+    storage.increment_daily_execution.assert_not_called()
 
 
-def test_execute_filter_out_already_published():
-    """Test that already published articles are filtered out."""
-    service = FnCliService(dry_run=True, limit=10)
+def test_execute_calendar_filters_maps_content_type_and_publishes_items():
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
+    published = CalendarEvent(
+        title="Published calendar",
+        url="https://example.com/calendar-published",
+        description="Already published event",
+        category=1,
+    )
+    fresh = CalendarEvent(
+        title="Fresh calendar",
+        url="https://example.com/calendar-fresh",
+        description="Fresh event",
+        start_time=datetime(2026, 6, 2, 10, 0),
+        end_time=datetime(2026, 6, 2, 11, 0),
+        category=2,
+    )
+    source.fetch_calendar.return_value = [published, fresh]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == published.url
+    )
 
-    # Create mock articles
-    article1 = MockArticle("https://example.com/article1")
-    article2 = MockArticle("https://example.com/article2")
-    article3 = MockArticle("https://example.com/article3")
+    result = service.execute_calendar()
 
-    # Mock the storage to return True for article2 (already published)
-    def mock_is_content_published(source, content_type, url):
-        return url == "https://example.com/article2"
-
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch', return_value=[article1, article2, article3]):
-            with patch.object(service.source, 'generate', return_value=["tweet1", "tweet3"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    result = service.execute()
-
-    # Should have filtered out 1 article, leaving 2
-    assert result["articles_fetched"] == 2
-    assert len(result["tweets_generated"]) == 2
-
-
-def test_execute_calendar_filter_out_already_published():
-    """Test that already published calendar events are filtered out."""
-    service = FnCliService(dry_run=True, limit=10)
-
-    event1 = MockEvent("https://example.com/event1")
-    event2 = MockEvent("https://example.com/event2")
-
-    def mock_is_content_published(source, content_type, url):
-        return url == "https://example.com/event1"
-
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_calendar', return_value=[event1, event2]):
-            with patch.object(service.source, 'generate_calendar', return_value=["tweet2"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    result = service.execute_calendar()
-
-    assert result["events_fetched"] == 1
-    assert len(result["tweets_generated"]) == 1
-
-
-def test_execute_airdrops_filter_out_already_published():
-    """Test that already published airdrop events are filtered out."""
-    service = FnCliService(dry_run=True, limit=10)
-
-    event1 = MockEvent("https://example.com/airdrop1")
-    event2 = MockEvent("https://example.com/airdrop2")
-
-    def mock_is_content_published(source, content_type, url):
-        return url == "https://example.com/airdrop1"
-
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_airdrops', return_value=[event1, event2]):
-            with patch.object(service.source, 'generate_airdrops', return_value=["tweet2"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    result = service.execute_airdrops()
-
-    assert result["events_fetched"] == 1
-    assert len(result["tweets_generated"]) == 1
+    source.generate_calendar.assert_not_called()
+    storage.is_content_published_today.assert_any_call("FnSource", "calendar", published.url)
+    storage.is_content_published_today.assert_any_call("FnSource", "calendar", fresh.url)
+    items = publisher.publish_items.call_args.args[0]
+    assert items == [
+        TweetSourceItem(
+            source_name="FnSource",
+            content_type="calendar",
+            identifier=fresh.url,
+            title=fresh.title,
+            summary=fresh.description,
+            url=fresh.url,
+            metadata={
+                "start_time": fresh.start_time.isoformat(),
+                "end_time": fresh.end_time.isoformat(),
+                "category": fresh.category,
+            },
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    storage.increment_daily_execution.assert_called_once_with("FnSourceCalendar")
 
 
-def test_execute_fundraising_filter_out_already_published():
-    """Test that already published fundraising events are filtered out."""
-    service = FnCliService(dry_run=True, limit=10)
+def test_execute_airdrops_filters_maps_content_type_and_publishes_items():
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
+    published = AirdropEvent(
+        id=1,
+        title="Published airdrop",
+        url="https://example.com/airdrop-published",
+        brief="Already published airdrop",
+    )
+    fresh = AirdropEvent(
+        id=2,
+        title="Fresh airdrop",
+        url="https://example.com/airdrop-fresh",
+        brief="Fresh airdrop",
+        published_at=datetime(2026, 6, 3, 12, 0),
+    )
+    source.fetch_airdrops.return_value = [published, fresh]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == published.url
+    )
 
-    event1 = MockEvent("https://example.com/fund1")
-    event2 = MockEvent("https://example.com/fund2")
+    result = service.execute_airdrops()
 
-    def mock_is_content_published(source, content_type, url):
-        return url == "https://example.com/fund1"
-
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_fundraising', return_value=[event1, event2]):
-            with patch.object(service.source, 'generate_fundraising', return_value=["tweet2"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    result = service.execute_fundraising()
-
-    assert result["events_fetched"] == 1
-    assert len(result["tweets_generated"]) == 1
-
-
-def test_filter_content_type_parameters():
-    """Test that correct content_type parameters are passed to storage."""
-    service = FnCliService(dry_run=True, limit=10)
-
-    article = MockArticle("https://example.com/article")
-
-    call_args = []
-
-    def mock_is_content_published(source, content_type, url):
-        call_args.append((source, content_type))
-        return False
-
-    # Test news
-    call_args.clear()
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch', return_value=[article]):
-            with patch.object(service.source, 'generate', return_value=["tweet"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    service.execute()
-    assert call_args == [("FnSource", "news")]
-
-    # Test calendar
-    call_args.clear()
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_calendar', return_value=[MockEvent("e1")]):
-            with patch.object(service.source, 'generate_calendar', return_value=["t"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    service.execute_calendar()
-    assert call_args == [("FnSource", "calendar")]
-
-    # Test airdrop
-    call_args.clear()
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_airdrops', return_value=[MockEvent("e1")]):
-            with patch.object(service.source, 'generate_airdrops', return_value=["t"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    service.execute_airdrops()
-    assert call_args == [("FnSource", "airdrop")]
-
-    # Test fundraising
-    call_args.clear()
-    with patch.object(service.storage, 'is_content_published_today', side_effect=mock_is_content_published):
-        with patch.object(service.source, 'fetch_fundraising', return_value=[MockEvent("e1")]):
-            with patch.object(service.source, 'generate_fundraising', return_value=["t"]):
-                with patch.object(service.storage, 'can_execute_source', return_value=True):
-                    service.execute_fundraising()
-    assert call_args == [("FnSource", "fundraising")]
+    source.generate_airdrops.assert_not_called()
+    storage.is_content_published_today.assert_any_call("FnSource", "airdrop", published.url)
+    storage.is_content_published_today.assert_any_call("FnSource", "airdrop", fresh.url)
+    items = publisher.publish_items.call_args.args[0]
+    assert items == [
+        TweetSourceItem(
+            source_name="FnSource",
+            content_type="airdrop",
+            identifier=fresh.url,
+            title=fresh.title,
+            summary=fresh.brief,
+            url=fresh.url,
+            metadata={"id": fresh.id, "published_at": fresh.published_at.isoformat()},
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    storage.increment_daily_execution.assert_called_once_with("FnSourceAirdrops")
 
 
-def test_mark_content_published_after_successful_publish():
-    """Test that content is marked as published after successful publish."""
-    service = FnCliService(dry_run=False, limit=10)
+def test_execute_fundraising_filters_maps_content_type_and_publishes_items():
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
+    published = FundraisingEvent(
+        id=1,
+        project_name="Published project",
+        amount=1.0,
+        round_str="Seed",
+        description="Already published fundraising",
+        investors=["Investor A"],
+        url="https://example.com/fundraising-published",
+    )
+    fresh = FundraisingEvent(
+        id=2,
+        project_name="Fresh project",
+        amount=2.5,
+        round_str="Series A",
+        description="Fresh fundraising",
+        investors=["Investor B"],
+        url="https://example.com/fundraising-fresh",
+        date=datetime(2026, 6, 4, 13, 0),
+    )
+    source.fetch_fundraising.return_value = [published, fresh]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == published.url
+    )
 
-    # Create mock article
-    article = MockArticle("https://example.com/test-article")
+    result = service.execute_fundraising()
 
-    # Mock API key configuration
-    original_api_keys = service.target.config.api_keys
-    service.target.config.api_keys = ["test_api_key"]
-
-    # Track calls to mark_content_published
-    marked_content = []
-
-    def mock_mark_published(source_name, content_type, content_identifier):
-        marked_content.append((source_name, content_type, content_identifier))
-
-    with patch.object(service.storage, 'mark_content_published', side_effect=mock_mark_published):
-        with patch.object(service.storage, 'can_publish_key', return_value=True):
-            with patch.object(service.storage, 'can_execute_source', return_value=True):
-                with patch.object(service.storage, 'increment_daily_publish_count'):
-                    with patch.object(service.storage, 'increment_daily_execution'):
-                        with patch.object(service.storage, 'is_content_published_today', return_value=False):
-                            with patch.object(service.source, 'fetch', return_value=[article]):
-                                with patch.object(service.source, 'generate', return_value=["test tweet content"]):
-                                    with patch.object(service.target, 'filter', return_value="filtered tweet"):
-                                        with patch.object(service.target, 'publish', return_value=(True, None)):
-                                            service.execute()
-
-    # Verify mark_content_published was called with correct parameters
-    assert len(marked_content) == 1
-    assert marked_content[0] == ("FnSource", "news", "https://example.com/test-article")
-
-    # Restore original config
-    service.target.config.api_keys = original_api_keys
+    source.generate_fundraising.assert_not_called()
+    storage.is_content_published_today.assert_any_call(
+        "FnSource", "fundraising", published.url
+    )
+    storage.is_content_published_today.assert_any_call("FnSource", "fundraising", fresh.url)
+    items = publisher.publish_items.call_args.args[0]
+    assert items == [
+        TweetSourceItem(
+            source_name="FnSource",
+            content_type="fundraising",
+            identifier=fresh.url,
+            title=fresh.project_name,
+            summary=fresh.description,
+            url=fresh.url,
+            metadata={
+                "id": fresh.id,
+                "amount": fresh.amount,
+                "round": fresh.round_str,
+                "investors": fresh.investors,
+                "date": fresh.date.isoformat(),
+            },
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    storage.increment_daily_execution.assert_called_once_with("FnSourceFundraising")
