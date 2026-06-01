@@ -138,22 +138,32 @@ class DeepAgentTweetGenerator:
             f"{attempt + 1}/{max_retries} "
             f"source={item.source_name} content_type={item.content_type} "
             f"item={item.identifier} account={api_key_mask} "
-            f"account_index={account_index} skill={Path(str(skill_path)).name}"
+            f"account_index={account_index}"
         )
+        print(f"↳ Skill selected: {Path(str(skill_path)).name}")
+        print(f"↳ Skill path: {skill_path}")
         last_chunk = None
+        printed_previews: set[str] = set()
         for chunk in agent.stream(payload, stream_mode="values"):
             last_chunk = chunk
-            self._print_trace_chunk(chunk)
+            self._print_trace_chunk(chunk, printed_previews)
         content = self._extract_content(last_chunk)
         print(f"↳ Raw output counts: #={content.count('#')} $={content.count('$')}")
         return content
 
-    def _print_trace_chunk(self, chunk: Any) -> None:
+    def _print_trace_chunk(self, chunk: Any, printed_previews: set[str]) -> None:
         message = self._latest_message_from_chunk(chunk)
+        role = self._message_role(message)
+        if role in {"user", "human"}:
+            return
+
         content = self._extract_content(message)
         if not content:
             return
         preview = " ".join(content.split())[:160]
+        if preview in printed_previews:
+            return
+        printed_previews.add(preview)
         print(f"↳ Agent message: {preview}")
 
     @staticmethod
@@ -163,6 +173,14 @@ class DeepAgentTweetGenerator:
             if isinstance(messages, list) and messages:
                 return messages[-1]
         return chunk
+
+    @staticmethod
+    def _message_role(message: Any) -> str | None:
+        if isinstance(message, dict):
+            role = message.get("role") or message.get("type")
+            return str(role).lower() if role else None
+        role = getattr(message, "role", None) or getattr(message, "type", None)
+        return str(role).lower() if role else None
 
     def _build_task(
         self,

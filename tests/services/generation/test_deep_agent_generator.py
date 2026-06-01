@@ -330,6 +330,47 @@ def test_generate_for_account_streams_and_prints_trace_when_enabled(
     assert "FULL_SECRET_API_KEY" not in output
 
 
+def test_generate_for_account_trace_skips_duplicate_user_prompts_and_prints_skill(
+    monkeypatch, capsys, source_item, generator_config
+):
+    generator_config.agent_trace_enabled = True
+    repeated_prompt = "请基于以下结构化内容生成一条币安广场推文。 item_payload: {...}"
+    final_message = "清晰输出只打印一次 #BTC $BTC"
+    agent = FakeAgent(
+        [],
+        stream_chunks=[
+            {"messages": [{"role": "user", "content": repeated_prompt}]},
+            {"messages": [{"role": "user", "content": repeated_prompt}]},
+            {"messages": [{"role": "assistant", "content": final_message}]},
+            {"messages": [{"role": "assistant", "content": final_message}]},
+        ],
+    )
+
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.get_config",
+        lambda: generator_config,
+    )
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.select_skill_path",
+        lambda item: "C:/repo/agent_skills/fn_news",
+    )
+
+    generator = DeepAgentTweetGenerator(agent_factory=lambda **kwargs: agent)
+
+    content = generator.generate_for_account(
+        source_item,
+        api_key_mask="mask-1",
+        account_index=1,
+    )
+
+    output = capsys.readouterr().out
+    assert content == final_message
+    assert "Skill selected: fn_news" in output
+    assert "Skill path: C:/repo/agent_skills/fn_news" in output
+    assert repeated_prompt not in output
+    assert output.count(final_message) == 1
+
+
 def test_generate_for_account_trace_prints_validation_failure_counts(
     monkeypatch, capsys, source_item, generator_config
 ):
