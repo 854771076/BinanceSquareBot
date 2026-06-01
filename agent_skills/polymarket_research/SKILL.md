@@ -23,6 +23,17 @@ Choose one structure that fits the market:
 - Scenario-first: what needs to happen for YES, what supports NO, why the price may change.
 - Risk-first: why the market is hard to price, key data points, discussion question.
 
+## Natural hook and market rhythm
+
+- Open with a concrete hook: a market signal, tension, contradiction, or watch variable. Do not simply restate the headline.
+- Add light long/short rhythm without giving trading advice:
+  - positive side: what supports attention, momentum, funding, adoption, liquidity, or narrative strength;
+  - cautious side: what remains unproven, overheated, illiquid, uncertain, or dependent on follow-up data.
+- Use neutral phrasing such as 积极的一面是, 谨慎看, 多头需要证明, or 风险在于.
+- Do not tell readers to buy, sell, long, short, chase, or avoid.
+- End with a specific watch point or tension. Avoid generic endings like 你怎么看？
+- Make readers want to follow the next variable, not rush into a trade.
+
 ## Evidence and grounding rules
 
 - Ground every claim in the supplied question, description, YES/NO prices, volume, condition ID, URL, and metadata.

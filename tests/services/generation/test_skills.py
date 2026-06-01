@@ -64,6 +64,7 @@ REQUIRED_SKILL_SECTIONS = [
     "## Output contract",
     "## Source-specific objective",
     "## Recommended structures",
+    "## Natural hook and market rhythm",
     "## Evidence and grounding rules",
     "## Account differentiation",
     "## Binance Square style rules",
@@ -79,6 +80,11 @@ REQUIRED_SKILL_GUARDRAILS = [
     "token tag",
     "account",
     "silently verify",
+    "positive side",
+    "cautious side",
+    "specific watch point",
+    "Do not tell readers to buy, sell, long, short",
+    "not simply restate the headline",
 ]
 
 
