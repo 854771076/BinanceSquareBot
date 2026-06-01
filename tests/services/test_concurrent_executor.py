@@ -1,14 +1,39 @@
 import random
-import pytest
-from unittest.mock import Mock, patch
 from dataclasses import dataclass
+from unittest.mock import Mock, patch
 
 from binance_square_bot.services.concurrent_executor import (
     ConcurrentExecutor,
-    SourceParallelPublisher,
     SourceOrchestrator,
+    SourceParallelPublisher,
     TaskResult,
 )
+from binance_square_bot.services.generation.models import TweetSourceItem
+
+
+@dataclass
+class MockTargetConfig:
+    daily_max_posts_per_key: int = 100
+
+
+class MockTarget:
+    config = MockTargetConfig()
+
+
+def make_item(
+    identifier="item-1",
+    *,
+    source_name="FnSource",
+    content_type="news",
+    title=None,
+):
+    return TweetSourceItem(
+        source_name=source_name,
+        content_type=content_type,
+        identifier=identifier,
+        title=title or f"Title {identifier}",
+        summary=f"Summary {identifier}",
+    )
 
 
 class TestConcurrentExecutor:
@@ -29,7 +54,7 @@ class TestSourceOrchestrator:
     """Tests for SourceOrchestrator class."""
 
     def test_init_default_total_per_run_is_none(self):
-        """Test that constructor default for total_per_run is None (no limit by default)."""
+        """Default total_per_run is None, meaning no limit by default."""
         orchestrator = SourceOrchestrator()
         assert orchestrator.total_per_run is None
         assert orchestrator.max_workers == 4
@@ -49,46 +74,25 @@ class TestSourceOrchestrator:
     def test_run_sources_accepts_total_per_run_parameter(self):
         """Test that run_sources accepts total_per_run parameter."""
         orchestrator = SourceOrchestrator()
-        # Just verify the method signature accepts the parameter
         import inspect
+
         sig = inspect.signature(orchestrator.run_sources)
         assert "total_per_run" in sig.parameters
         assert sig.parameters["total_per_run"].default is None
 
     def test_when_total_tweets_exceeds_limit_only_n_are_selected(self):
-        """Test that when total tweets > limit, only N are selected (deterministic with seed)."""
-        orchestrator = SourceOrchestrator(total_per_run=3)
+        """Test existing limit selection behavior with generated tweet strings."""
+        all_tweets = ["t1", "t2", "t3", "t4", "t5"]
+        total_per_run = 3
+        total_generated = len(all_tweets)
 
-        # Create mock source results with 5 tweets
-        mock_results = {
-            "TestSource": TaskResult(
-                task_name="TestSource",
-                success=True,
-                data={"tweets_generated": ["t1", "t2", "t3", "t4", "t5"]},
-            )
-        }
+        random.seed(42)
+        random.shuffle(all_tweets)
+        selected = all_tweets[:total_per_run]
 
-        # Patch the executor.run_parallel to return our mock results
-        with patch.object(
-            orchestrator._get_service_for_source("TestSource"),
-            "execute",
-            return_value={"tweets_generated": ["t1", "t2", "t3", "t4", "t5"]},
-        ):
-            # Instead of testing full run_sources, test the core logic directly
-            # by simulating what happens inside run_sources
-            all_tweets = ["t1", "t2", "t3", "t4", "t5"]
-            total_per_run = 3
-            total_generated = len(all_tweets)
-
-            # Set seed for deterministic shuffle
-            random.seed(42)
-            random.shuffle(all_tweets)
-            selected = all_tweets[:total_per_run]
-
-            assert len(selected) == 3
-            assert total_generated == 5
-            # Verify all selected are from original
-            assert all(t in ["t1", "t2", "t3", "t4", "t5"] for t in selected)
+        assert len(selected) == 3
+        assert total_generated == 5
+        assert all(t in ["t1", "t2", "t3", "t4", "t5"] for t in selected)
 
     def test_when_total_tweets_less_than_limit_all_are_published(self):
         """Test that when total tweets <= limit, all are published."""
@@ -105,19 +109,18 @@ class TestSourceOrchestrator:
             selected = all_tweets
 
         assert len(selected) == 3
+        assert total_generated == 3
         assert selected == ["t1", "t2", "t3"]
 
     def test_method_parameter_takes_precedence_over_instance_attribute(self):
-        """Test that method arg takes precedence over instance attr for total_per_run."""
+        """Method arg takes precedence over instance total_per_run."""
         orchestrator = SourceOrchestrator(total_per_run=5)
 
-        # Simulate with method param = 3 (should override instance's 5)
         all_tweets = ["t1", "t2", "t3", "t4", "t5", "t6", "t7"]
-        instance_limit = orchestrator.total_per_run  # 5
+        instance_limit = orchestrator.total_per_run
         method_limit = 3
 
-        # Fixed logic: explicit None check instead of 'or' operator
-        effective_limit = method_limit if method_limit is not None else instance_limit  # Should be 3
+        effective_limit = method_limit if method_limit is not None else instance_limit
 
         assert effective_limit == 3
 
@@ -145,6 +148,108 @@ class TestSourceOrchestrator:
         assert len(selected) == original_count
         assert selected == all_tweets
 
+    def test_total_per_run_limits_content_items_before_account_publishing(self):
+        """total_per_run limits selected content items, not item/account pairs."""
+        item_1 = make_item("item-1")
+        item_2 = make_item("item-2")
+        item_3 = make_item("item-3")
+        orchestrator = SourceOrchestrator(max_workers=1, total_per_run=2)
+        target = MockTarget()
+        storage = Mock()
+        storage.can_publish_key.return_value = True
+
+        service_cls = Mock()
+        service_cls.return_value.execute.return_value = {
+            "items_generated": [item_1, item_2, item_3]
+        }
+
+        with (
+            patch.object(
+                orchestrator, "_get_service_for_source", return_value=service_cls
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.random.shuffle",
+                side_effect=lambda items: None,
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.return_value = {
+                "published_success": 4
+            }
+            orchestrator.run_sources(
+                source_configs=[{"source": object(), "execute": "execute"}],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1", "key-2"]},
+                storage=storage,
+            )
+
+        publisher_cls.return_value.publish_to_targets.assert_called_once()
+        published_items = (
+            publisher_cls.return_value.publish_to_targets.call_args.kwargs["tweets"]
+        )
+        assert published_items == [item_1, item_2]
+
+    def test_run_sources_aggregates_items_generated_and_passes_them_downstream(self):
+        """SourceOrchestrator prefers items_generated over legacy tweets_generated."""
+        item_1 = make_item("item-1")
+        item_2 = make_item("item-2")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+
+        source_results = {
+            "FnSource": TaskResult(
+                task_name="FnSource",
+                success=True,
+                data={
+                    "items_generated": [item_1],
+                    "tweets_generated": [{"text": "legacy-tweet"}],
+                },
+            ),
+            "FollowinSource": TaskResult(
+                task_name="FollowinSource",
+                success=True,
+                data={"items_generated": [item_2]},
+            ),
+            "FailedSource": TaskResult(
+                task_name="FailedSource",
+                success=False,
+                data={"items_generated": [make_item("failed")]},
+                error="boom",
+            ),
+        }
+
+        with (
+            patch(
+                "binance_square_bot.services.concurrent_executor.ConcurrentExecutor.run_parallel",
+                return_value=source_results,
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.return_value = {
+                "published_success": 2
+            }
+            orchestrator.run_sources(
+                source_configs=[
+                    {"source": type("FnSource", (), {})()},
+                    {"source": type("FollowinSource", (), {})()},
+                    {"source": type("FailedSource", (), {})()},
+                ],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+            )
+
+        publisher_cls.return_value.publish_to_targets.assert_called_once()
+        published_items = (
+            publisher_cls.return_value.publish_to_targets.call_args.kwargs["tweets"]
+        )
+        assert published_items == [item_1, item_2]
+
 
 class TestSourceParallelPublisher:
     """Tests for SourceParallelPublisher class."""
@@ -159,81 +264,114 @@ class TestSourceParallelPublisher:
         publisher = SourceParallelPublisher(max_workers=7)
         assert publisher.max_workers == 7
 
-    def test_mark_content_published_after_successful_publish(self):
-        """Test that content is marked as published after successful publish in SourceParallelPublisher."""
-        publisher = SourceParallelPublisher(max_workers=1)
+    def test_passes_all_items_and_all_available_keys_to_account_item_publisher(self):
+        """SourceParallelPublisher delegates every item and every available key."""
+        items = [make_item("item-1"), make_item("item-2")]
+        target = MockTarget()
+        storage = Mock()
+        storage.can_publish_key.return_value = True
+        storage.is_content_published_today.return_value = False
 
-        # Create mock target
-        @dataclass
-        class MockTarget:
-            @dataclass
-            class Config:
-                api_keys = ["test_key"]
-                daily_max_posts_per_key = 100
-            config = Config()
+        with patch(
+            "binance_square_bot.services.concurrent_executor.AccountItemPublisher"
+        ) as publisher_cls:
+            publisher_cls.return_value.publish_items.return_value = {
+                "items_total": 2,
+                "api_keys_total": 2,
+                "generated_success": 4,
+                "generated_failed": 0,
+                "published_success": 4,
+                "published_failed": 0,
+            }
 
-            def filter(self, text):
-                return text
+            result = SourceParallelPublisher(max_workers=1).publish_to_targets(
+                tweets=items,
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1", "key-2"]},
+                storage=storage,
+                delay_between_publishes=0,
+            )
 
-            def publish(self, content, api_key):
-                return (True, None)  # Success
+        publisher_cls.assert_called_once_with(delay_between_publishes=0)
+        publisher_cls.return_value.publish_items.assert_called_once_with(
+            items=items,
+            target=target,
+            api_keys=["key-1", "key-2"],
+            storage=storage,
+            dry_run=False,
+        )
+        assert result["total_items"] == 2
+        assert result["published_success"] == 4
+        assert result["generated_success"] == 4
 
-        # Create mock storage
-        mock_storage = Mock()
-        mock_storage.can_publish_key.return_value = True
-        mock_storage.increment_daily_publish_count.return_value = None
-        mock_storage.mark_content_published.return_value = None
+    def test_deduplicates_items_by_source_type_and_identifier_before_publishing(self):
+        """Duplicate content identity is removed before account-level publishing."""
+        original = make_item("same", source_name="FnSource", content_type="news")
+        duplicate = make_item(
+            "same",
+            source_name="FnSource",
+            content_type="news",
+            title="Different title should still dedupe",
+        )
+        different_type = make_item(
+            "same", source_name="FnSource", content_type="calendar"
+        )
+        target = MockTarget()
+        storage = Mock()
+        storage.can_publish_key.return_value = True
+        storage.is_content_published_today.return_value = False
 
-        # Create tweet dicts with metadata
-        tweets = [
-            {
-                "text": "tweet content 1",
-                "source_name": "FnSource",
-                "content_type": "news",
-                "identifier": "https://example.com/1",
-            },
-            {
-                "text": "tweet content 2",
-                "source_name": "FollowinSource",
-                "content_type": "topics",
-                "identifier": "123",
-            },
+        with patch(
+            "binance_square_bot.services.concurrent_executor.AccountItemPublisher"
+        ) as publisher_cls:
+            publisher_cls.return_value.publish_items.return_value = {
+                "published_success": 2,
+                "published_failed": 0,
+            }
+
+            SourceParallelPublisher(max_workers=1).publish_to_targets(
+                tweets=[original, duplicate, different_type],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                delay_between_publishes=0,
+            )
+
+        published_items = publisher_cls.return_value.publish_items.call_args.kwargs[
+            "items"
         ]
+        assert published_items == [original, different_type]
 
-        targets = [MockTarget()]
-        api_keys_map = {"MockTarget": ["test_key"]}
+    def test_filters_already_published_items_before_account_level_publishing(self):
+        """Items published today are skipped before AccountItemPublisher is called."""
+        already_published = make_item("already-published")
+        fresh = make_item("fresh")
+        target = MockTarget()
+        storage = Mock()
+        storage.can_publish_key.return_value = True
+        storage.is_content_published_today.side_effect = [True, False]
 
-        # Execute publish
-        result = publisher.publish_to_targets(
-            tweets=tweets,
-            targets=targets,
-            api_keys_map=api_keys_map,
-            storage=mock_storage,
-            delay_between_publishes=0,
+        with patch(
+            "binance_square_bot.services.concurrent_executor.AccountItemPublisher"
+        ) as publisher_cls:
+            publisher_cls.return_value.publish_items.return_value = {
+                "published_success": 1,
+                "published_failed": 0,
+            }
+
+            SourceParallelPublisher(max_workers=1).publish_to_targets(
+                tweets=[already_published, fresh],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                delay_between_publishes=0,
+            )
+
+        storage.is_content_published_today.assert_any_call(
+            "FnSource", "news", "already-published"
         )
-
-        # Verify mark_content_published was called for each tweet
-        assert mock_storage.mark_content_published.call_count == 2
-
-        # Check the actual calls - call_args_list contains Call objects
-        calls = mock_storage.mark_content_published.call_args_list
-        # Each call is a tuple of (args, kwargs), extract kwargs
-        call_kwargs = [c.kwargs for c in calls]
-
-        # Verify first tweet was marked
-        assert any(
-            c.get("source_name") == "FnSource"
-            and c.get("content_type") == "news"
-            and c.get("content_identifier") == "https://example.com/1"
-            for c in call_kwargs
-        )
-        # Verify second tweet was marked
-        assert any(
-            c.get("source_name") == "FollowinSource"
-            and c.get("content_type") == "topics"
-            and c.get("content_identifier") == "123"
-            for c in call_kwargs
-        )
-
-        # Verify success count
-        assert result["published_success"] == 2
+        storage.is_content_published_today.assert_any_call("FnSource", "news", "fresh")
+        published_items = publisher_cls.return_value.publish_items.call_args.kwargs[
+            "items"
+        ]
+        assert published_items == [fresh]
