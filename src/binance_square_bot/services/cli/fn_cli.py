@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from loguru import logger
 from rich.console import Console
@@ -12,8 +12,8 @@ from binance_square_bot.services.generation.mappers import (
     fn_fundraising_to_item,
 )
 from binance_square_bot.services.generation.models import TweetSourceItem
-from binance_square_bot.services.storage import StorageService
 from binance_square_bot.services.source.fn_source import FnSource
+from binance_square_bot.services.storage import StorageService
 from binance_square_bot.services.target.binance_target import BinanceTarget
 
 console = Console()
@@ -22,15 +22,15 @@ console = Console()
 class FnCliService:
     """CLI business logic for Fn news workflow."""
 
-    def __init__(self, dry_run: bool = False, limit: int = None):
+    def __init__(self, dry_run: bool = False, limit: int | None = None) -> None:
         self.dry_run = dry_run
         self.limit = limit
         self.storage = StorageService()
-        self.source = FnSource()
-        self.target = BinanceTarget()
+        self.source = FnSource()  # type: ignore[no-untyped-call]
+        self.target = BinanceTarget()  # type: ignore[no-untyped-call]
         self.publisher = AccountItemPublisher()
 
-    def execute(self) -> Dict[str, Any]:
+    def execute(self) -> dict[str, Any]:
         """Execute the full crawl-generate-publish workflow.
 
         Returns:
@@ -39,8 +39,12 @@ class FnCliService:
         logger.info("Starting Fn news workflow")
 
         # Check execution limit
-        if not self.storage.can_execute_source("FnSource", self.source.config.daily_max_executions):
-            console.print("[yellow]⚠️ Daily execution limit reached for FnSource[/yellow]")
+        if not self.storage.can_execute_source(
+            "FnSource", self.source.config.daily_max_executions
+        ):
+            console.print(
+                "[yellow]⚠️ Daily execution limit reached for FnSource[/yellow]"
+            )
             return {"error": "daily limit reached"}
 
         # Fetch articles
@@ -54,15 +58,17 @@ class FnCliService:
 
         # 过滤掉当天已发布的
         filtered_items = [
-            item for item in articles
+            item
+            for item in articles
             if not self.storage.is_content_published_today("FnSource", "news", item.url)
         ]
-        console.print(f"ℹ️ Filtered out {len(articles) - len(filtered_items)} already published items")
-        logger.info(f"Filtered out {len(articles) - len(filtered_items)} already published items")
+        filtered_count = len(articles) - len(filtered_items)
+        console.print(f"ℹ️ Filtered out {filtered_count} already published items")
+        logger.info(f"Filtered out {filtered_count} already published items")
 
         # Apply limit
         if self.limit and len(filtered_items) > self.limit:
-            filtered_items = filtered_items[:self.limit]
+            filtered_items = filtered_items[: self.limit]
             console.print(f"ℹ️ Limited to {self.limit} articles")
 
         items = [fn_article_to_item(item) for item in filtered_items]
@@ -72,12 +78,16 @@ class FnCliService:
         logger.info(f"Fn news workflow complete: {result}")
         return result
 
-    def execute_calendar(self) -> Dict[str, Any]:
+    def execute_calendar(self) -> dict[str, Any]:
         """Execute the calendar events workflow."""
         logger.info("Starting Fn calendar workflow")
 
-        if not self.storage.can_execute_source("FnSourceCalendar", self.source.config.daily_max_executions):
-            console.print("[yellow]⚠️ Daily execution limit reached for FnSourceCalendar[/yellow]")
+        if not self.storage.can_execute_source(
+            "FnSourceCalendar", self.source.config.daily_max_executions
+        ):
+            console.print(
+                "[yellow]⚠️ Daily execution limit reached for FnSourceCalendar[/yellow]"
+            )
             return {"error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn calendar events...[/blue]")
@@ -90,14 +100,18 @@ class FnCliService:
 
         # 过滤掉当天已发布的
         filtered_items = [
-            item for item in events
-            if not self.storage.is_content_published_today("FnSource", "calendar", item.url)
+            item
+            for item in events
+            if not self.storage.is_content_published_today(
+                "FnSource", "calendar", item.url
+            )
         ]
-        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
-        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+        filtered_count = len(events) - len(filtered_items)
+        console.print(f"ℹ️ Filtered out {filtered_count} already published items")
+        logger.info(f"Filtered out {filtered_count} already published items")
 
         if self.limit and len(filtered_items) > self.limit:
-            filtered_items = filtered_items[:self.limit]
+            filtered_items = filtered_items[: self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         items = [fn_calendar_to_item(item) for item in filtered_items]
@@ -107,12 +121,16 @@ class FnCliService:
         logger.info(f"FnSourceCalendar workflow complete: {result}")
         return result
 
-    def execute_airdrops(self) -> Dict[str, Any]:
+    def execute_airdrops(self) -> dict[str, Any]:
         """Execute the airdrop events workflow."""
         logger.info("Starting Fn airdrop workflow")
 
-        if not self.storage.can_execute_source("FnSourceAirdrops", self.source.config.daily_max_executions):
-            console.print("[yellow]⚠️ Daily execution limit reached for FnSourceAirdrops[/yellow]")
+        if not self.storage.can_execute_source(
+            "FnSourceAirdrops", self.source.config.daily_max_executions
+        ):
+            console.print(
+                "[yellow]⚠️ Daily execution limit reached for FnSourceAirdrops[/yellow]"
+            )
             return {"error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn airdrop events...[/blue]")
@@ -125,14 +143,18 @@ class FnCliService:
 
         # 过滤掉当天已发布的
         filtered_items = [
-            item for item in events
-            if not self.storage.is_content_published_today("FnSource", "airdrop", item.url)
+            item
+            for item in events
+            if not self.storage.is_content_published_today(
+                "FnSource", "airdrop", item.url
+            )
         ]
-        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
-        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+        filtered_count = len(events) - len(filtered_items)
+        console.print(f"ℹ️ Filtered out {filtered_count} already published items")
+        logger.info(f"Filtered out {filtered_count} already published items")
 
         if self.limit and len(filtered_items) > self.limit:
-            filtered_items = filtered_items[:self.limit]
+            filtered_items = filtered_items[: self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         items = [fn_airdrop_to_item(item) for item in filtered_items]
@@ -142,12 +164,15 @@ class FnCliService:
         logger.info(f"FnSourceAirdrops workflow complete: {result}")
         return result
 
-    def execute_fundraising(self) -> Dict[str, Any]:
+    def execute_fundraising(self) -> dict[str, Any]:
         """Execute the fundraising (众筹) events workflow."""
         logger.info("Starting Fn fundraising workflow")
 
-        if not self.storage.can_execute_source("FnSourceFundraising", self.source.config.daily_max_executions):
-            console.print("[yellow]⚠️ Daily execution limit reached for FnSourceFundraising[/yellow]")
+        if not self.storage.can_execute_source(
+            "FnSourceFundraising", self.source.config.daily_max_executions
+        ):
+            message = "Daily execution limit reached for FnSourceFundraising"
+            console.print(f"[yellow]⚠️ {message}[/yellow]")
             return {"error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn fundraising events...[/blue]")
@@ -160,14 +185,18 @@ class FnCliService:
 
         # 过滤掉当天已发布的
         filtered_items = [
-            item for item in events
-            if not self.storage.is_content_published_today("FnSource", "fundraising", item.url)
+            item
+            for item in events
+            if not self.storage.is_content_published_today(
+                "FnSource", "fundraising", item.url
+            )
         ]
-        console.print(f"ℹ️ Filtered out {len(events) - len(filtered_items)} already published items")
-        logger.info(f"Filtered out {len(events) - len(filtered_items)} already published items")
+        filtered_count = len(events) - len(filtered_items)
+        console.print(f"ℹ️ Filtered out {filtered_count} already published items")
+        logger.info(f"Filtered out {filtered_count} already published items")
 
         if self.limit and len(filtered_items) > self.limit:
-            filtered_items = filtered_items[:self.limit]
+            filtered_items = filtered_items[: self.limit]
             console.print(f"ℹ️ Limited to {self.limit} events")
 
         items = [fn_fundraising_to_item(item) for item in filtered_items]
@@ -177,14 +206,14 @@ class FnCliService:
         logger.info(f"FnSourceFundraising workflow complete: {result}")
         return result
 
-    def _empty_stats(self) -> Dict[str, Any]:
+    def _empty_stats(self) -> dict[str, Any]:
         return {
             "items_fetched": 0,
             "items_generated": [],
             "dry_run": self.dry_run,
         }
 
-    def _base_stats(self, items: list[TweetSourceItem]) -> Dict[str, Any]:
+    def _base_stats(self, items: list[TweetSourceItem]) -> dict[str, Any]:
         return {
             "items_fetched": len(items),
             "items_generated": items,
@@ -194,13 +223,18 @@ class FnCliService:
     def _publish_items(
         self,
         items: list[TweetSourceItem],
-        stats: Dict[str, Any],
+        stats: dict[str, Any],
         source_key: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
+        api_keys = self.target.config.api_keys
+        if not self.dry_run and not api_keys:
+            logger.warning("No Binance API keys configured; skipping publish")
+            return stats
+
         publish_stats = self.publisher.publish_items(
             items,
             self.target,
-            self.target.config.api_keys,
+            api_keys,
             self.storage,
             dry_run=self.dry_run,
         )
@@ -211,7 +245,7 @@ class FnCliService:
 
         return stats
 
-    def _print_summary(self, stats: Dict[str, Any], fetched_label: str) -> None:
+    def _print_summary(self, stats: dict[str, Any], fetched_label: str) -> None:
         table = Table(title="Execution Summary")
         table.add_column("Metric", style="cyan")
         table.add_column("Value", style="magenta")

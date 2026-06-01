@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 from binance_square_bot.services.cli.fn_cli import FnCliService
@@ -16,13 +17,15 @@ class DummySourceConfig:
 
 
 class DummySource:
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = DummySourceConfig()
         self.fetch = MagicMock(return_value=[])
         self.fetch_calendar = MagicMock(return_value=[])
         self.fetch_airdrops = MagicMock(return_value=[])
         self.fetch_fundraising = MagicMock(return_value=[])
-        self.generate = MagicMock(side_effect=AssertionError("source.generate must not be called"))
+        self.generate = MagicMock(
+            side_effect=AssertionError("source.generate must not be called")
+        )
         self.generate_calendar = MagicMock(
             side_effect=AssertionError("source.generate_calendar must not be called")
         )
@@ -40,14 +43,14 @@ class DummyTargetConfig:
 
 
 class DummyTarget:
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = DummyTargetConfig()
         self.filter = MagicMock()
         self.publish = MagicMock()
 
 
 class DummyStorage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.can_execute_source = MagicMock(return_value=True)
         self.is_content_published_today = MagicMock(return_value=False)
         self.increment_daily_execution = MagicMock()
@@ -57,7 +60,7 @@ class DummyStorage:
 
 
 class PublisherFactory:
-    def __init__(self, stats=None):
+    def __init__(self, stats: dict[str, Any] | None = None) -> None:
         self.instance = MagicMock()
         self.instance.publish_items.return_value = stats or {
             "generated_success": 0,
@@ -67,11 +70,16 @@ class PublisherFactory:
             "dry_run": False,
         }
 
-    def __call__(self):
+    def __call__(self) -> MagicMock:
         return self.instance
 
 
-def make_service(*, dry_run=True, limit=10, publisher_stats=None):
+def make_service(
+    *,
+    dry_run: bool = True,
+    limit: int | None = 10,
+    publisher_stats: dict[str, Any] | None = None,
+) -> tuple[FnCliService, DummySource, DummyTarget, DummyStorage, MagicMock]:
     source = DummySource()
     target = DummyTarget()
     storage = DummyStorage()
@@ -85,26 +93,31 @@ def make_service(*, dry_run=True, limit=10, publisher_stats=None):
         }
     publisher_factory = PublisherFactory(publisher_stats)
 
-    with patch(
-        "binance_square_bot.services.cli.fn_cli.StorageService",
-        return_value=storage,
-    ), patch(
-        "binance_square_bot.services.cli.fn_cli.FnSource",
-        return_value=source,
-    ), patch(
-        "binance_square_bot.services.cli.fn_cli.BinanceTarget",
-        return_value=target,
-    ), patch(
-        "binance_square_bot.services.cli.fn_cli.AccountItemPublisher",
-        new=publisher_factory,
-        create=True,
+    with (
+        patch(
+            "binance_square_bot.services.cli.fn_cli.StorageService",
+            return_value=storage,
+        ),
+        patch(
+            "binance_square_bot.services.cli.fn_cli.FnSource",
+            return_value=source,
+        ),
+        patch(
+            "binance_square_bot.services.cli.fn_cli.BinanceTarget",
+            return_value=target,
+        ),
+        patch(
+            "binance_square_bot.services.cli.fn_cli.AccountItemPublisher",
+            new=publisher_factory,
+            create=True,
+        ),
     ):
         service = FnCliService(dry_run=dry_run, limit=limit)
 
     return service, source, target, storage, publisher_factory.instance
 
 
-def test_fn_cli_service_init():
+def test_fn_cli_service_init() -> None:
     """Test FnCliService can be initialized without real source/target side effects."""
     service, _, _, _, _ = make_service(dry_run=True, limit=5)
 
@@ -112,7 +125,7 @@ def test_fn_cli_service_init():
     assert service.limit == 5
 
 
-def test_execute_uses_account_item_publisher_with_filtered_mapped_articles():
+def test_execute_uses_account_item_publisher_with_filtered_mapped_articles() -> None:
     publisher_stats = {"generated_success": 2, "published_failed": 1, "dry_run": False}
     service, source, target, storage, publisher = make_service(
         dry_run=False,
@@ -145,11 +158,14 @@ def test_execute_uses_account_item_publisher_with_filtered_mapped_articles():
 
     source.generate.assert_not_called()
     publisher.publish_items.assert_called_once()
-    items, publish_target, api_keys, publish_storage = publisher.publish_items.call_args.args
+    items, publish_target, api_keys, publish_storage = (
+        publisher.publish_items.call_args.args
+    )
     assert publish_target is target
     assert api_keys == target.config.api_keys
     assert publish_storage is storage
     assert publisher.publish_items.call_args.kwargs == {"dry_run": False}
+    assert new_article.published_at is not None
     assert items == [
         TweetSourceItem(
             source_name="FnSource",
@@ -169,7 +185,7 @@ def test_execute_uses_account_item_publisher_with_filtered_mapped_articles():
     storage.increment_daily_execution.assert_called_once_with("FnSource")
 
 
-def test_execute_dry_run_passes_dry_run_true_to_publisher_and_does_not_increment_execution():
+def test_execute_dry_run_calls_publisher_without_increment() -> None:
     service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
     article = Article(
         title="Dry run article",
@@ -183,7 +199,9 @@ def test_execute_dry_run_passes_dry_run_true_to_publisher_and_does_not_increment
     source.generate.assert_not_called()
     publisher.publish_items.assert_called_once()
     assert publisher.publish_items.call_args.kwargs == {"dry_run": True}
-    items, publish_target, api_keys, publish_storage = publisher.publish_items.call_args.args
+    items, publish_target, api_keys, publish_storage = (
+        publisher.publish_items.call_args.args
+    )
     assert publish_target is target
     assert api_keys == target.config.api_keys
     assert publish_storage is storage
@@ -193,7 +211,7 @@ def test_execute_dry_run_passes_dry_run_true_to_publisher_and_does_not_increment
     storage.increment_daily_execution.assert_not_called()
 
 
-def test_execute_calendar_filters_maps_content_type_and_publishes_items():
+def test_execute_calendar_filters_maps_content_type_and_publishes_items() -> None:
     service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
     published = CalendarEvent(
         title="Published calendar",
@@ -217,9 +235,15 @@ def test_execute_calendar_filters_maps_content_type_and_publishes_items():
     result = service.execute_calendar()
 
     source.generate_calendar.assert_not_called()
-    storage.is_content_published_today.assert_any_call("FnSource", "calendar", published.url)
-    storage.is_content_published_today.assert_any_call("FnSource", "calendar", fresh.url)
+    storage.is_content_published_today.assert_any_call(
+        "FnSource", "calendar", published.url
+    )
+    storage.is_content_published_today.assert_any_call(
+        "FnSource", "calendar", fresh.url
+    )
     items = publisher.publish_items.call_args.args[0]
+    assert fresh.start_time is not None
+    assert fresh.end_time is not None
     assert items == [
         TweetSourceItem(
             source_name="FnSource",
@@ -240,7 +264,7 @@ def test_execute_calendar_filters_maps_content_type_and_publishes_items():
     storage.increment_daily_execution.assert_called_once_with("FnSourceCalendar")
 
 
-def test_execute_airdrops_filters_maps_content_type_and_publishes_items():
+def test_execute_airdrops_filters_maps_content_type_and_publishes_items() -> None:
     service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
     published = AirdropEvent(
         id=1,
@@ -263,9 +287,12 @@ def test_execute_airdrops_filters_maps_content_type_and_publishes_items():
     result = service.execute_airdrops()
 
     source.generate_airdrops.assert_not_called()
-    storage.is_content_published_today.assert_any_call("FnSource", "airdrop", published.url)
+    storage.is_content_published_today.assert_any_call(
+        "FnSource", "airdrop", published.url
+    )
     storage.is_content_published_today.assert_any_call("FnSource", "airdrop", fresh.url)
     items = publisher.publish_items.call_args.args[0]
+    assert fresh.published_at is not None
     assert items == [
         TweetSourceItem(
             source_name="FnSource",
@@ -282,7 +309,7 @@ def test_execute_airdrops_filters_maps_content_type_and_publishes_items():
     storage.increment_daily_execution.assert_called_once_with("FnSourceAirdrops")
 
 
-def test_execute_fundraising_filters_maps_content_type_and_publishes_items():
+def test_execute_fundraising_filters_maps_content_type_and_publishes_items() -> None:
     service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
     published = FundraisingEvent(
         id=1,
@@ -314,8 +341,11 @@ def test_execute_fundraising_filters_maps_content_type_and_publishes_items():
     storage.is_content_published_today.assert_any_call(
         "FnSource", "fundraising", published.url
     )
-    storage.is_content_published_today.assert_any_call("FnSource", "fundraising", fresh.url)
+    storage.is_content_published_today.assert_any_call(
+        "FnSource", "fundraising", fresh.url
+    )
     items = publisher.publish_items.call_args.args[0]
+    assert fresh.date is not None
     assert items == [
         TweetSourceItem(
             source_name="FnSource",
@@ -336,3 +366,37 @@ def test_execute_fundraising_filters_maps_content_type_and_publishes_items():
     assert result["items_fetched"] == 1
     assert result["items_generated"] == items
     storage.increment_daily_execution.assert_called_once_with("FnSourceFundraising")
+
+
+def test_execute_without_api_keys_returns_stats_without_publishing_or_increment() -> (
+    None
+):
+    service, source, target, storage, publisher = make_service(dry_run=False, limit=10)
+    target.config.api_keys = []
+    article = Article(
+        title="No key article",
+        url="https://example.com/no-key",
+        content="No key summary",
+    )
+    source.fetch.return_value = [article]
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result == {
+        "items_fetched": 1,
+        "items_generated": [
+            TweetSourceItem(
+                source_name="FnSource",
+                content_type="news",
+                identifier=article.url,
+                title=article.title,
+                summary=article.content,
+                url=article.url,
+                metadata={"published_at": None},
+            )
+        ],
+        "dry_run": False,
+    }
