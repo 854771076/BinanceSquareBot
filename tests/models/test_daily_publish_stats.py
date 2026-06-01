@@ -24,9 +24,9 @@ def test_api_key_masking():
     assert masked.endswith("mnop")
     assert "..." in masked
 
-    # Short keys not masked
+    # Short keys are fully redacted to avoid leaking credentials
     short_key = "abcd"
-    assert DailyPublishStatsModel.mask_key(short_key) == short_key
+    assert DailyPublishStatsModel.mask_key(short_key) == "***"
 
 def test_model_persistence():
     """Test model can be saved and queried by api_key_hash."""
