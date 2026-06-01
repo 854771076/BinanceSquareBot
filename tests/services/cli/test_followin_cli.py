@@ -1,150 +1,372 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
+
 from binance_square_bot.services.cli.followin_cli import FollowinCliService
-from binance_square_bot.services.source.followin_source import FollowinTopic, FollowinToken
+from binance_square_bot.services.generation.models import TweetSourceItem
+from binance_square_bot.services.source.followin_source import (
+    FollowinToken,
+    FollowinTopic,
+)
 
 
-class TestFollowinCliServiceInit:
-    """Test FollowinCliService initialization."""
-
-    def test_followin_cli_service_init(self):
-        """Test FollowinCliService can be initialized."""
-        service = FollowinCliService(dry_run=True)
-        assert service.dry_run is True
-
-    def test_followin_cli_service_init_with_limit(self):
-        """Test FollowinCliService can be initialized with a limit."""
-        service = FollowinCliService(dry_run=False, limit=5)
-        assert service.dry_run is False
-        assert service.limit == 5
+class DummySourceConfig:
+    daily_max_executions = 30
 
 
-class TestFollowinCliServiceDeduplication:
-    """Test deduplication filtering in FollowinCliService._publish_items."""
+class DummySource:
+    def __init__(self) -> None:
+        self.config = DummySourceConfig()
+        self.fetch = MagicMock(return_value=[])
+        self.fetch_trending_topics = MagicMock(return_value=[])
+        self.fetch_io_flow_tokens = MagicMock(return_value=[])
+        self.fetch_discussion_tokens = MagicMock(return_value=[])
+        self.generate = MagicMock(
+            side_effect=AssertionError("source.generate must not be called")
+        )
+        self._generate_single_tweet = MagicMock(
+            side_effect=AssertionError("_generate_single_tweet must not be called")
+        )
 
-    def test_publish_items_filters_published_topics(self):
-        """Test that already published topics are filtered out."""
-        service = FollowinCliService(dry_run=True)
 
-        # Mock storage.is_content_published_today to return True for item 1
-        def mock_is_published(source_name, content_type, content_id):
-            return content_id == "1"  # item with id=1 is already published
+class DummyTargetConfig:
+    api_keys = ["api-key-1", "api-key-2"]
+    daily_max_posts_per_key = 5
 
-        service.storage.is_content_published_today = mock_is_published
 
-        # Create test items (FollowinTopic)
-        items = [
-            FollowinTopic(id=1, title="Topic 1", summary="Summary 1", url="https://test1.com"),
-            FollowinTopic(id=2, title="Topic 2", summary="Summary 2", url="https://test2.com"),
-            FollowinTopic(id=3, title="Topic 3", summary="Summary 3", url="https://test3.com"),
-        ]
+class DummyTarget:
+    def __init__(self) -> None:
+        self.config = DummyTargetConfig()
+        self.filter = MagicMock()
+        self.publish = MagicMock(
+            side_effect=AssertionError("target.publish must not be called directly")
+        )
 
-        # Mock source.generate
-        service.source.generate = MagicMock(return_value=["tweet1", "tweet2"])
 
-        result = service._publish_items(items, "FollowinSourceTopics", "Trending Topics")
+class DummyStorage:
+    def __init__(self) -> None:
+        self.can_execute_source = MagicMock(return_value=True)
+        self.is_content_published_today = MagicMock(return_value=False)
+        self.increment_daily_execution = MagicMock()
+        self.can_publish_key = MagicMock(return_value=True)
+        self.mark_content_published = MagicMock()
+        self.increment_daily_publish_count = MagicMock()
 
-        # Should have filtered out 1 item, leaving 2
-        assert result["items_fetched"] == 2
 
-    def test_publish_items_filters_published_io_flow_tokens(self):
-        """Test that already published IO flow tokens are filtered out."""
-        service = FollowinCliService(dry_run=True)
+class PublisherFactory:
+    def __init__(self, stats: dict[str, Any] | None = None) -> None:
+        self.instance = MagicMock()
+        self.instance.publish_items.return_value = stats or {
+            "generated_success": 0,
+            "generated_failed": 0,
+            "published_success": 0,
+            "published_failed": 0,
+            "dry_run": False,
+        }
 
-        # Mock storage.is_content_published_today to return True for item 101
-        def mock_is_published(source_name, content_type, content_id):
-            return content_id == "101"
+    def __call__(self) -> MagicMock:
+        return self.instance
 
-        service.storage.is_content_published_today = mock_is_published
 
-        # Create test items (FollowinToken)
-        items = [
-            FollowinToken(id=101, name="Token 1", symbol="TKN1", summary="Summary 1", category="io_flow"),
-            FollowinToken(id=102, name="Token 2", symbol="TKN2", summary="Summary 2", category="io_flow"),
-        ]
+def make_service(
+    *,
+    dry_run: bool = True,
+    limit: int | None = 10,
+    publisher_stats: dict[str, Any] | None = None,
+) -> tuple[FollowinCliService, DummySource, DummyTarget, DummyStorage, MagicMock]:
+    source = DummySource()
+    target = DummyTarget()
+    storage = DummyStorage()
+    if publisher_stats is None:
+        publisher_stats = {
+            "generated_success": 0,
+            "generated_failed": 0,
+            "published_success": 0,
+            "published_failed": 0,
+            "dry_run": dry_run,
+        }
+    publisher_factory = PublisherFactory(publisher_stats)
 
-        service.source.generate = MagicMock(return_value=["tweet1"])
+    with (
+        patch(
+            "binance_square_bot.services.cli.followin_cli.StorageService",
+            return_value=storage,
+        ),
+        patch(
+            "binance_square_bot.services.cli.followin_cli.FollowinSource",
+            return_value=source,
+        ),
+        patch(
+            "binance_square_bot.services.cli.followin_cli.BinanceTarget",
+            return_value=target,
+        ),
+        patch(
+            "binance_square_bot.services.cli.followin_cli.AccountItemPublisher",
+            new=publisher_factory,
+            create=True,
+        ),
+    ):
+        service = FollowinCliService(dry_run=dry_run, limit=limit)
 
-        result = service._publish_items(items, "FollowinSourceIOFlow", "IO Flow Tokens")
+    return service, source, target, storage, publisher_factory.instance
 
-        # Should have filtered out 1 item, leaving 1
-        assert result["items_fetched"] == 1
 
-    def test_publish_items_filters_published_discussion_tokens(self):
-        """Test that already published discussion tokens are filtered out."""
-        service = FollowinCliService(dry_run=True)
+def test_followin_cli_service_init() -> None:
+    service, _, _, _, _ = make_service(dry_run=True, limit=5)
 
-        # Mock storage.is_content_published_today to return True for items 201 and 202
-        def mock_is_published(source_name, content_type, content_id):
-            return content_id in ["201", "202"]
+    assert service.dry_run is True
+    assert service.limit == 5
 
-        service.storage.is_content_published_today = mock_is_published
 
-        # Create test items (FollowinToken)
-        items = [
-            FollowinToken(id=201, name="Token A", symbol="TKNA", summary="Summary A", category="discussion"),
-            FollowinToken(id=202, name="Token B", symbol="TKNB", summary="Summary B", category="discussion"),
-            FollowinToken(id=203, name="Token C", symbol="TKNC", summary="Summary C", category="discussion"),
-        ]
+def test_publish_items_uses_publisher_and_maps_topic_content_type() -> None:
+    publisher_stats = {
+        "generated_success": 2,
+        "published_success": 1,
+        "dry_run": False,
+    }
+    service, source, target, storage, publisher = make_service(
+        dry_run=False,
+        limit=10,
+        publisher_stats=publisher_stats,
+    )
+    topic = FollowinTopic(
+        id=1,
+        title="Topic 1",
+        summary="Summary 1",
+        url="https://followin.io/topic/1",
+    )
 
-        service.source.generate = MagicMock(return_value=["tweet1"])
+    result = service._publish_items([topic], "FollowinSourceTopics", "Trending Topics")
 
-        result = service._publish_items(items, "FollowinSourceDiscussion", "Discussion Tokens")
+    source.generate.assert_not_called()
+    source._generate_single_tweet.assert_not_called()
+    target.publish.assert_not_called()
+    publisher.publish_items.assert_called_once()
+    items, publish_target, api_keys, publish_storage = (
+        publisher.publish_items.call_args.args
+    )
+    assert publish_target is target
+    assert api_keys == target.config.api_keys
+    assert publish_storage is storage
+    assert publisher.publish_items.call_args.kwargs == {"dry_run": False}
+    assert items == [
+        TweetSourceItem(
+            source_name="FollowinSource",
+            content_type="topics",
+            identifier="1",
+            title="Topic 1",
+            summary="Summary 1",
+            url="https://followin.io/topic/1",
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    assert result["dry_run"] is False
+    assert result["generated_success"] == 2
+    assert result["published_success"] == 1
+    storage.increment_daily_execution.assert_called_once_with("FollowinSourceTopics")
 
-        # Should have filtered out 2 items, leaving 1
-        assert result["items_fetched"] == 1
 
-    def test_publish_items_filter_before_limit(self):
-        """Test that filtering happens before limit is applied."""
-        service = FollowinCliService(dry_run=True, limit=2)
+def test_io_flow_and_discussion_token_content_types_are_preserved() -> None:
+    service, _, _, storage, publisher = make_service(dry_run=False, limit=10)
+    io_flow_token = FollowinToken(
+        id=101,
+        name="IO Token",
+        symbol="IO",
+        summary="IO summary",
+        token_quote={"price": 1.23},
+        category="io_flow",
+    )
+    discussion_token = FollowinToken(
+        id=201,
+        name="Discussion Token",
+        symbol="DISC",
+        summary="Discussion summary",
+        category="discussion",
+    )
 
-        # Published items: ids 1 and 2 (2 items)
-        # Unpublished items: ids 3, 4, 5 (3 items)
-        # After filtering: 3 items remain
-        # After limit: 2 items remain
-        def mock_is_published(source_name, content_type, content_id):
-            return content_id in ["1", "2"]
+    io_result = service._publish_items(
+        [io_flow_token], "FollowinSourceIOFlow", "IO Flow Tokens"
+    )
+    discussion_result = service._publish_items(
+        [discussion_token], "FollowinSourceDiscussion", "Discussion Tokens"
+    )
 
-        service.storage.is_content_published_today = mock_is_published
+    io_items = publisher.publish_items.call_args_list[0].args[0]
+    discussion_items = publisher.publish_items.call_args_list[1].args[0]
+    assert io_items == [
+        TweetSourceItem(
+            source_name="FollowinSource",
+            content_type="io_flow",
+            identifier="101",
+            title="IO Token ($IO)",
+            summary="IO summary",
+            metadata={
+                "name": "IO Token",
+                "symbol": "IO",
+                "category": "io_flow",
+                "token_quote": {"price": 1.23},
+            },
+        )
+    ]
+    assert discussion_items == [
+        TweetSourceItem(
+            source_name="FollowinSource",
+            content_type="discussion",
+            identifier="201",
+            title="Discussion Token ($DISC)",
+            summary="Discussion summary",
+            metadata={
+                "name": "Discussion Token",
+                "symbol": "DISC",
+                "category": "discussion",
+                "token_quote": None,
+            },
+        )
+    ]
+    assert io_result["items_generated"] == io_items
+    assert discussion_result["items_generated"] == discussion_items
+    storage.increment_daily_execution.assert_any_call("FollowinSourceIOFlow")
+    storage.increment_daily_execution.assert_any_call("FollowinSourceDiscussion")
 
-        items = [
-            FollowinTopic(id=1, title="Topic 1", summary="Summary 1", url="https://test1.com"),
-            FollowinTopic(id=2, title="Topic 2", summary="Summary 2", url="https://test2.com"),
-            FollowinTopic(id=3, title="Topic 3", summary="Summary 3", url="https://test3.com"),
-            FollowinTopic(id=4, title="Topic 4", summary="Summary 4", url="https://test4.com"),
-            FollowinTopic(id=5, title="Topic 5", summary="Summary 5", url="https://test5.com"),
-        ]
 
-        service.source.generate = MagicMock(return_value=["tweet1", "tweet2"])
+def test_publish_items_filters_before_limit() -> None:
+    service, _, _, storage, publisher = make_service(dry_run=True, limit=2)
+    items = [
+        FollowinTopic(id=1, title="Published 1", summary="Summary 1", url="https://test/1"),
+        FollowinTopic(id=2, title="Published 2", summary="Summary 2", url="https://test/2"),
+        FollowinTopic(id=3, title="Fresh 3", summary="Summary 3", url="https://test/3"),
+        FollowinTopic(id=4, title="Fresh 4", summary="Summary 4", url="https://test/4"),
+        FollowinTopic(id=5, title="Fresh 5", summary="Summary 5", url="https://test/5"),
+    ]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier in {"1", "2"}
+    )
 
-        result = service._publish_items(items, "FollowinSourceTopics", "Trending Topics")
+    result = service._publish_items(items, "FollowinSourceTopics", "Trending Topics")
 
-        # 5 total - 2 filtered = 3 remaining, then limited to 2
-        assert result["items_fetched"] == 2
+    publisher_items = publisher.publish_items.call_args.args[0]
+    assert [item.identifier for item in publisher_items] == ["3", "4"]
+    assert result["items_fetched"] == 2
+    assert result["items_generated"] == publisher_items
+    storage.is_content_published_today.assert_any_call("FollowinSource", "topics", "1")
+    storage.is_content_published_today.assert_any_call("FollowinSource", "topics", "5")
 
-    def test_publish_items_no_items(self):
-        """Test _publish_items with empty items list."""
-        service = FollowinCliService(dry_run=True)
 
-        result = service._publish_items([], "FollowinSourceTopics", "Trending Topics")
+def test_execute_full_workflow_uses_followin_source_storage_key() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=1)
+    old_topic = FollowinTopic(
+        id=1,
+        title="Old topic",
+        summary="Old summary",
+        url="https://test/old",
+    )
+    fresh_topic = FollowinTopic(
+        id=2,
+        title="Fresh topic",
+        summary="Fresh summary",
+        url="https://test/fresh",
+    )
+    source.fetch.return_value = [old_topic, fresh_topic]
+    storage.is_content_published_today.side_effect = (
+        lambda source_name, content_type, identifier: identifier == "1"
+    )
 
-        assert result["items_fetched"] == 0
+    result = service.execute()
 
-    def test_publish_items_all_filtered_out(self):
-        """Test when all items are filtered out."""
-        service = FollowinCliService(dry_run=True)
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_called_once()
+    items = publisher.publish_items.call_args.args[0]
+    assert items == [
+        TweetSourceItem(
+            source_name="FollowinSource",
+            content_type="unknown",
+            identifier="2",
+            title="Fresh topic",
+            summary="Fresh summary",
+            url="https://test/fresh",
+        )
+    ]
+    assert result["items_fetched"] == 1
+    assert result["items_generated"] == items
+    storage.can_execute_source.assert_called_once_with("FollowinSource", 30)
+    storage.increment_daily_execution.assert_called_once_with("FollowinSource")
 
-        # All items are already published
-        def mock_is_published(source_name, content_type, content_id):
-            return True
 
-        service.storage.is_content_published_today = mock_is_published
+def test_execute_topics_fetches_and_publishes_topics() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=False, limit=10)
+    topic = FollowinTopic(
+        id=1,
+        title="Topic",
+        summary="Summary",
+        url="https://test/topic",
+    )
+    source.fetch_trending_topics.return_value = [topic]
 
-        items = [
-            FollowinTopic(id=1, title="Topic 1", summary="Summary 1", url="https://test1.com"),
-            FollowinTopic(id=2, title="Topic 2", summary="Summary 2", url="https://test2.com"),
-        ]
+    result = service.execute_topics()
 
-        result = service._publish_items(items, "FollowinSourceTopics", "Trending Topics")
+    publisher.publish_items.assert_called_once()
+    assert publisher.publish_items.call_args.args[0][0].content_type == "topics"
+    assert result["items_fetched"] == 1
+    storage.can_execute_source.assert_called_once_with("FollowinSourceTopics", 30)
+    storage.increment_daily_execution.assert_called_once_with("FollowinSourceTopics")
 
-        # All items filtered out, returns 0 fetched
-        assert result["items_fetched"] == 0
+
+def test_dry_run_passes_dry_run_true_without_execution_increment() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    topic = FollowinTopic(
+        id=1,
+        title="Dry topic",
+        summary="Dry summary",
+        url="https://test/dry",
+    )
+    source.fetch_trending_topics.return_value = [topic]
+
+    result = service.execute_topics()
+
+    publisher.publish_items.assert_called_once()
+    assert publisher.publish_items.call_args.args[2] == target.config.api_keys
+    assert publisher.publish_items.call_args.kwargs == {"dry_run": True}
+    assert result["dry_run"] is True
+    storage.increment_daily_execution.assert_not_called()
+
+
+def test_no_api_keys_non_dry_returns_without_publisher_or_increment() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=False, limit=10)
+    target.config.api_keys = []
+    topic = FollowinTopic(
+        id=1,
+        title="No key topic",
+        summary="No key summary",
+        url="https://test/no-key",
+    )
+    source.fetch_trending_topics.return_value = [topic]
+
+    result = service.execute_topics()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result == {
+        "items_fetched": 1,
+        "items_generated": [
+            TweetSourceItem(
+                source_name="FollowinSource",
+                content_type="topics",
+                identifier="1",
+                title="No key topic",
+                summary="No key summary",
+                url="https://test/no-key",
+            )
+        ],
+        "dry_run": False,
+    }
+
+
+def test_publish_items_no_items_returns_empty_stats_without_publisher() -> None:
+    service, _, _, storage, publisher = make_service(dry_run=True)
+
+    result = service._publish_items([], "FollowinSourceTopics", "Trending Topics")
+
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result == {"items_fetched": 0, "items_generated": [], "dry_run": True}
