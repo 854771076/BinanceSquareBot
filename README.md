@@ -9,7 +9,7 @@
 - ✅ **AI 智能生成** - 使用 DeepAgents 和仓库内 `agent_skills/` 技能生成推文，支持格式校验失败自动重试
 - ✅ **强制格式约束** - 字符数、话题标签 `#`、代币标签 `$` 按配置校验，符合币安广场规范
 - ✅ **定时自动运行** - GitHub Actions 每小时自动执行
-- ✅ **完整单元测试** - 所有模块覆盖单元测试，类型安全有保证
+- ✅ **测试与质量检查** - 核心模块有 pytest 覆盖，项目配置包含 ruff 和 mypy
 - ✅ **Polymarket 投资研报** - 自动获取 Polymarket 最新市场，筛选热门新市场和概率偏离机会，AI 生成投资研报并发布
 - ✅ **Followin 热点/币种分析** - 自动获取 Followin 热门话题、资金异动币种、讨论最热币种，AI 生成观点型推文
 - ✅ **限流发布** - 每个 API 密钥每日发布上限可配，`parallel` 可限制每轮进入发布阶段的内容项数量
@@ -168,12 +168,9 @@ BinanceSquareBot/
 │       ├── __init__.py          # 版本信息
 │       ├── cli.py               # CLI入口 (Typer)
 │       ├── config.py            # 配置加载 (pydantic-settings)
-│       ├── models/
-│       │   ├── article.py       # Article数据模型
-│       │   └── tweet.py         # Tweet数据模型
+│       ├── models/              # SQLAlchemy 持久化模型
 │       └── services/
 │           ├── storage.py       # SQLite存储去重和发布统计
-│           ├── spider.py        # ForesightNews爬虫
 │           ├── account_item_publisher.py # 按内容项和账号生成/发布
 │           ├── concurrent_executor.py    # 并行执行编排器（源并行 + 内容项发布）
 │           ├── cli/                      # CLI服务
@@ -187,11 +184,11 @@ BinanceSquareBot/
 │               └── binance_target.py     # 币安广场目标
 ├── agent_skills/                # DeepAgents 写作技能（按来源/内容类型选择）
 ├── tests/
-│   ├── test_storage.py          # 存储服务测试
-│   ├── test_generator.py        # 格式校验测试
-│   ├── test_publisher.py        # 发布服务测试
-│   ├── test_spider.py           # 爬虫测试
-│   └── live_test_spider.py      # 爬虫真实API测试
+│   ├── common/                  # 通用工具测试
+│   ├── models/                  # 持久化模型测试
+│   ├── services/                # 生成、数据源、发布和编排测试
+│   ├── test_cli.py              # CLI 测试
+│   └── test_config.py           # 配置测试
 ├── .github/
 │   └── workflows/
 │       └── run-bot.yml          # GitHub Actions定时任务
@@ -207,9 +204,6 @@ python -m pytest tests/ -v
 
 # 运行类型检查
 mypy src/
-
-# 爬虫真实API测试
-python -m tests.live_test_spider
 ```
 
 ## 🔧 技术栈
