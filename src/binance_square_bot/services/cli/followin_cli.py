@@ -37,22 +37,9 @@ class FollowinCliService:
         """
         logger.info("Starting Followin workflow")
 
-        # Check execution limit
-        storage_key = "FollowinSource"
-        if not self.storage.can_execute_source(
-            storage_key, self.source.config.daily_max_executions
-        ):
-            console.print(
-                "[yellow]⚠️ Daily execution limit reached for FollowinSource[/yellow]"
-            )
-            return {**self._empty_stats(), "error": "daily limit reached"}
-
-        # Fetch items
-        console.print("[blue]Fetching Followin data...[/blue]")
-        items = self.source.fetch()
-        console.print(f"✓ Fetched {len(items)} items (topics + tokens)")
-
-        result = self._publish_items(items, storage_key, "Followin")
+        result = self._collect_and_publish(
+            "FollowinSource", "Followin", self.source.fetch
+        )
         self._print_summary(result, "Followin")
         logger.info(f"Followin workflow complete: {result}")
         return result
@@ -61,20 +48,11 @@ class FollowinCliService:
         """Execute trending topics workflow."""
         logger.info("Starting Followin trending topics workflow")
 
-        storage_key = "FollowinSourceTopics"
-        if not self.storage.can_execute_source(
-            storage_key, self.source.config.daily_max_executions
-        ):
-            console.print(
-                "[yellow]⚠️ Daily limit reached for Followin trending topics[/yellow]"
-            )
-            return {**self._empty_stats(), "error": "daily limit reached"}
-
-        console.print("[blue]Fetching Followin trending topics...[/blue]")
-        items = self.source.fetch_trending_topics()
-        console.print(f"✓ Fetched {len(items)} trending topics")
-
-        result = self._publish_items(items, storage_key, "Trending Topics")
+        result = self._collect_and_publish(
+            "FollowinSourceTopics",
+            "Trending Topics",
+            self.source.fetch_trending_topics,
+        )
         self._print_summary(result, "Trending Topics")
         logger.info(f"Followin trending topics workflow complete: {result}")
         return result
@@ -83,18 +61,11 @@ class FollowinCliService:
         """Execute IO flow tokens workflow."""
         logger.info("Starting Followin IO flow tokens workflow")
 
-        storage_key = "FollowinSourceIOFlow"
-        if not self.storage.can_execute_source(
-            storage_key, self.source.config.daily_max_executions
-        ):
-            console.print("[yellow]⚠️ Daily limit reached for Followin IO flow[/yellow]")
-            return {**self._empty_stats(), "error": "daily limit reached"}
-
-        console.print("[blue]Fetching Followin IO flow tokens...[/blue]")
-        items = self.source.fetch_io_flow_tokens()
-        console.print(f"✓ Fetched {len(items)} IO flow tokens")
-
-        result = self._publish_items(items, storage_key, "IO Flow Tokens")
+        result = self._collect_and_publish(
+            "FollowinSourceIOFlow",
+            "IO Flow Tokens",
+            self.source.fetch_io_flow_tokens,
+        )
         self._print_summary(result, "IO Flow Tokens")
         logger.info(f"Followin IO flow workflow complete: {result}")
         return result
@@ -103,20 +74,11 @@ class FollowinCliService:
         """Execute discussion tokens workflow."""
         logger.info("Starting Followin discussion tokens workflow")
 
-        storage_key = "FollowinSourceDiscussion"
-        if not self.storage.can_execute_source(
-            storage_key, self.source.config.daily_max_executions
-        ):
-            console.print(
-                "[yellow]⚠️ Daily limit reached for Followin discussion[/yellow]"
-            )
-            return {**self._empty_stats(), "error": "daily limit reached"}
-
-        console.print("[blue]Fetching Followin discussion tokens...[/blue]")
-        items = self.source.fetch_discussion_tokens()
-        console.print(f"✓ Fetched {len(items)} discussion tokens")
-
-        result = self._publish_items(items, storage_key, "Discussion Tokens")
+        result = self._collect_and_publish(
+            "FollowinSourceDiscussion",
+            "Discussion Tokens",
+            self.source.fetch_discussion_tokens,
+        )
         self._print_summary(result, "Discussion Tokens")
         logger.info(f"Followin discussion workflow complete: {result}")
         return result
@@ -135,6 +97,57 @@ class FollowinCliService:
             "dry_run": self.dry_run,
         }
 
+    def collect_items(self, workflow_name: str = "execute") -> dict[str, Any]:
+        """Collect mapped source items for parallel orchestration without publishing."""
+        workflows = {
+            "execute": ("FollowinSource", "Followin", self.source.fetch),
+            "execute_topics": (
+                "FollowinSourceTopics",
+                "Trending Topics",
+                self.source.fetch_trending_topics,
+            ),
+            "execute_io_flow": (
+                "FollowinSourceIOFlow",
+                "IO Flow Tokens",
+                self.source.fetch_io_flow_tokens,
+            ),
+            "execute_discussion": (
+                "FollowinSourceDiscussion",
+                "Discussion Tokens",
+                self.source.fetch_discussion_tokens,
+            ),
+        }
+        storage_key, category_name, fetch_items = workflows[workflow_name]
+        return self._collect_items(storage_key, category_name, fetch_items)
+
+    def _collect_and_publish(
+        self,
+        storage_key: str,
+        category_name: str,
+        fetch_items: Any,
+    ) -> dict[str, Any]:
+        stats = self._collect_items(storage_key, category_name, fetch_items)
+        return self._publish_mapped_items(
+            stats["items_generated"], storage_key, category_name, stats
+        )
+
+    def _collect_items(
+        self,
+        storage_key: str,
+        category_name: str,
+        fetch_items: Any,
+    ) -> dict[str, Any]:
+        if not self.storage.can_execute_source(
+            storage_key, self.source.config.daily_max_executions
+        ):
+            console.print(f"[yellow]⚠️ Daily limit reached for {category_name}[/yellow]")
+            return {**self._empty_stats(), "error": "daily limit reached"}
+
+        console.print(f"[blue]Fetching Followin {category_name}...[/blue]")
+        items = fetch_items()
+        console.print(f"✓ Fetched {len(items)} {category_name}")
+        return self._map_items(items, storage_key)
+
     def _publish_items(
         self,
         items: list[Any],
@@ -142,11 +155,16 @@ class FollowinCliService:
         category_name: str,
     ) -> dict[str, Any]:
         """Map Followin items and publish them through the account item publisher."""
+        stats = self._map_items(items, storage_key)
+        return self._publish_mapped_items(
+            stats["items_generated"], storage_key, category_name, stats
+        )
+
+    def _map_items(self, items: list[Any], storage_key: str) -> dict[str, Any]:
         if not items:
             console.print("[yellow]No items found[/yellow]")
             return self._empty_stats()
 
-        # Filter out already published items (BEFORE limit application)
         filtered_items = [
             item
             for item in items
@@ -168,7 +186,18 @@ class FollowinCliService:
             self._map_item(item, self._content_type_for_item(storage_key, item))
             for item in filtered_items
         ]
-        stats = self._base_stats(mapped_items)
+        return self._base_stats(mapped_items)
+
+    def _publish_mapped_items(
+        self,
+        mapped_items: list[TweetSourceItem],
+        storage_key: str,
+        category_name: str,
+        stats: dict[str, Any],
+    ) -> dict[str, Any]:
+        if not mapped_items:
+            return stats
+
         api_keys = self.target.config.api_keys
         if not self.dry_run and not api_keys:
             logger.warning("No Binance API keys configured; skipping publish")

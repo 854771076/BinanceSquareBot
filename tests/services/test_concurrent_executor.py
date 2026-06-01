@@ -148,6 +148,45 @@ class TestSourceOrchestrator:
         assert len(selected) == original_count
         assert selected == all_tweets
 
+    def test_run_sources_uses_collect_items_without_source_publish(self) -> None:
+        """Parallel source phase collects items without publish-capable execute."""
+        item = make_item("source-item")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+
+        service = Mock()
+        service.execute.side_effect = AssertionError("source phase must not publish")
+        service.collect_items.return_value = {"items_generated": [item]}
+        service_cls = Mock(return_value=service)
+
+        with (
+            patch.object(
+                orchestrator, "_get_service_for_source", return_value=service_cls
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.return_value = {
+                "published_success": 1
+            }
+            orchestrator.run_sources(
+                source_configs=[{"source": type("FnSource", (), {})()}],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                dry_run=False,
+            )
+
+        service.collect_items.assert_called_once_with("execute")
+        service.execute.assert_not_called()
+        publisher_cls.return_value.publish_to_targets.assert_called_once()
+        published_items = (
+            publisher_cls.return_value.publish_to_targets.call_args.kwargs["tweets"]
+        )
+        assert published_items == [item]
+
     def test_total_per_run_limits_content_items_before_account_publishing(self) -> None:
         """total_per_run limits selected content items, not item/account pairs."""
         item_1 = make_item("item-1")
@@ -159,7 +198,7 @@ class TestSourceOrchestrator:
         storage.can_publish_key.return_value = True
 
         service_cls = Mock()
-        service_cls.return_value.execute.return_value = {
+        service_cls.return_value.collect_items.return_value = {
             "items_generated": [item_1, item_2, item_3]
         }
 

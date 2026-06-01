@@ -576,8 +576,7 @@ class SourceOrchestrator:
                     source_name = src.__class__.__name__
                     service_cls = self._get_service_for_source(source_name)
                     service = service_cls(dry_run=dry_run, limit=lim)
-                    exec_method = getattr(service, exec_fn)
-                    result = exec_method()
+                    result = service.collect_items(exec_fn)
                     if isinstance(result, dict):
                         return result
                     return {"result": result}

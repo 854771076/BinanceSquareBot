@@ -21,8 +21,9 @@ console = Console()
 class PolymarketCliService:
     """CLI business logic for Polymarket research workflow."""
 
-    def __init__(self, dry_run: bool = False) -> None:
+    def __init__(self, dry_run: bool = False, limit: int | None = None) -> None:
         self.dry_run = dry_run
+        self.limit = limit
         self.storage = StorageService()
         self.source = PolymarketSource()  # type: ignore[no-untyped-call]
         self.target = BinanceTarget()  # type: ignore[no-untyped-call]
@@ -41,23 +42,8 @@ class PolymarketCliService:
             )
             return {**self._empty_stats(), "error": "daily limit reached"}
 
-        # Fetch markets
-        console.print("[blue]🔍 Fetching Polymarket markets...[/blue]")
-        markets = self.source.fetch()
-        console.print(f"✓ Fetched {len(markets)} markets")
-
-        candidates = self._candidate_markets(markets)
-        unpublished_candidates = [
-            market
-            for market in candidates
-            if not self.storage.is_content_published_today(
-                "PolymarketSource",
-                "polymarket_research",
-                market.condition_id,
-            )
-        ]
-        items = [polymarket_to_item(market) for market in unpublished_candidates]
-        stats = self._base_stats(len(markets), items)
+        stats = self.collect_items()
+        items = stats["items_generated"]
 
         if not items:
             console.print("[yellow]No suitable markets found for research[/yellow]")
@@ -93,6 +79,28 @@ class PolymarketCliService:
 
         logger.info(f"Polymarket research workflow complete: {stats}")
         return stats
+
+    def collect_items(self, workflow_name: str = "execute") -> dict[str, Any]:
+        """Collect mapped source items for parallel orchestration without publishing."""
+        if workflow_name != "execute":
+            raise AttributeError(f"Unknown Polymarket workflow: {workflow_name}")
+
+        console.print("[blue]🔍 Fetching Polymarket markets...[/blue]")
+        markets = self.source.fetch()
+        console.print(f"✓ Fetched {len(markets)} markets")
+
+        candidates = self._candidate_markets(markets)
+        unpublished_candidates = [
+            market
+            for market in candidates
+            if not self.storage.is_content_published_today(
+                "PolymarketSource",
+                "polymarket_research",
+                market.condition_id,
+            )
+        ]
+        items = [polymarket_to_item(market) for market in unpublished_candidates]
+        return self._base_stats(len(markets), items)
 
     def _candidate_markets(
         self, markets: list[PolymarketMarket]
