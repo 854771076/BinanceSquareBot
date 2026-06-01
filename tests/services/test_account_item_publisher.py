@@ -57,20 +57,33 @@ class FakeTarget:
     class Config:
         daily_max_posts_per_key: int = 3
 
-    def __init__(self, failures=None):
+    def __init__(
+        self,
+        failures=None,
+        failure_messages=None,
+        filter_exceptions=None,
+        publish_exceptions=None,
+    ):
         self.config = self.Config()
         self.failures = set(failures or [])
+        self.failure_messages = failure_messages or {}
+        self.filter_exceptions = filter_exceptions or {}
+        self.publish_exceptions = publish_exceptions or {}
         self.filter_calls = []
         self.publish_calls = []
 
     def filter(self, tweet):
         self.filter_calls.append(tweet)
+        if tweet in self.filter_exceptions:
+            raise ValueError(self.filter_exceptions[tweet])
         return f"filtered:{tweet}"
 
     def publish(self, tweet, api_key):
         self.publish_calls.append((tweet, api_key))
+        if (tweet, api_key) in self.publish_exceptions:
+            raise RuntimeError(self.publish_exceptions[(tweet, api_key)])
         if (tweet, api_key) in self.failures or api_key in self.failures:
-            return False, "publish failed"
+            return False, self.failure_messages.get((tweet, api_key), "publish failed")
         return True, ""
 
 
@@ -283,4 +296,115 @@ def test_generation_failure_output_does_not_leak_full_api_key(capsys):
     output = capsys.readouterr().out
     assert stats["generated_failed"] == 1
     assert mask_api_key(api_key) in output
+    assert api_key not in output
+
+
+def test_publish_failure_output_does_not_leak_full_api_key(capsys):
+    item = make_item("publish-secret-failure")
+    api_key = "FULL_SECRET_API_KEY_9999"
+    generator = FakeGenerator()
+    target = FakeTarget(
+        failures={api_key},
+        failure_messages={
+            ("filtered:tweet-publish-secret-failure-1", api_key): (
+                f"publisher rejected {api_key}"
+            ),
+        },
+    )
+    storage = FakeStorage()
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items([item], target, [api_key], storage)
+
+    output = capsys.readouterr().out
+    assert stats["published_failed"] == 1
+    assert mask_api_key(api_key) in output
+    assert api_key not in output
+
+
+def test_filter_exception_increments_publish_failed_continues_and_masks_key(capsys):
+    item = make_item("filter-exception")
+    api_keys = ["FULL_SECRET_API_KEY_9999", "SECOND_SECRET_API_KEY_8888"]
+    generator = FakeGenerator()
+    target = FakeTarget(
+        filter_exceptions={
+            "tweet-filter-exception-1": f"filter rejected {api_keys[0]}",
+        },
+    )
+    storage = FakeStorage()
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items([item], target, api_keys, storage)
+
+    output = capsys.readouterr().out
+    assert stats["generated_success"] == 2
+    assert stats["published_success"] == 1
+    assert stats["published_failed"] == 1
+    assert target.publish_calls == [("filtered:tweet-filter-exception-2", api_keys[1])]
+    assert storage.increment_calls == [("FakeTarget", api_keys[1])]
+    assert storage.mark_calls == [
+        {
+            "source_name": "FnSource",
+            "content_type": "news",
+            "content_identifier": "filter-exception",
+        }
+    ]
+    assert mask_api_key(api_keys[0]) in output
+    assert api_keys[0] not in output
+
+
+def test_publish_exception_increments_publish_failed_continues_and_masks_key(capsys):
+    item = make_item("publish-exception")
+    api_keys = ["FULL_SECRET_API_KEY_9999", "SECOND_SECRET_API_KEY_8888"]
+    generator = FakeGenerator()
+    target = FakeTarget(
+        publish_exceptions={
+            ("filtered:tweet-publish-exception-1", api_keys[0]): (
+                f"publish exploded for {api_keys[0]}"
+            ),
+        },
+    )
+    storage = FakeStorage()
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items([item], target, api_keys, storage)
+
+    output = capsys.readouterr().out
+    assert stats["generated_success"] == 2
+    assert stats["published_success"] == 1
+    assert stats["published_failed"] == 1
+    assert target.publish_calls == [
+        ("filtered:tweet-publish-exception-1", api_keys[0]),
+        ("filtered:tweet-publish-exception-2", api_keys[1]),
+    ]
+    assert storage.increment_calls == [("FakeTarget", api_keys[1])]
+    assert storage.mark_calls == [
+        {
+            "source_name": "FnSource",
+            "content_type": "news",
+            "content_identifier": "publish-exception",
+        }
+    ]
+    assert mask_api_key(api_keys[0]) in output
+    assert api_keys[0] not in output
+
+
+def test_dry_run_output_redacts_full_api_key_from_generated_tweet(capsys):
+    item = make_item("dry-run-secret")
+    api_key = "FULL_SECRET_API_KEY_9999"
+    generator = FakeGenerator(
+        outputs={
+            ("dry-run-secret", api_key): f"tweet accidentally includes {api_key}",
+        },
+    )
+    target = FakeTarget()
+    storage = FakeStorage()
+    publisher = AccountItemPublisher(generator=generator, delay_between_publishes=0)
+
+    stats = publisher.publish_items([item], target, [api_key], storage, dry_run=True)
+
+    output = capsys.readouterr().out
+    assert stats["generated_success"] == 1
+    assert mask_api_key(api_key) in output
+    assert "tweet accidentally includes" in output
     assert api_key not in output

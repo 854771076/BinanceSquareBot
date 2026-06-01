@@ -68,11 +68,19 @@ class AccountItemPublisher:
                 stats["generated_success"] += 1
 
                 if dry_run:
-                    print(f"[DRY RUN] API key {api_key_mask}: {tweet}")
+                    safe_tweet = _sanitize_message(tweet, key_masks)
+                    print(f"[DRY RUN] API key {api_key_mask}: {safe_tweet}")
                     continue
 
-                filtered_tweet = target.filter(tweet)
-                success, error = target.publish(filtered_tweet, api_key)
+                try:
+                    filtered_tweet = target.filter(tweet)
+                    success, error = target.publish(filtered_tweet, api_key)
+                except Exception as exc:
+                    stats["published_failed"] += 1
+                    safe_error = _sanitize_message(str(exc), key_masks)
+                    print(f"Publish failed for API key {api_key_mask}: {safe_error}")
+                    continue
+
                 if success:
                     stats["published_success"] += 1
                     storage.increment_daily_publish_count(target_name, api_key)
