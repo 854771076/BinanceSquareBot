@@ -57,3 +57,66 @@ def test_select_skill_path_rejects_unknown_mapping():
 
     with pytest.raises(ValueError, match="No DeepAgents skill"):
         select_skill_path(item)
+
+
+REQUIRED_SKILL_SECTIONS = [
+    "## Role",
+    "## Output contract",
+    "## Source-specific objective",
+    "## Recommended structures",
+    "## Evidence and grounding rules",
+    "## Account differentiation",
+    "## Binance Square style rules",
+    "## Forbidden patterns",
+    "## Final self-check",
+]
+
+REQUIRED_SKILL_GUARDRAILS = [
+    "Output only the final post body",
+    "Do not use emojis",
+    "Do not invent",
+    "hashtag",
+    "token tag",
+    "account",
+    "silently verify",
+]
+
+
+@pytest.mark.parametrize(
+    "skill_directory",
+    [
+        "fn_news",
+        "fn_calendar",
+        "fn_airdrop",
+        "fn_fundraising",
+        "followin_topics",
+        "followin_token",
+        "polymarket_research",
+    ],
+)
+def test_skill_files_use_professional_instruction_structure(skill_directory: str):
+    skill_file = skills_root() / skill_directory / "SKILL.md"
+    content = skill_file.read_text(encoding="utf-8")
+
+    for section in REQUIRED_SKILL_SECTIONS:
+        assert section in content
+
+
+@pytest.mark.parametrize(
+    "skill_directory",
+    [
+        "fn_news",
+        "fn_calendar",
+        "fn_airdrop",
+        "fn_fundraising",
+        "followin_topics",
+        "followin_token",
+        "polymarket_research",
+    ],
+)
+def test_skill_files_include_generation_guardrails(skill_directory: str):
+    skill_file = skills_root() / skill_directory / "SKILL.md"
+    content = skill_file.read_text(encoding="utf-8")
+
+    for guardrail in REQUIRED_SKILL_GUARDRAILS:
+        assert guardrail in content
