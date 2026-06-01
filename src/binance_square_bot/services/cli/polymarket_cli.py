@@ -33,15 +33,6 @@ class PolymarketCliService:
         """Execute the full fetch-generate-publish workflow for Polymarket research."""
         logger.info("Starting Polymarket research workflow")
 
-        # Check execution limit
-        if not self.storage.can_execute_source(
-            "PolymarketSource", self.source.config.daily_max_executions
-        ):
-            console.print(
-                "[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]"
-            )
-            return {**self._empty_stats(), "error": "daily limit reached"}
-
         stats = self.collect_items()
         items = stats["items_generated"]
 
@@ -84,6 +75,14 @@ class PolymarketCliService:
         """Collect mapped source items for parallel orchestration without publishing."""
         if workflow_name != "execute":
             raise AttributeError(f"Unknown Polymarket workflow: {workflow_name}")
+
+        if not self.storage.can_execute_source(
+            "PolymarketSource", self.source.config.daily_max_executions
+        ):
+            console.print(
+                "[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]"
+            )
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]🔍 Fetching Polymarket markets...[/blue]")
         markets = self.source.fetch()

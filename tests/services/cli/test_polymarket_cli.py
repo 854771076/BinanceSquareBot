@@ -257,6 +257,19 @@ def test_execute_daily_limit_reached_returns_items_stats() -> None:
     assert result["items_generated"] == []
 
 
+def test_collect_items_daily_limit_reached_returns_error_empty_items() -> None:
+    service, source, _, storage, _ = make_service(dry_run=False)
+    storage.can_execute_source.return_value = False
+
+    result = service.collect_items()
+
+    storage.can_execute_source.assert_called_once_with("PolymarketSource", 10)
+    source.fetch.assert_not_called()
+    assert result["error"] == "daily limit reached"
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
 def test_execute_no_candidate_markets_returns_empty_items_stats() -> None:
     service, source, _, storage, publisher = make_service(dry_run=True)
     source.fetch.return_value = [

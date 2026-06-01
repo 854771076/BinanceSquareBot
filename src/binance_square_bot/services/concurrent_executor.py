@@ -2,7 +2,7 @@ import random
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from loguru import logger
 from rich.console import Console
@@ -288,12 +288,15 @@ class SourceParallelPublisher:
             publisher = AccountItemPublisher(
                 delay_between_publishes=delay_between_publishes
             )
-            return publisher.publish_items(
-                items=items,
-                target=target,
-                api_keys=api_keys,
-                storage=storage,
-                dry_run=dry_run,
+            return cast(
+                dict[str, Any],
+                publisher.publish_items(
+                    items=items,
+                    target=target,
+                    api_keys=api_keys,
+                    storage=storage,
+                    dry_run=dry_run,
+                ),
             )
 
         return publish_task
@@ -552,6 +555,7 @@ class SourceOrchestrator:
         )
 
         total_stats["publish_results"] = publish_results
+        self._increment_collected_source_executions(source_results, storage, dry_run)
         return total_stats
 
     def _build_source_tasks(
@@ -566,11 +570,18 @@ class SourceOrchestrator:
             source = cfg["source"]
             execute_fn = cfg.get("execute", "execute")
             limit = cfg.get("limit")
+            source_name = source.__class__.__name__
+            task_name = cfg.get("name") or f"{source_name}_{execute_fn}"
+            storage_key = cfg.get("storage_key") or self._storage_key_for_workflow(
+                source_name,
+                execute_fn,
+            )
 
             def create_source_task(
                 src: Any,
                 exec_fn: str,
                 lim: Any,
+                workflow_storage_key: str,
             ) -> Callable[[], dict[str, Any]]:
                 def source_task() -> dict[str, Any]:
                     source_name = src.__class__.__name__
@@ -578,13 +589,16 @@ class SourceOrchestrator:
                     service = service_cls(dry_run=dry_run, limit=lim)
                     result = service.collect_items(exec_fn)
                     if isinstance(result, dict):
+                        result["storage_key"] = workflow_storage_key
                         return result
-                    return {"result": result}
+                    return {"result": result, "storage_key": workflow_storage_key}
 
                 return source_task
 
-            source_tasks.append(create_source_task(source, execute_fn, limit))
-            source_names.append(source.__class__.__name__)
+            source_tasks.append(
+                create_source_task(source, execute_fn, limit, storage_key)
+            )
+            source_names.append(task_name)
 
         return source_tasks, source_names
 
@@ -601,6 +615,48 @@ class SourceOrchestrator:
                 if isinstance(items, list):
                     all_items.extend(items)
         return all_items
+
+    def _increment_collected_source_executions(
+        self,
+        source_results: dict[str, TaskResult],
+        storage: Any,
+        dry_run: bool,
+    ) -> None:
+        if dry_run:
+            return
+
+        incremented_keys: set[str] = set()
+        for result in source_results.values():
+            if not result.success:
+                continue
+            items = result.data.get("items_generated")
+            if items is None:
+                items = result.data.get("tweets_generated", [])
+            if not isinstance(items, list) or not items:
+                continue
+            storage_key = result.data.get("storage_key")
+            if not isinstance(storage_key, str) or storage_key in incremented_keys:
+                continue
+            storage.increment_daily_execution(storage_key)
+            incremented_keys.add(storage_key)
+
+    def _storage_key_for_workflow(self, source_name: str, execute_fn: str) -> str:
+        workflow_storage_keys = {
+            "FnSource": {
+                "execute": "FnSource",
+                "execute_calendar": "FnSourceCalendar",
+                "execute_airdrops": "FnSourceAirdrops",
+                "execute_fundraising": "FnSourceFundraising",
+            },
+            "FollowinSource": {
+                "execute": "FollowinSource",
+                "execute_topics": "FollowinSourceTopics",
+                "execute_io_flow": "FollowinSourceIOFlow",
+                "execute_discussion": "FollowinSourceDiscussion",
+            },
+            "PolymarketSource": {"execute": "PolymarketSource"},
+        }
+        return workflow_storage_keys.get(source_name, {}).get(execute_fn, source_name)
 
     def _get_service_for_source(self, source_name: str) -> Any:
         """Get the CLI service class for a source."""

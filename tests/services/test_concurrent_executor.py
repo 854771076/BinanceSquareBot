@@ -1,5 +1,6 @@
 import random
 from dataclasses import dataclass
+from typing import Any
 from unittest.mock import Mock, patch
 
 from binance_square_bot.services.concurrent_executor import (
@@ -186,6 +187,140 @@ class TestSourceOrchestrator:
             publisher_cls.return_value.publish_to_targets.call_args.kwargs["tweets"]
         )
         assert published_items == [item]
+
+    def test_run_sources_keeps_same_source_class_workflows_separate(self) -> None:
+        """Same-class source configs use unique task names and publish both items."""
+        news_item = make_item("fn-news", content_type="news")
+        calendar_item = make_item("fn-calendar", content_type="calendar")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+
+        service = Mock()
+        service.collect_items.side_effect = [
+            {"items_generated": [news_item]},
+            {"items_generated": [calendar_item]},
+        ]
+        service_cls = Mock(return_value=service)
+
+        with (
+            patch.object(
+                orchestrator, "_get_service_for_source", return_value=service_cls
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.return_value = {
+                "published_success": 2
+            }
+            result = orchestrator.run_sources(
+                source_configs=[
+                    {"source": type("FnSource", (), {})(), "execute": "execute"},
+                    {
+                        "source": type("FnSource", (), {})(),
+                        "execute": "execute_calendar",
+                    },
+                ],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                dry_run=False,
+            )
+
+        assert set(result["source_results"]) == {
+            "FnSource_execute",
+            "FnSource_execute_calendar",
+        }
+        publisher_cls.return_value.publish_to_targets.assert_called_once()
+        published_items = (
+            publisher_cls.return_value.publish_to_targets.call_args.kwargs["tweets"]
+        )
+        assert published_items == [news_item, calendar_item]
+
+    def test_run_sources_increments_collected_workflow_keys_after_publish(
+        self,
+    ) -> None:
+        """Non-dry source accounting increments each collected workflow once."""
+        news_item = make_item("fn-news", content_type="news")
+        calendar_item = make_item("fn-calendar", content_type="calendar")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+        call_order: list[str] = []
+
+        service = Mock()
+        service.collect_items.side_effect = [
+            {"items_generated": [news_item]},
+            {"items_generated": [calendar_item]},
+        ]
+        service_cls = Mock(return_value=service)
+
+        def publish_to_targets(**kwargs: Any) -> dict[str, Any]:
+            call_order.append("publish")
+            return {"published_success": 2}
+
+        def increment_daily_execution(source_name: str) -> None:
+            call_order.append(f"increment:{source_name}")
+
+        storage.increment_daily_execution.side_effect = increment_daily_execution
+
+        with (
+            patch.object(
+                orchestrator, "_get_service_for_source", return_value=service_cls
+            ),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.side_effect = (
+                publish_to_targets
+            )
+            orchestrator.run_sources(
+                source_configs=[
+                    {"source": type("FnSource", (), {})(), "execute": "execute"},
+                    {
+                        "source": type("FnSource", (), {})(),
+                        "execute": "execute_calendar",
+                    },
+                ],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                dry_run=False,
+            )
+
+        assert call_order == [
+            "publish",
+            "increment:FnSource",
+            "increment:FnSourceCalendar",
+        ]
+
+    def test_run_sources_dry_run_does_not_increment_collected_workflow_keys(
+        self,
+    ) -> None:
+        """Dry-run parallel source accounting preserves no-increment semantics."""
+        item = make_item("fn-news", content_type="news")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+
+        service = Mock()
+        service.collect_items.return_value = {"items_generated": [item]}
+        service_cls = Mock(return_value=service)
+
+        with patch.object(
+            orchestrator, "_get_service_for_source", return_value=service_cls
+        ):
+            orchestrator.run_sources(
+                source_configs=[{"source": type("FnSource", (), {})()}],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                dry_run=True,
+            )
+
+        storage.increment_daily_execution.assert_not_called()
 
     def test_total_per_run_limits_content_items_before_account_publishing(self) -> None:
         """total_per_run limits selected content items, not item/account pairs."""
