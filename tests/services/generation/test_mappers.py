@@ -1,3 +1,6 @@
+import os
+import subprocess
+import sys
 from datetime import datetime, timezone
 
 from binance_square_bot.services.generation.mappers import (
@@ -6,6 +9,8 @@ from binance_square_bot.services.generation.mappers import (
     fn_calendar_to_item,
     fn_fundraising_to_item,
     followin_item_to_item,
+    followin_token_to_item,
+    followin_topic_to_item,
     polymarket_to_item,
 )
 from binance_square_bot.services.source.fn_source import (
@@ -16,6 +21,28 @@ from binance_square_bot.services.source.fn_source import (
 )
 from binance_square_bot.services.source.followin_source import FollowinToken, FollowinTopic
 from binance_square_bot.services.source.polymarket_source import PolymarketMarket
+
+
+def test_mapper_import_does_not_auto_register_sources_or_targets():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "src"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            "import binance_square_bot.services.generation.mappers; print('imported')",
+        ],
+        check=False,
+        capture_output=True,
+        cwd=os.getcwd(),
+        env=env,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "imported" in result.stdout
+    assert "Auto-registered" not in result.stderr
 
 
 def test_fn_article_to_item_maps_news_article_fields():
@@ -158,7 +185,7 @@ def test_fn_fundraising_to_item_maps_missing_date_to_none():
     assert item.metadata["date"] is None
 
 
-def test_followin_item_to_item_maps_topic_fields():
+def test_followin_topic_to_item_maps_topic_fields():
     topic = FollowinTopic(
         id=123,
         title="Stablecoin regulation heats up",
@@ -166,7 +193,7 @@ def test_followin_item_to_item_maps_topic_fields():
         url="https://followin.io/zh-Hans/trendingTopic/123",
     )
 
-    item = followin_item_to_item(topic)
+    item = followin_topic_to_item(topic)
 
     assert item.source_name == "FollowinSource"
     assert item.content_type == "topics"
@@ -177,7 +204,22 @@ def test_followin_item_to_item_maps_topic_fields():
     assert item.metadata == {}
 
 
-def test_followin_item_to_item_maps_token_fields():
+def test_followin_item_to_item_dispatches_topic_fields():
+    topic = FollowinTopic(
+        id=123,
+        title="Stablecoin regulation heats up",
+        summary="New policy debates are trending among crypto users.",
+        url="https://followin.io/zh-Hans/trendingTopic/123",
+    )
+
+    item = followin_item_to_item(topic)
+
+    assert item.content_type == "topics"
+    assert item.identifier == "123"
+    assert item.title == topic.title
+
+
+def test_followin_token_to_item_maps_token_fields():
     token_quote = {"price": "12.34", "change_24h": "5%"}
     token = FollowinToken(
         id=456,
@@ -188,7 +230,7 @@ def test_followin_item_to_item_maps_token_fields():
         token_quote=token_quote,
     )
 
-    item = followin_item_to_item(token)
+    item = followin_token_to_item(token)
 
     assert item.source_name == "FollowinSource"
     assert item.content_type == "token"
@@ -202,6 +244,25 @@ def test_followin_item_to_item_maps_token_fields():
         "category": "discussion",
         "token_quote": token_quote,
     }
+
+
+def test_followin_item_to_item_dispatches_token_fields():
+    token_quote = {"price": "12.34", "change_24h": "5%"}
+    token = FollowinToken(
+        id=456,
+        name="Solana",
+        symbol="SOL",
+        summary="SOL discussion volume is rising.",
+        category="discussion",
+        token_quote=token_quote,
+    )
+
+    item = followin_item_to_item(token)
+
+    assert item.content_type == "token"
+    assert item.identifier == "456"
+    assert item.title == "Solana ($SOL)"
+    assert item.metadata["token_quote"] == token_quote
 
 
 def test_polymarket_to_item_maps_market_fields_with_description():

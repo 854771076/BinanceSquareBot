@@ -1,14 +1,19 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from binance_square_bot.services.generation.models import TweetSourceItem
-from binance_square_bot.services.source.fn_source import (
-    AirdropEvent,
-    Article,
-    CalendarEvent,
-    FundraisingEvent,
-)
-from binance_square_bot.services.source.followin_source import FollowinToken, FollowinTopic
-from binance_square_bot.services.source.polymarket_source import PolymarketMarket
+
+if TYPE_CHECKING:
+    from binance_square_bot.services.source.fn_source import (
+        AirdropEvent,
+        Article,
+        CalendarEvent,
+        FundraisingEvent,
+    )
+    from binance_square_bot.services.source.followin_source import FollowinToken, FollowinTopic
+    from binance_square_bot.services.source.polymarket_source import PolymarketMarket
 
 
 def _isoformat(value: datetime | None) -> str | None:
@@ -73,30 +78,37 @@ def fn_fundraising_to_item(event: FundraisingEvent) -> TweetSourceItem:
     )
 
 
-def followin_item_to_item(item: FollowinTopic | FollowinToken) -> TweetSourceItem:
-    if isinstance(item, FollowinTopic):
-        return TweetSourceItem(
-            source_name="FollowinSource",
-            content_type="topics",
-            identifier=str(item.id),
-            title=item.title,
-            summary=item.summary,
-            url=item.url,
-        )
+def followin_topic_to_item(topic: FollowinTopic) -> TweetSourceItem:
+    return TweetSourceItem(
+        source_name="FollowinSource",
+        content_type="topics",
+        identifier=str(topic.id),
+        title=topic.title,
+        summary=topic.summary,
+        url=topic.url,
+    )
 
+
+def followin_token_to_item(token: FollowinToken) -> TweetSourceItem:
     return TweetSourceItem(
         source_name="FollowinSource",
         content_type="token",
-        identifier=str(item.id),
-        title=f"{item.name} (${item.symbol})",
-        summary=item.summary,
+        identifier=str(token.id),
+        title=f"{token.name} (${token.symbol})",
+        summary=token.summary,
         metadata={
-            "name": item.name,
-            "symbol": item.symbol,
-            "category": item.category,
-            "token_quote": item.token_quote,
+            "name": token.name,
+            "symbol": token.symbol,
+            "category": token.category,
+            "token_quote": token.token_quote,
         },
     )
+
+
+def followin_item_to_item(item: FollowinTopic | FollowinToken) -> TweetSourceItem:
+    if hasattr(item, "symbol"):
+        return followin_token_to_item(item)
+    return followin_topic_to_item(item)
 
 
 def polymarket_to_item(market: PolymarketMarket) -> TweetSourceItem:
