@@ -45,8 +45,8 @@ cp .env_example .env
 编辑 `.env` 文件：
 
 ```env
-# 币安API密钥列表 (JSON数组格式，支持多账号)
-BINANCE_API_KEYS=["your-api-key-1", "your-api-key-2"]
+# 币安API密钥列表（逗号分隔，支持多账号）
+BINANCE_TARGET_API_KEYS=your-first-api-key,your-second-api-key
 
 # OpenAI API Key
 LLM_API_KEY=sk-xxx
@@ -91,7 +91,7 @@ binance-square-bot run --limit 5
 binance-square-bot clean
 
 # 扫描 Polymarket 市场显示热门候选（不生成不发布）
-binance-square-bot polymarket-scan
+binance-square-bot polymarket-research scan
 
 # 生成并发布 Polymarket 投资研报
 binance-square-bot polymarket-research run
@@ -136,7 +136,7 @@ binance-square-bot parallel --workers 8 --no-fn --enable-polymarket
 
    | Secret Name                 | Value                                               | Required      |
    | --------------------------- | --------------------------------------------------- | ------------- |
-   | `BINANCE_TARGET_API_KEYS` | 币安API密钥列表，JSON格式，例如：`"key1", "key2"` | ✅ Required   |
+   | `BINANCE_TARGET_API_KEYS` | 币安API密钥列表，逗号分隔，例如：`key1,key2` | ✅ Required   |
    | `LLM_API_KEY`             | OpenAI API 密钥（或兼容接口的密钥）                 | ✅ Required   |
    | `LLM_BASE_URL`            | LLM API 地址（如使用第三方接口）                    | ⚙️ Optional |
    | `LLM_MODEL`               | LLM 模型名称                                        | ⚙️ Optional |
@@ -155,7 +155,7 @@ binance-square-bot parallel --workers 8 --no-fn --enable-polymarket
 - **运行超时**：30 分钟（足够完成处理）
 - **冲突处理**：运行前自动拉取远程最新代码，处理分支冲突
 - **失败重试**：推送失败最多重试 5 次，提高成功率
-- **自动提交**：运行完成后自动提交 `data/processed_urls.db` 数据库变更
+- **自动提交**：运行完成后自动提交 `data/app.db` 数据库变更
 
 推送代码后 GitHub Actions 自动启用。
 
