@@ -322,6 +322,49 @@ class TestSourceOrchestrator:
 
         storage.increment_daily_execution.assert_not_called()
 
+    def test_run_sources_dry_run_still_delegates_items_to_publisher(self) -> None:
+        """Dry-run parallel execution generates/prints via publisher without state increments."""
+        item = make_item("fn-news", content_type="news")
+        orchestrator = SourceOrchestrator(max_workers=1)
+        target = MockTarget()
+        storage = Mock()
+
+        service = Mock()
+        service.collect_items.return_value = {"items_generated": [item]}
+        service_cls = Mock(return_value=service)
+
+        with (
+            patch.object(orchestrator, "_get_service_for_source", return_value=service_cls),
+            patch(
+                "binance_square_bot.services.concurrent_executor.SourceParallelPublisher"
+            ) as publisher_cls,
+        ):
+            publisher_cls.return_value.publish_to_targets.return_value = {
+                "generated_success": 1,
+                "published_success": 0,
+            }
+            result = orchestrator.run_sources(
+                source_configs=[{"source": type("FnSource", (), {})()}],
+                targets=[target],
+                api_keys_map={"MockTarget": ["key-1"]},
+                storage=storage,
+                dry_run=True,
+            )
+
+        publisher_cls.return_value.publish_to_targets.assert_called_once()
+        assert publisher_cls.return_value.publish_to_targets.call_args.kwargs[
+            "tweets"
+        ] == [item]
+        assert (
+            publisher_cls.return_value.publish_to_targets.call_args.kwargs["dry_run"]
+            is True
+        )
+        assert result["publish_results"] == {
+            "generated_success": 1,
+            "published_success": 0,
+        }
+        storage.increment_daily_execution.assert_not_called()
+
     def test_total_per_run_limits_content_items_before_account_publishing(self) -> None:
         """total_per_run limits selected content items, not item/account pairs."""
         item_1 = make_item("item-1")

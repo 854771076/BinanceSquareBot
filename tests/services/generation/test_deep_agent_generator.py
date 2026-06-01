@@ -9,13 +9,19 @@ from binance_square_bot.services.generation import (
 
 
 class FakeAgent:
-    def __init__(self, results):
+    def __init__(self, results, stream_chunks=None):
         self.results = list(results)
+        self.stream_chunks = list(stream_chunks or [])
         self.invocations = []
+        self.streams = []
 
     def invoke(self, payload):
         self.invocations.append(payload)
         return self.results.pop(0)
+
+    def stream(self, payload, stream_mode=None):
+        self.streams.append({"payload": payload, "stream_mode": stream_mode})
+        yield from self.stream_chunks
 
 
 @pytest.fixture
@@ -42,6 +48,7 @@ def generator_config():
         max_chars=120,
         max_hashtags=2,
         max_mentions=2,
+        agent_trace_enabled=False,
     )
 
 
@@ -95,6 +102,10 @@ def test_generate_invokes_deep_agent_with_skill_and_returns_valid_content(
     assert "account_index" in task
     assert "2" in task
     assert "variation" in task
+    assert "字符数范围: 10-120" in task
+    assert "# 话题标签最多 2 个" in task
+    assert "$ 代币标签最多 2 个" in task
+    assert "最终输出中 `$` 符号数量不得超过 2" in task
 
 
 def test_generate_for_account_retries_with_validation_errors(
@@ -275,3 +286,82 @@ def test_generate_for_account_never_includes_full_api_key(
     assert full_api_key not in serialized_factory_calls
     assert full_api_key not in serialized_invocations
     assert "bina...alue" in serialized_invocations
+
+
+def test_generate_for_account_streams_and_prints_trace_when_enabled(
+    monkeypatch, capsys, source_item, generator_config
+):
+    generator_config.agent_trace_enabled = True
+    agent = FakeAgent(
+        [],
+        stream_chunks=[
+            {"messages": [{"content": "计划：先读取技能，再生成草稿"}]},
+            {"messages": [{"content": "合规内容聚焦ETF流入，不堆叠标签 #BTC $BTC"}]},
+        ],
+    )
+
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.get_config",
+        lambda: generator_config,
+    )
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.select_skill_path",
+        lambda item: "C:/repo/agent_skills/fn_news",
+    )
+
+    generator = DeepAgentTweetGenerator(agent_factory=lambda **kwargs: agent)
+
+    content = generator.generate_for_account(
+        source_item,
+        api_key_mask="b335d90...7c24",
+        account_index=1,
+        api_key="FULL_SECRET_API_KEY",
+    )
+
+    output = capsys.readouterr().out
+    assert content == "合规内容聚焦ETF流入，不堆叠标签 #BTC $BTC"
+    assert agent.invocations == []
+    assert agent.streams[0]["stream_mode"] == "values"
+    assert "Agent attempt 1/3" in output
+    assert "FnSource" in output
+    assert "fn_news" in output
+    assert "b335d90...7c24" in output
+    assert "Validation passed" in output
+    assert "FULL_SECRET_API_KEY" not in output
+
+
+def test_generate_for_account_trace_prints_validation_failure_counts(
+    monkeypatch, capsys, source_item, generator_config
+):
+    generator_config.agent_trace_enabled = True
+    generator_config.max_retries = 1
+    agent = FakeAgent(
+        [],
+        stream_chunks=[
+            {"messages": [{"content": "标签过多 #BTC $BTC $ETH $BNB"}]},
+        ],
+    )
+
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.get_config",
+        lambda: generator_config,
+    )
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.select_skill_path",
+        lambda item: "C:/repo/agent_skills/fn_news",
+    )
+
+    generator = DeepAgentTweetGenerator(agent_factory=lambda **kwargs: agent)
+
+    with pytest.raises(ValueError, match="代币标签不能超过 2 个"):
+        generator.generate_for_account(
+            source_item,
+            api_key_mask="mask-2",
+            account_index=3,
+        )
+
+    output = capsys.readouterr().out
+    assert "Validation failed" in output
+    assert "#=1" in output
+    assert "$=3" in output
+    assert "代币标签不能超过 2 个" in output

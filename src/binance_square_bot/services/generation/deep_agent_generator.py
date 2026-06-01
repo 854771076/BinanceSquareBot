@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from deepagents import create_deep_agent
@@ -42,7 +43,8 @@ class DeepAgentTweetGenerator:
             max_hashtags=config.max_hashtags,
             max_mentions=config.max_mentions,
         )
-        agent = self._create_agent(item, config)
+        skill_path = select_skill_path(item)
+        agent = self._create_agent(skill_path, config)
 
         validation_error: str | None = None
         for attempt in range(config.max_retries):
@@ -52,14 +54,30 @@ class DeepAgentTweetGenerator:
                 account_index=account_index,
                 attempt=attempt,
                 validation_error=validation_error,
+                config=config,
             )
-            result = agent.invoke({"messages": [{"role": "user", "content": task}]})
-            content = self._extract_content(result)
+            content = self._invoke_agent(
+                agent,
+                task,
+                config,
+                item=item,
+                api_key_mask=api_key_mask,
+                account_index=account_index,
+                attempt=attempt,
+                skill_path=skill_path,
+            )
             try:
                 validator.validate(content)
             except ValueError as exc:
                 validation_error = str(exc)
+                if getattr(config, "agent_trace_enabled", False):
+                    print(
+                        f"↳ Validation failed: {validation_error} "
+                        f"(#={content.count('#')} $={content.count('$')})"
+                    )
                 continue
+            if getattr(config, "agent_trace_enabled", False):
+                print("↳ Validation passed")
             return content.strip()
 
         error_detail = validation_error or "unknown validation error"
@@ -68,8 +86,7 @@ class DeepAgentTweetGenerator:
             f"{config.max_retries} attempts: {error_detail}"
         )
 
-    def _create_agent(self, item: TweetSourceItem, config: Any) -> Any:
-        skill_path = select_skill_path(item)
+    def _create_agent(self, skill_path: Any, config: Any) -> Any:
         return self._agent_factory(
             model=config.llm_model,
             system_prompt=SYSTEM_PROMPT,
@@ -78,6 +95,75 @@ class DeepAgentTweetGenerator:
             config=config,
         )
 
+    def _invoke_agent(
+        self,
+        agent: Any,
+        task: str,
+        config: Any,
+        *,
+        item: TweetSourceItem,
+        api_key_mask: str,
+        account_index: int,
+        attempt: int,
+        skill_path: Any,
+    ) -> str:
+        payload = {"messages": [{"role": "user", "content": task}]}
+        if not getattr(config, "agent_trace_enabled", False):
+            return self._extract_content(agent.invoke(payload))
+        return self._invoke_agent_with_trace(
+            agent,
+            payload,
+            item=item,
+            api_key_mask=api_key_mask,
+            account_index=account_index,
+            attempt=attempt,
+            max_retries=config.max_retries,
+            skill_path=skill_path,
+        )
+
+    def _invoke_agent_with_trace(
+        self,
+        agent: Any,
+        payload: dict[str, Any],
+        *,
+        item: TweetSourceItem,
+        api_key_mask: str,
+        account_index: int,
+        attempt: int,
+        max_retries: int,
+        skill_path: Any,
+    ) -> str:
+        print(
+            "🧠 Agent attempt "
+            f"{attempt + 1}/{max_retries} "
+            f"source={item.source_name} content_type={item.content_type} "
+            f"item={item.identifier} account={api_key_mask} "
+            f"account_index={account_index} skill={Path(str(skill_path)).name}"
+        )
+        last_chunk = None
+        for chunk in agent.stream(payload, stream_mode="values"):
+            last_chunk = chunk
+            self._print_trace_chunk(chunk)
+        content = self._extract_content(last_chunk)
+        print(f"↳ Raw output counts: #={content.count('#')} $={content.count('$')}")
+        return content
+
+    def _print_trace_chunk(self, chunk: Any) -> None:
+        message = self._latest_message_from_chunk(chunk)
+        content = self._extract_content(message)
+        if not content:
+            return
+        preview = " ".join(content.split())[:160]
+        print(f"↳ Agent message: {preview}")
+
+    @staticmethod
+    def _latest_message_from_chunk(chunk: Any) -> Any:
+        if isinstance(chunk, dict):
+            messages = chunk.get("messages")
+            if isinstance(messages, list) and messages:
+                return messages[-1]
+        return chunk
+
     def _build_task(
         self,
         item: TweetSourceItem,
@@ -85,6 +171,7 @@ class DeepAgentTweetGenerator:
         account_index: int,
         attempt: int,
         validation_error: str | None,
+        config: Any,
     ) -> str:
         payload = item.to_prompt_payload()
         parts = [
@@ -96,9 +183,18 @@ class DeepAgentTweetGenerator:
                 "variation: 为这个账号生成独立角度和措辞，避免与其他账号重复；"
                 f"这是第 {attempt + 1} 次尝试。"
             ),
+            (
+                "format_limits: "
+                f"字符数范围: {config.min_chars}-{config.max_chars}；"
+                f"# 话题标签最多 {config.max_hashtags} 个；"
+                f"$ 代币标签最多 {config.max_mentions} 个；"
+                f"最终输出中 `$` 符号数量不得超过 {config.max_mentions}。"
+            ),
+            "如果没有明确必要的代币标签，宁可少用或不用；不要为了覆盖多个项目而堆叠 `$TOKEN`。",
         ]
         if validation_error:
             parts.append(f"上次生成不符合格式要求: {validation_error}")
+            parts.append("请修复上次错误，优先减少标签数量，不要新增额外 `$` 或 `#` 标签。")
         return "\n".join(parts)
 
     @staticmethod

@@ -512,10 +512,6 @@ class SourceOrchestrator:
             "source_results": source_results,
         }
 
-        if dry_run:
-            console.print("[yellow]🏁 Dry run complete - no publishing[/yellow]")
-            return total_stats
-
         all_items = self._aggregate_generated_items(source_results)
 
         if not all_items:
@@ -540,8 +536,9 @@ class SourceOrchestrator:
                 total_generated,
             )
 
+        action = "Generating dry-run posts for" if dry_run else "Publishing"
         console.print(
-            f"[blue]📤 Publishing {len(all_items)} items "
+            f"[blue]📤 {action} {len(all_items)} items "
             f"to {len(targets)} targets[/blue]"
         )
 
