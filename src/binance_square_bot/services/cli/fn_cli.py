@@ -45,7 +45,7 @@ class FnCliService:
             console.print(
                 "[yellow]⚠️ Daily execution limit reached for FnSource[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         # Fetch articles
         console.print("[blue]📥 Fetching Fn news...[/blue]")
@@ -88,7 +88,7 @@ class FnCliService:
             console.print(
                 "[yellow]⚠️ Daily execution limit reached for FnSourceCalendar[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn calendar events...[/blue]")
         events = self.source.fetch_calendar(page_size=self.limit or 10)
@@ -131,7 +131,7 @@ class FnCliService:
             console.print(
                 "[yellow]⚠️ Daily execution limit reached for FnSourceAirdrops[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn airdrop events...[/blue]")
         events = self.source.fetch_airdrops(page_size=self.limit or 10)
@@ -173,7 +173,7 @@ class FnCliService:
         ):
             message = "Daily execution limit reached for FnSourceFundraising"
             console.print(f"[yellow]⚠️ {message}[/yellow]")
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]📥 Fetching Fn fundraising events...[/blue]")
         events = self.source.fetch_fundraising(page_size=self.limit or 10)

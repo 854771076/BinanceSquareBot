@@ -245,6 +245,35 @@ def test_execute_filters_already_published_markets_before_mapping() -> None:
     ]
 
 
+def test_execute_daily_limit_reached_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_no_candidate_markets_returns_empty_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    source.fetch.return_value = [
+        market("too-small", volume=999.0, yes_price=0.9, no_price=0.1),
+        market("too-balanced", volume=8_000.0, yes_price=0.55, no_price=0.45),
+    ]
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result["markets_fetched"] == 2
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
 def test_execute_non_dry_without_api_keys_skips_publish_and_increment() -> None:
     service, source, target, storage, publisher = make_service(dry_run=False)
     target.config.api_keys = []

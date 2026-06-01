@@ -364,6 +364,90 @@ def test_no_api_keys_non_dry_returns_without_publisher_or_increment() -> None:
     }
 
 
+def test_execute_daily_limit_reached_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_topics_daily_limit_reached_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_topics()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_io_flow_daily_limit_reached_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_io_flow()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_discussion_daily_limit_reached_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_discussion()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_topics_empty_items_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    source.fetch_trending_topics.return_value = []
+
+    result = service.execute_topics()
+
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_io_flow_empty_items_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    source.fetch_io_flow_tokens.return_value = []
+
+    result = service.execute_io_flow()
+
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_discussion_empty_items_returns_items_stats() -> None:
+    service, source, _, storage, publisher = make_service(dry_run=True)
+    source.fetch_discussion_tokens.return_value = []
+
+    result = service.execute_discussion()
+
+    publisher.publish_items.assert_not_called()
+    storage.increment_daily_execution.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
 def test_publish_items_no_items_returns_empty_stats_without_publisher() -> None:
     service, _, _, storage, publisher = make_service(dry_run=True)
 

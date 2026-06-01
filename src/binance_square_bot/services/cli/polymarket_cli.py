@@ -39,7 +39,7 @@ class PolymarketCliService:
             console.print(
                 "[yellow]⚠️ Daily execution limit reached for PolymarketSource[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         # Fetch markets
         console.print("[blue]🔍 Fetching Polymarket markets...[/blue]")
@@ -112,6 +112,14 @@ class PolymarketCliService:
         ]
         candidates.sort(key=lambda market: market.volume, reverse=True)
         return candidates[:5]
+
+    def _empty_stats(self) -> dict[str, Any]:
+        return {
+            "markets_fetched": 0,
+            "items_fetched": 0,
+            "items_generated": [],
+            "dry_run": self.dry_run,
+        }
 
     def _base_stats(
         self, markets_fetched: int, items: list[TweetSourceItem]

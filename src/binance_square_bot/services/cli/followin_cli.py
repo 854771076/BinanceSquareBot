@@ -45,7 +45,7 @@ class FollowinCliService:
             console.print(
                 "[yellow]⚠️ Daily execution limit reached for FollowinSource[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         # Fetch items
         console.print("[blue]Fetching Followin data...[/blue]")
@@ -68,7 +68,7 @@ class FollowinCliService:
             console.print(
                 "[yellow]⚠️ Daily limit reached for Followin trending topics[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]Fetching Followin trending topics...[/blue]")
         items = self.source.fetch_trending_topics()
@@ -88,7 +88,7 @@ class FollowinCliService:
             storage_key, self.source.config.daily_max_executions
         ):
             console.print("[yellow]⚠️ Daily limit reached for Followin IO flow[/yellow]")
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]Fetching Followin IO flow tokens...[/blue]")
         items = self.source.fetch_io_flow_tokens()
@@ -110,7 +110,7 @@ class FollowinCliService:
             console.print(
                 "[yellow]⚠️ Daily limit reached for Followin discussion[/yellow]"
             )
-            return {"error": "daily limit reached"}
+            return {**self._empty_stats(), "error": "daily limit reached"}
 
         console.print("[blue]Fetching Followin discussion tokens...[/blue]")
         items = self.source.fetch_discussion_tokens()

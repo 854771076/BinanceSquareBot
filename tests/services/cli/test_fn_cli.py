@@ -368,6 +368,102 @@ def test_execute_fundraising_filters_maps_content_type_and_publishes_items() -> 
     storage.increment_daily_execution.assert_called_once_with("FnSourceFundraising")
 
 
+def test_execute_daily_limit_reached_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_calendar_daily_limit_reached_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_calendar()
+
+    source.generate_calendar.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_airdrops_daily_limit_reached_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_airdrops()
+
+    source.generate_airdrops.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_fundraising_daily_limit_reached_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    storage.can_execute_source.return_value = False
+
+    result = service.execute_fundraising()
+
+    source.generate_fundraising.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_empty_articles_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    source.fetch.return_value = []
+
+    result = service.execute()
+
+    source.generate.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_calendar_empty_events_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    source.fetch_calendar.return_value = []
+
+    result = service.execute_calendar()
+
+    source.generate_calendar.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_airdrops_empty_events_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    source.fetch_airdrops.return_value = []
+
+    result = service.execute_airdrops()
+
+    source.generate_airdrops.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
+def test_execute_fundraising_empty_events_returns_items_stats() -> None:
+    service, source, target, storage, publisher = make_service(dry_run=True, limit=10)
+    source.fetch_fundraising.return_value = []
+
+    result = service.execute_fundraising()
+
+    source.generate_fundraising.assert_not_called()
+    publisher.publish_items.assert_not_called()
+    assert result["items_fetched"] == 0
+    assert result["items_generated"] == []
+
+
 def test_execute_without_api_keys_returns_stats_without_publishing_or_increment() -> (
     None
 ):
