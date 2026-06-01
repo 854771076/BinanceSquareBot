@@ -21,12 +21,12 @@ class MockTarget:
 
 
 def make_item(
-    identifier="item-1",
+    identifier: str = "item-1",
     *,
-    source_name="FnSource",
-    content_type="news",
-    title=None,
-):
+    source_name: str = "FnSource",
+    content_type: str = "news",
+    title: str | None = None,
+) -> TweetSourceItem:
     return TweetSourceItem(
         source_name=source_name,
         content_type=content_type,
@@ -39,12 +39,12 @@ def make_item(
 class TestConcurrentExecutor:
     """Tests for ConcurrentExecutor class."""
 
-    def test_init_default_max_workers(self):
+    def test_init_default_max_workers(self) -> None:
         """Test default max_workers is set correctly."""
         executor = ConcurrentExecutor()
         assert executor.max_workers == 5
 
-    def test_init_custom_max_workers(self):
+    def test_init_custom_max_workers(self) -> None:
         """Test custom max_workers is set correctly."""
         executor = ConcurrentExecutor(max_workers=10)
         assert executor.max_workers == 10
@@ -53,25 +53,25 @@ class TestConcurrentExecutor:
 class TestSourceOrchestrator:
     """Tests for SourceOrchestrator class."""
 
-    def test_init_default_total_per_run_is_none(self):
+    def test_init_default_total_per_run_is_none(self) -> None:
         """Default total_per_run is None, meaning no limit by default."""
         orchestrator = SourceOrchestrator()
         assert orchestrator.total_per_run is None
         assert orchestrator.max_workers == 4
 
-    def test_init_accepts_total_per_run_parameter(self):
+    def test_init_accepts_total_per_run_parameter(self) -> None:
         """Test that total_per_run parameter is accepted by constructor."""
         orchestrator = SourceOrchestrator(total_per_run=10)
         assert orchestrator.total_per_run == 10
         assert orchestrator.max_workers == 4
 
-    def test_init_accepts_both_parameters(self):
+    def test_init_accepts_both_parameters(self) -> None:
         """Test that both max_workers and total_per_run can be set."""
         orchestrator = SourceOrchestrator(max_workers=8, total_per_run=5)
         assert orchestrator.max_workers == 8
         assert orchestrator.total_per_run == 5
 
-    def test_run_sources_accepts_total_per_run_parameter(self):
+    def test_run_sources_accepts_total_per_run_parameter(self) -> None:
         """Test that run_sources accepts total_per_run parameter."""
         orchestrator = SourceOrchestrator()
         import inspect
@@ -80,7 +80,7 @@ class TestSourceOrchestrator:
         assert "total_per_run" in sig.parameters
         assert sig.parameters["total_per_run"].default is None
 
-    def test_when_total_tweets_exceeds_limit_only_n_are_selected(self):
+    def test_when_total_tweets_exceeds_limit_only_n_are_selected(self) -> None:
         """Test existing limit selection behavior with generated tweet strings."""
         all_tweets = ["t1", "t2", "t3", "t4", "t5"]
         total_per_run = 3
@@ -94,7 +94,7 @@ class TestSourceOrchestrator:
         assert total_generated == 5
         assert all(t in ["t1", "t2", "t3", "t4", "t5"] for t in selected)
 
-    def test_when_total_tweets_less_than_limit_all_are_published(self):
+    def test_when_total_tweets_less_than_limit_all_are_published(self) -> None:
         """Test that when total tweets <= limit, all are published."""
         orchestrator = SourceOrchestrator(total_per_run=10)
 
@@ -112,7 +112,7 @@ class TestSourceOrchestrator:
         assert total_generated == 3
         assert selected == ["t1", "t2", "t3"]
 
-    def test_method_parameter_takes_precedence_over_instance_attribute(self):
+    def test_method_parameter_takes_precedence_over_instance_attribute(self) -> None:
         """Method arg takes precedence over instance total_per_run."""
         orchestrator = SourceOrchestrator(total_per_run=5)
 
@@ -131,7 +131,7 @@ class TestSourceOrchestrator:
 
         assert len(selected) == 3
 
-    def test_no_limit_when_total_per_run_is_none(self):
+    def test_no_limit_when_total_per_run_is_none(self) -> None:
         """Test that no limit is applied when total_per_run is None."""
         orchestrator = SourceOrchestrator(total_per_run=None)
 
@@ -148,7 +148,7 @@ class TestSourceOrchestrator:
         assert len(selected) == original_count
         assert selected == all_tweets
 
-    def test_total_per_run_limits_content_items_before_account_publishing(self):
+    def test_total_per_run_limits_content_items_before_account_publishing(self) -> None:
         """total_per_run limits selected content items, not item/account pairs."""
         item_1 = make_item("item-1")
         item_2 = make_item("item-2")
@@ -191,7 +191,9 @@ class TestSourceOrchestrator:
         )
         assert published_items == [item_1, item_2]
 
-    def test_run_sources_aggregates_items_generated_and_passes_them_downstream(self):
+    def test_run_sources_aggregates_items_generated_and_passes_them_downstream(
+        self,
+    ) -> None:
         """SourceOrchestrator prefers items_generated over legacy tweets_generated."""
         item_1 = make_item("item-1")
         item_2 = make_item("item-2")
@@ -254,17 +256,19 @@ class TestSourceOrchestrator:
 class TestSourceParallelPublisher:
     """Tests for SourceParallelPublisher class."""
 
-    def test_init_default_max_workers(self):
+    def test_init_default_max_workers(self) -> None:
         """Test default max_workers is set correctly."""
         publisher = SourceParallelPublisher()
         assert publisher.max_workers == 3
 
-    def test_init_custom_max_workers(self):
+    def test_init_custom_max_workers(self) -> None:
         """Test custom max_workers is set correctly."""
         publisher = SourceParallelPublisher(max_workers=7)
         assert publisher.max_workers == 7
 
-    def test_passes_all_items_and_all_available_keys_to_account_item_publisher(self):
+    def test_passes_all_items_and_all_available_keys_to_account_item_publisher(
+        self,
+    ) -> None:
         """SourceParallelPublisher delegates every item and every available key."""
         items = [make_item("item-1"), make_item("item-2")]
         target = MockTarget()
@@ -304,7 +308,9 @@ class TestSourceParallelPublisher:
         assert result["published_success"] == 4
         assert result["generated_success"] == 4
 
-    def test_deduplicates_items_by_source_type_and_identifier_before_publishing(self):
+    def test_deduplicates_items_by_source_type_and_identifier_before_publishing(
+        self,
+    ) -> None:
         """Duplicate content identity is removed before account-level publishing."""
         original = make_item("same", source_name="FnSource", content_type="news")
         duplicate = make_item(
@@ -342,7 +348,9 @@ class TestSourceParallelPublisher:
         ]
         assert published_items == [original, different_type]
 
-    def test_filters_already_published_items_before_account_level_publishing(self):
+    def test_filters_already_published_items_before_account_level_publishing(
+        self,
+    ) -> None:
         """Items published today are skipped before AccountItemPublisher is called."""
         already_published = make_item("already-published")
         fresh = make_item("fresh")
@@ -376,7 +384,7 @@ class TestSourceParallelPublisher:
         ]
         assert published_items == [fresh]
 
-    def test_legacy_dict_items_are_converted_before_account_publishing(self):
+    def test_legacy_dict_items_are_converted_before_account_publishing(self) -> None:
         """Legacy dict content items are normalized for AccountItemPublisher."""
         legacy_item = {
             "text": "Legacy generated tweet text should not become summary first",
@@ -423,7 +431,7 @@ class TestSourceParallelPublisher:
         assert published_item.url == "https://example.com/legacy-1"
         assert published_item.metadata == {"topic": "crypto"}
 
-    def test_legacy_string_items_are_skipped_before_account_publishing(self):
+    def test_legacy_string_items_are_skipped_before_account_publishing(self) -> None:
         """Unsupported legacy string tweets are dropped instead of published raw."""
         target = MockTarget()
         storage = Mock()
