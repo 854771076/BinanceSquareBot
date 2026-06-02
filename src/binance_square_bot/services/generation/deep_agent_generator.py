@@ -9,7 +9,7 @@ from pydantic import SecretStr
 
 from binance_square_bot.config import get_config
 from binance_square_bot.services.generation.models import TweetSourceItem
-from binance_square_bot.services.generation.skills import select_skill_path
+from binance_square_bot.services.generation.skills import select_skill_path,get_humanizer_skill_path
 from binance_square_bot.services.generation.validator import TweetContentValidator
 
 AgentFactory = Callable[..., Any]
@@ -45,6 +45,7 @@ class DeepAgentTweetGenerator:
             max_mentions=config.max_mentions,
         )
         skill_path = select_skill_path(item)
+        
         agent = self._create_agent(skill_path, config)
 
         validation_error: str | None = None
@@ -109,7 +110,8 @@ class DeepAgentTweetGenerator:
         skill_path: Any,
     ) -> str:
         payload = {"messages": [{"role": "user", "content": task}]}
-        agent_skills = [str(skill_path)]
+        humanizer_skill_path = get_humanizer_skill_path()
+        agent_skills = [str(skill_path), str(humanizer_skill_path)]
         if not getattr(config, "agent_trace_enabled", False):
             return self._extract_content(agent.invoke(payload))
         return self._invoke_agent_with_trace(

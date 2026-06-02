@@ -30,3 +30,7 @@ def select_skill_path(item: TweetSourceItem) -> Path:
             f"source_name={item.source_name!r}, content_type={item.content_type!r}"
         )
     return skills_root() / skill_directory
+
+def get_humanizer_skill_path() -> Path:
+    """Return the DeepAgents skill directory for humanizer."""
+    return skills_root() / "humanizer"
