@@ -365,10 +365,92 @@ def test_generate_for_account_trace_skips_duplicate_user_prompts_and_prints_skil
 
     output = capsys.readouterr().out
     assert content == final_message
-    assert "Skill selected: fn_news" in output
-    assert "Skill path: C:/repo/agent_skills/fn_news" in output
+    assert "Skill configured: fn_news" in output
+    assert "Skill path:" in output
     assert repeated_prompt not in output
     assert output.count(final_message) == 1
+
+
+def test_generate_for_account_trace_prints_skill_configuration_evidence(
+    monkeypatch, capsys, tmp_path, source_item, generator_config
+):
+    generator_config.agent_trace_enabled = True
+    skill_dir = tmp_path / "fn_news"
+    skill_dir.mkdir()
+    skill_file = skill_dir / "SKILL.md"
+    skill_file.write_text("# Skill\n\nUse a natural hook.", encoding="utf-8")
+    agent = FakeAgent(
+        [],
+        stream_chunks=[{"messages": [{"role": "assistant", "content": "合规内容 #BTC $BTC"}]}],
+    )
+
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.get_config",
+        lambda: generator_config,
+    )
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.select_skill_path",
+        lambda item: skill_dir,
+    )
+
+    generator = DeepAgentTweetGenerator(agent_factory=lambda **kwargs: agent)
+
+    generator.generate_for_account(
+        source_item,
+        api_key_mask="mask-1",
+        account_index=1,
+    )
+
+    output = capsys.readouterr().out
+    assert "Skill configured: fn_news" in output
+    assert "SKILL.md exists=True" in output
+    assert "Skill digest:" in output
+    assert "Agent factory skills:" in output
+    assert str(skill_dir) in output
+    assert "Runtime skill event: not exposed by stream" in output
+
+
+def test_generate_for_account_trace_prints_tool_call_runtime_evidence(
+    monkeypatch, capsys, source_item, generator_config
+):
+    generator_config.agent_trace_enabled = True
+    agent = FakeAgent(
+        [],
+        stream_chunks=[
+            {
+                "messages": [
+                    {
+                        "role": "assistant",
+                        "content": "",
+                        "tool_calls": [{"name": "read_skill", "args": {"skill": "fn_news"}}],
+                    }
+                ]
+            },
+            {"messages": [{"role": "assistant", "content": "合规内容 #BTC $BTC"}]},
+        ],
+    )
+
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.get_config",
+        lambda: generator_config,
+    )
+    monkeypatch.setattr(
+        "binance_square_bot.services.generation.deep_agent_generator.select_skill_path",
+        lambda item: "C:/repo/agent_skills/fn_news",
+    )
+
+    generator = DeepAgentTweetGenerator(agent_factory=lambda **kwargs: agent)
+
+    generator.generate_for_account(
+        source_item,
+        api_key_mask="mask-1",
+        account_index=1,
+    )
+
+    output = capsys.readouterr().out
+    assert "Tool call: read_skill" in output
+    assert "Runtime skill event: observed" in output
+    assert "not exposed by stream" not in output
 
 
 def test_generate_for_account_trace_prints_validation_failure_counts(

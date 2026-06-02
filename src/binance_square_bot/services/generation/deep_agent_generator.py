@@ -1,3 +1,4 @@
+import hashlib
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -108,6 +109,7 @@ class DeepAgentTweetGenerator:
         skill_path: Any,
     ) -> str:
         payload = {"messages": [{"role": "user", "content": task}]}
+        agent_skills = [str(skill_path)]
         if not getattr(config, "agent_trace_enabled", False):
             return self._extract_content(agent.invoke(payload))
         return self._invoke_agent_with_trace(
@@ -119,6 +121,7 @@ class DeepAgentTweetGenerator:
             attempt=attempt,
             max_retries=config.max_retries,
             skill_path=skill_path,
+            agent_skills=agent_skills,
         )
 
     def _invoke_agent_with_trace(
@@ -132,6 +135,7 @@ class DeepAgentTweetGenerator:
         attempt: int,
         max_retries: int,
         skill_path: Any,
+        agent_skills: list[str],
     ) -> str:
         print(
             "🧠 Agent attempt "
@@ -140,31 +144,70 @@ class DeepAgentTweetGenerator:
             f"item={item.identifier} account={api_key_mask} "
             f"account_index={account_index}"
         )
-        print(f"↳ Skill selected: {Path(str(skill_path)).name}")
-        print(f"↳ Skill path: {skill_path}")
+        self._print_skill_configuration_trace(skill_path, agent_skills)
         last_chunk = None
         printed_previews: set[str] = set()
+        runtime_evidence_observed = False
         for chunk in agent.stream(payload, stream_mode="values"):
             last_chunk = chunk
-            self._print_trace_chunk(chunk, printed_previews)
+            runtime_evidence_observed = (
+                self._print_trace_chunk(chunk, printed_previews)
+                or runtime_evidence_observed
+            )
+        if runtime_evidence_observed:
+            print("↳ Runtime skill event: observed")
+        else:
+            print("↳ Runtime skill event: not exposed by stream")
         content = self._extract_content(last_chunk)
         print(f"↳ Raw output counts: #={content.count('#')} $={content.count('$')}")
         return content
 
-    def _print_trace_chunk(self, chunk: Any, printed_previews: set[str]) -> None:
+    def _print_skill_configuration_trace(
+        self,
+        skill_path: Any,
+        agent_skills: list[str],
+    ) -> None:
+        path = Path(str(skill_path))
+        skill_file = path / "SKILL.md"
+        exists = skill_file.is_file()
+        size = 0
+        digest = "missing"
+        if exists:
+            data = skill_file.read_bytes()
+            size = len(data)
+            digest = hashlib.sha256(data).hexdigest()[:12]
+
+        print(f"↳ Skill configured: {path.name}")
+        print(f"↳ Skill path: {path}")
+        print(f"↳ SKILL.md exists={exists} size={size}")
+        print(f"↳ Skill digest: {digest}")
+        print(f"↳ Agent factory skills: {agent_skills}")
+
+    def _print_trace_chunk(self, chunk: Any, printed_previews: set[str]) -> bool:
         message = self._latest_message_from_chunk(chunk)
+        runtime_evidence_observed = self._print_tool_calls(message)
         role = self._message_role(message)
         if role in {"user", "human"}:
-            return
+            return runtime_evidence_observed
 
         content = self._extract_content(message)
         if not content:
-            return
+            return runtime_evidence_observed
         preview = " ".join(content.split())[:160]
         if preview in printed_previews:
-            return
+            return runtime_evidence_observed
         printed_previews.add(preview)
         print(f"↳ Agent message: {preview}")
+        return runtime_evidence_observed
+
+    def _print_tool_calls(self, message: Any) -> bool:
+        observed = False
+        for tool_call in self._message_tool_calls(message):
+            name = self._tool_call_name(tool_call)
+            if name:
+                print(f"↳ Tool call: {name}")
+                observed = True
+        return observed
 
     @staticmethod
     def _latest_message_from_chunk(chunk: Any) -> Any:
@@ -181,6 +224,22 @@ class DeepAgentTweetGenerator:
             return str(role).lower() if role else None
         role = getattr(message, "role", None) or getattr(message, "type", None)
         return str(role).lower() if role else None
+
+    @staticmethod
+    def _message_tool_calls(message: Any) -> list[Any]:
+        if isinstance(message, dict):
+            calls = message.get("tool_calls") or []
+        else:
+            calls = getattr(message, "tool_calls", []) or []
+        return calls if isinstance(calls, list) else []
+
+    @staticmethod
+    def _tool_call_name(tool_call: Any) -> str | None:
+        if isinstance(tool_call, dict):
+            value = tool_call.get("name")
+            return str(value) if value else None
+        value = getattr(tool_call, "name", None)
+        return str(value) if value else None
 
     def _build_task(
         self,
