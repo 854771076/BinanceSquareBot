@@ -42,13 +42,13 @@ class ParallelCliService:
         self.enable_followin_discussion = enable_followin_discussion
         self.storage = StorageService()
         self.source_limits = {
-            "FnSource_execute": 2,
+            "FnSource_execute": 4,
             "FnSource_execute_calendar": 1,
             "FnSource_execute_airdrops": 1,
             "FnSource_execute_fundraising": 1,
-            "FollowinSource_execute_topics": 1,
-            "FollowinSource_execute_io_flow": 1,
-            "FollowinSource_execute_discussion": 1,
+            "FollowinSource_execute_topics": 4,
+            "FollowinSource_execute_io_flow": 4,
+            "FollowinSource_execute_discussion": 4,
         }
 
     def execute_all(self) -> Dict[str, Any]:
