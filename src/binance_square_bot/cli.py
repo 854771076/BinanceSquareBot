@@ -239,12 +239,14 @@ def parallel_run(
     enable_pexels: bool = typer.Option(False, "--enable-pexels", help="Enable Pexels image source"),
     enable_square_hot: bool = typer.Option(False, "--enable-square-hot", help="Enable Square hot-post rewrite source"),
     enable_binance_ann: bool = typer.Option(False, "--enable-binance-ann", help="Enable Binance official announcement source"),
+    publish_workers: int = typer.Option(1, "--publish-workers", help="Concurrent workers across API keys during publishing"),
 ) -> None:
     """Run ALL sources in parallel and publish to ALL targets concurrently."""
     service = ParallelCliService(
         dry_run=dry_run,
         max_workers=max_workers,
         total_per_run=total_per_run,
+        publish_workers=publish_workers,
         enable_fn=not disable_fn,
         enable_fn_calendar=not disable_fn_calendar,
         enable_fn_airdrop=not disable_fn_airdrop,

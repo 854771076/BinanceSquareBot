@@ -66,23 +66,20 @@ jobs:
           FOLLOWIN_SOURCE_ENABLED: true
           FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 50
 
-          # Pexels 图源 (图文/长文封面); 在 GitHub repo Settings → Secrets 配置
-          PEXELS_SOURCE_ENABLED: true
-          PEXELS_SOURCE_API_KEY: ${{ secrets.PEXELS_SOURCE_API_KEY }}
-          PEXELS_SOURCE_DOWNLOAD_DIR: data/media/pexels
-          PEXELS_SOURCE_MAX_ITEMS_PER_RUN: 5
+          # Pexels 配图服务（已停用；需要时设 enabled + key 并加 --enable-pexels）
+          PEXELS_SOURCE_ENABLED: false
 
-          # 币安官方公告润色 (长文需要 Pexels 封面)
+          # 币安官方公告润色
           BINANCE_ANN_SOURCE_ENABLED: true
           BINANCE_ANN_SOURCE_MAX_ITEMS_PER_RUN: 3
 
-          # 广场热门改写 (默认关闭; 启用需评估洗稿/封号风险)
+          # 广场热门改写
           SQUARE_HOT_SOURCE_ENABLED: true
         run: |
-          # 启用: Fn, Followin, Pexels, BinanceAnn, SquareHot
-          # 注意: SquareHot 需要同时设 SQUARE_HOT_SOURCE_ENABLED=true 和此 flag
+          # 启用: Fn, Followin, BinanceAnn, SquareHot
+          # Pexels 配图已停用
           poetry run binance-square-bot parallel --workers 10 --total-per-run 25 \
-            --enable-pexels --enable-binance-ann --enable-square-hot
+            --publish-workers 6 --enable-binance-ann --enable-square-hot
 
       - name: Commit and push if changes
         env:

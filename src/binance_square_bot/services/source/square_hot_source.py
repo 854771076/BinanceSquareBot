@@ -24,6 +24,7 @@ No signatures, cookies, WASM, or bootstrap. Pure httpx.
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import httpx
@@ -126,16 +127,25 @@ class SquareHotSource(BaseSource):
     def fetch(self) -> list[TweetSourceItem]:
         listings = self._fetch_list()
         listings = self._filter_listings(listings)
+        # Fetch details concurrently — each is an independent HTTP round-trip.
+        target_count = self.config.max_items_per_run
+        candidates: list[SquareHotPost | None] = []
+        # Fetch a few extra listings concurrently so that post-filter rejections
+        # (verification, length, AI content) don't force a second serial batch.
+        wanted = min(len(listings), target_count + 4)
+        with ThreadPoolExecutor(max_workers=min(6, wanted or 1)) as pool:
+            for post in pool.map(
+                self._fetch_detail, [v["id"] for v in listings[:wanted]]
+            ):
+                candidates.append(post)
+
         items: list[TweetSourceItem] = []
-        for listing in listings:
-            if len(items) >= self.config.max_items_per_run:
-                break
-            post = self._fetch_detail(listing["id"])
-            if post is None:
-                continue
-            if not self._passes_detail_filters(post):
+        for post in candidates:
+            if post is None or not self._passes_detail_filters(post):
                 continue
             items.append(self._to_item(post))
+            if len(items) >= target_count:
+                break
         return items
 
     def generate(self, data: Any) -> Any:

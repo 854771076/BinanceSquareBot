@@ -513,7 +513,9 @@ class TestSourceParallelPublisher:
                 delay_between_publishes=0,
             )
 
-        publisher_cls.assert_called_once_with(delay_between_publishes=0)
+        publisher_cls.assert_called_once_with(
+            delay_between_publishes=0, max_workers=1
+        )
         publisher_cls.return_value.publish_items.assert_called_once_with(
             items=items,
             target=target,

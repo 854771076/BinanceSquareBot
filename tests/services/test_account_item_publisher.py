@@ -125,37 +125,41 @@ def test_publishes_every_item_to_every_available_key_and_marks_each_item():
         "dry_run": False,
     }
     assert len(generator.calls) == 4
-    assert [call["item"].identifier for call in generator.calls] == [
-        "item-1",
-        "item-1",
-        "item-2",
-        "item-2",
-    ]
-    assert [call["api_key"] for call in generator.calls] == [
-        api_keys[0],
-        api_keys[1],
-        api_keys[0],
-        api_keys[1],
-    ]
-    assert [call["api_key_mask"] for call in generator.calls] == [
-        mask_api_key(api_keys[0]),
-        mask_api_key(api_keys[1]),
-        mask_api_key(api_keys[0]),
-        mask_api_key(api_keys[1]),
-    ]
-    assert [call["account_index"] for call in generator.calls] == [1, 2, 1, 2]
-    assert [(c[0].body, c[1]) for c in target.publish_calls] == [
-        ("filtered:tweet-item-1-1", api_keys[0]),
-        ("filtered:tweet-item-1-2", api_keys[1]),
-        ("filtered:tweet-item-2-1", api_keys[0]),
-        ("filtered:tweet-item-2-2", api_keys[1]),
-    ]
-    assert storage.increment_calls == [
-        ("FakeTarget", api_keys[0]),
-        ("FakeTarget", api_keys[1]),
-        ("FakeTarget", api_keys[0]),
-        ("FakeTarget", api_keys[1]),
-    ]
+    # Each (item, key) pair must be generated exactly once. Publishing fans out
+    # one worker per key, so call order across keys is not guaranteed — assert
+    # the set of pairs instead of a fixed interleaving.
+    call_pairs = [(c["item"].identifier, c["api_key"]) for c in generator.calls]
+    assert sorted(call_pairs) == sorted(
+        [
+            ("item-1", api_keys[0]),
+            ("item-1", api_keys[1]),
+            ("item-2", api_keys[0]),
+            ("item-2", api_keys[1]),
+        ]
+    )
+    # account_index is the key's fixed 1-based position (stable per account).
+    assert {c["api_key"]: c["account_index"] for c in generator.calls} == {
+        api_keys[0]: 1,
+        api_keys[1]: 2,
+    }
+    assert all(c["api_key_mask"] == mask_api_key(c["api_key"]) for c in generator.calls)
+    published_pairs = sorted((c[0].body, c[1]) for c in target.publish_calls)
+    assert published_pairs == sorted(
+        [
+            ("filtered:tweet-item-1-1", api_keys[0]),
+            ("filtered:tweet-item-1-2", api_keys[1]),
+            ("filtered:tweet-item-2-1", api_keys[0]),
+            ("filtered:tweet-item-2-2", api_keys[1]),
+        ]
+    )
+    assert sorted(storage.increment_calls) == sorted(
+        [
+            ("FakeTarget", api_keys[0]),
+            ("FakeTarget", api_keys[1]),
+            ("FakeTarget", api_keys[0]),
+            ("FakeTarget", api_keys[1]),
+        ]
+    )
     assert storage.mark_calls == [
         {
             "source_name": "FnSource",
@@ -255,8 +259,9 @@ def test_skips_unavailable_keys_for_generation_and_publishing():
         ("FakeTarget", api_keys[1], 3),
     ]
     assert [call["api_key"] for call in generator.calls] == [api_keys[1]]
-    assert [call["account_index"] for call in generator.calls] == [1]
-    assert target.publish_calls[0][0].body == "filtered:tweet-available-only-1"
+    # account_index is the key's fixed position (api_keys[1] -> 2).
+    assert [call["account_index"] for call in generator.calls] == [2]
+    assert target.publish_calls[0][0].body == "filtered:tweet-available-only-2"
     assert target.publish_calls[0][1] == api_keys[1]
 
 

@@ -162,6 +162,7 @@ class SourceParallelPublisher:
         storage: Any,
         delay_between_publishes: float = 1.0,
         dry_run: bool = False,
+        publish_workers: int = 1,
     ) -> dict[str, Any]:
         """Publish content items to every available account for each target.
 
@@ -188,6 +189,7 @@ class SourceParallelPublisher:
             delay_between_publishes=delay_between_publishes,
             dry_run=dry_run,
             total_stats=total_stats,
+            publish_workers=publish_workers,
         )
 
         if not publish_tasks:
@@ -230,6 +232,7 @@ class SourceParallelPublisher:
         delay_between_publishes: float,
         dry_run: bool,
         total_stats: dict[str, Any],
+        publish_workers: int = 1,
     ) -> tuple[list[Callable[[], dict[str, Any]]], list[str]]:
         publish_tasks: list[Callable[[], dict[str, Any]]] = []
         task_names: list[str] = []
@@ -269,6 +272,7 @@ class SourceParallelPublisher:
                     storage=storage,
                     delay_between_publishes=delay_between_publishes,
                     dry_run=dry_run,
+                    publish_workers=publish_workers,
                 )
             )
 
@@ -283,10 +287,12 @@ class SourceParallelPublisher:
         storage: Any,
         delay_between_publishes: float,
         dry_run: bool,
+        publish_workers: int = 1,
     ) -> Callable[[], dict[str, Any]]:
         def publish_task() -> dict[str, Any]:
             publisher = AccountItemPublisher(
-                delay_between_publishes=delay_between_publishes
+                delay_between_publishes=delay_between_publishes,
+                max_workers=publish_workers,
             )
             return cast(
                 dict[str, Any],
@@ -482,6 +488,7 @@ class SourceOrchestrator:
         dry_run: bool = False,
         total_per_run: int | None = None,
         image_attributor: Callable[[list[Any]], int] | None = None,
+        publish_workers: int = 1,
     ) -> dict[str, Any]:
         """Run multiple sources in parallel, then publish to targets.
 
@@ -561,6 +568,7 @@ class SourceOrchestrator:
             api_keys_map=api_keys_map,
             storage=storage,
             dry_run=dry_run,
+            publish_workers=publish_workers,
         )
 
         total_stats["publish_results"] = publish_results

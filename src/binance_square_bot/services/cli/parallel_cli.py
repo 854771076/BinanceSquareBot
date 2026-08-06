@@ -34,10 +34,12 @@ class ParallelCliService:
         enable_pexels: bool = False,
         enable_square_hot: bool = False,
         enable_binance_ann: bool = False,
+        publish_workers: int = 1,
     ):
         self.dry_run = dry_run
         self.max_workers = max_workers
         self.total_per_run = total_per_run
+        self.publish_workers = max(1, publish_workers)
         self.enable_fn = enable_fn
         self.enable_fn_calendar = enable_fn_calendar
         self.enable_fn_airdrop = enable_fn_airdrop
@@ -197,6 +199,7 @@ class ParallelCliService:
             dry_run=self.dry_run,
             total_per_run=self.total_per_run,
             image_attributor=image_attributor,
+            publish_workers=self.publish_workers,
         )
 
         logger.info(f"Parallel execution complete: {results}")

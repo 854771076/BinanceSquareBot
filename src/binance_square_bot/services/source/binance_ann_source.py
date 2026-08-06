@@ -84,21 +84,32 @@ class BinanceAnnSource(BaseSource):
             logger.error(f"BinanceAnn list fetch failed: {exc}")
             return []
 
+        # Fetch details concurrently — each is an independent HTTP round-trip
+        # (plus a cover-image download). Fetch a few extra to absorb skips.
+        target_count = self.config.max_items_per_run
+        wanted = min(len(articles), target_count + 4)
+        details: list[Announcement | None] = []
+        with ThreadPoolExecutor(max_workers=min(6, wanted or 1)) as pool:
+            for detail in pool.map(self._safe_fetch_detail, articles[:wanted]):
+                details.append(detail)
+
         items: list[TweetSourceItem] = []
-        for article in articles:
-            if len(items) >= self.config.max_items_per_run:
-                break
-            try:
-                detail = self._fetch_detail(article)
-            except Exception as exc:  # noqa: BLE001
-                logger.warning(f"BinanceAnn detail failed for {article.code}: {exc}")
-                continue
+        for detail in details:
             if detail is None:
                 continue
             item = self._to_item(detail)
             if item is not None:
                 items.append(item)
+                if len(items) >= target_count:
+                    break
         return items
+
+    def _safe_fetch_detail(self, article: Announcement) -> Announcement | None:
+        try:
+            return self._fetch_detail(article)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning(f"BinanceAnn detail failed for {article.code}: {exc}")
+            return None
 
     def generate(self, data: Any) -> Any:
         return data
