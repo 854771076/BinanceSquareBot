@@ -79,10 +79,10 @@ jobs:
           # 广场热门改写 (默认关闭; 启用需评估洗稿/封号风险)
           SQUARE_HOT_SOURCE_ENABLED: true
         run: |
-          # 默认启用: Fn, Followin, Pexels, BinanceAnn
-          # SquareHot 默认关闭 (反爬/重复内容风险), 需要时加 --enable-square-hot
+          # 启用: Fn, Followin, Pexels, BinanceAnn, SquareHot
+          # 注意: SquareHot 需要同时设 SQUARE_HOT_SOURCE_ENABLED=true 和此 flag
           poetry run binance-square-bot parallel --workers 10 --total-per-run 25 \
-            --enable-pexels --enable-binance-ann
+            --enable-pexels --enable-binance-ann --enable-square-hot
 
       - name: Commit and push if changes
         env:
