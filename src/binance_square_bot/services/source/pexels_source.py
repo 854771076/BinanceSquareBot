@@ -111,9 +111,14 @@ class PexelsSource(BaseSource):
 
     def _fetch_keyword(self, keyword: str) -> list[TweetSourceItem]:
         headers = {"Authorization": self.config.api_key}
+        is_binance = keyword.strip().lower() in BINANCE_KEYWORDS
+        post_type = "article" if is_binance else "image"
+        # Article posts need exactly one cover; image posts take up to 4.
+        # Fetch a couple of extras to survive width filtering / failed downloads.
+        wanted = 1 if post_type == "article" else min(self.config.per_keyword, 4)
         params = {
             "query": keyword,
-            "per_page": self.config.per_keyword + 2,  # fetch a few extras; width-filter below
+            "per_page": wanted + 2,
             "orientation": self.config.orientation,
         }
         response = self._client.get(self.config.api_url, headers=headers, params=params)
@@ -121,7 +126,7 @@ class PexelsSource(BaseSource):
         payload = response.json()
         photos = self._parse_photos(payload)
         photos = [p for p in photos if p.width >= self.config.min_width]
-        photos = photos[: self.config.per_keyword]
+        photos = photos[:wanted]
         if not photos:
             return []
 
@@ -133,15 +138,13 @@ class PexelsSource(BaseSource):
             if not local_path:
                 continue
             downloaded.append(local_path)
-            attribution.append(f"Photo by {photo.photographer} on Pexels ({photo.url})")
+            attribution.append(
+                f"Photo by {photo.photographer} on Pexels ({photo.url})"
+            )
 
         if not downloaded:
             return []
 
-        is_binance = keyword.strip().lower() in BINANCE_KEYWORDS
-        post_type = "article" if is_binance else "image"
-
-        # For image posts cap at 4 images. For article covers use exactly 1.
         if post_type == "image":
             images = downloaded[:4]
             cover = None

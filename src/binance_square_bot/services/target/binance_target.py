@@ -57,6 +57,14 @@ class BinanceTarget(BaseTarget):
         """Check if content contains any stop words. Case-insensitive."""
         return any(word.lower() in content.lower() for word in self.stop_words)
 
+    def _contains_stop_words(self, post: SquarePost) -> bool:
+        """Check both body and article title for stop words."""
+        if self.is_contains_stop_words(post.body):
+            return True
+        if post.title and self.is_contains_stop_words(post.title):
+            return True
+        return False
+
     # ----- public publish entry -----
 
     def publish(self, content: PostInput, api_key: str) -> Tuple[bool, str]:
@@ -68,8 +76,11 @@ class BinanceTarget(BaseTarget):
         post = self._coerce_post(content)
         post.validate_media()
 
-        if self.is_contains_stop_words(post.body):
-            logger.info(f"[API:{key_mask}] ⏭️ Skipped - contains stop words: {post.body[:40]}...")
+        if self._contains_stop_words(post):
+            logger.info(
+                f"[API:{key_mask}] ⏭️ Skipped - contains stop words: "
+                f"{(post.title or post.body)[:40]}..."
+            )
             return False, "Content contains stop words"
 
         # Build the publish body (uploads media) once — uploaded S3 URLs are
