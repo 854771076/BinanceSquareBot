@@ -16,6 +16,8 @@ class TweetContentValidator:
     max_mentions: int
     article_min_chars: int = 800
     article_max_chars: int = 15000
+    article_min_title: int = 10
+    article_max_title: int = 100
     coin_whitelist: tuple[str, ...] = ()
     post_type: str = "text"
 
@@ -58,11 +60,26 @@ class TweetContentValidator:
             allowed = {c.upper() for c in self.coin_whitelist}
             for token in _extract_dollar_tokens(text):
                 if token.upper() not in allowed:
-                    errors.append(f"包含未授权的代币标签 ${token}（仅允许: {', '.join(sorted(allowed))}）")
+                    errors.append(
+                        f"包含未授权的代币标签 ${token}（仅允许: {', '.join(sorted(allowed))}）"
+                    )
                     break
 
         if errors:
             raise ValueError("；".join(errors))
+
+    def validate_title(self, title: str | None) -> None:
+        """Article title length check — called separately from body validation."""
+        if self.post_type != "article":
+            return
+        if not title or not title.strip():
+            raise ValueError("文章标题缺失")
+        tlen = len(title.strip())
+        if tlen < self.article_min_title or tlen > self.article_max_title:
+            raise ValueError(
+                f"标题长度必须在 {self.article_min_title}-{self.article_max_title} 之间，"
+                f"当前 {tlen}"
+            )
 
 
 def _extract_dollar_tokens(text: str) -> list[str]:

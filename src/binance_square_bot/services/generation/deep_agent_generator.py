@@ -32,7 +32,7 @@ structured payload.
 For post_type=text/image/video return ONLY the post body text.
 
 For post_type=article return EXACTLY two blocks separated by a blank line:
-    TITLE: <article title, 10-60 chars>
+    TITLE: <article title, 10-100 chars>
     <blank line>
     <article body, 800-15000 Chinese chars, plain text with short paragraphs,
      no Markdown fences, use $TOKEN and #topic sparingly and only when on
@@ -64,6 +64,8 @@ class DeepAgentTweetGenerator:
             max_mentions=config.max_mentions,
             article_min_chars=getattr(config, "article_min_chars", 800),
             article_max_chars=getattr(config, "article_max_chars", 15000),
+            article_min_title=getattr(config, "article_min_title", 10),
+            article_max_title=getattr(config, "article_max_title", 100),
             coin_whitelist=tuple(item.coin_tags),
             post_type=item.post_type,
         )
@@ -91,10 +93,10 @@ class DeepAgentTweetGenerator:
                 skill_path=skill_path,
             )
             title, body = self._split_article(raw, item)
+            validator = TweetContentValidator(**validator_kwargs)
             try:
-                TweetContentValidator(**validator_kwargs).validate(body)
-                if item.post_type == "article" and not title:
-                    raise ValueError("文章标题缺失")
+                validator.validate(body)
+                validator.validate_title(title)
             except ValueError as exc:
                 validation_error = str(exc)
                 if getattr(config, "agent_trace_enabled", False):

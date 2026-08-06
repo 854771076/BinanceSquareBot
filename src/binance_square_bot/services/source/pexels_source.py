@@ -32,6 +32,16 @@ BINANCE_KEYWORDS = {
     "binance alpha",
 }
 
+# Map Pexels response Content-Type to the extension we'll store and upload with.
+# Binance media upload picks content-type from the file extension.
+_EXT_BY_CONTENT_TYPE = {
+    "image/jpeg": ".jpg",
+    "image/jpg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
+}
+
 
 class PexelsPhoto(BaseModel):
     id: int
@@ -181,15 +191,19 @@ class PexelsSource(BaseSource):
         return photos
 
     def _download(self, photo: PexelsPhoto) -> str | None:
-        target = self._download_dir / f"{photo.id}.jpg"
-        if target.is_file() and target.stat().st_size > 0:
-            return str(target)
         url = photo.src_original or photo.src_large
         if not url:
             return None
+        # Default to .jpg; corrected from Content-Type once response arrives.
+        target = self._download_dir / f"{photo.id}.jpg"
         try:
             with self._client.stream("GET", url) as resp:
                 resp.raise_for_status()
+                content_type = resp.headers.get("content-type", "").split(";")[0].lower()
+                ext = _EXT_BY_CONTENT_TYPE.get(content_type, ".jpg")
+                target = target.with_suffix(ext)
+                if target.is_file() and target.stat().st_size > 0:
+                    return str(target)
                 with target.open("wb") as fh:
                     for chunk in resp.iter_bytes():
                         fh.write(chunk)

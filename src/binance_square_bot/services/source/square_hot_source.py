@@ -154,12 +154,21 @@ class SquareHotSource(BaseSource):
         data = payload.get("data") or {}
         return data.get("vos") or []
 
-    def _is_whitelisted_author(self, username: str | None, author_name: str | None) -> bool:
-        allowed = {u.lower() for u in self.config.official_author_whitelist}
-        for name in (username, author_name):
-            if name and str(name).lower() in allowed:
-                return True
-        return False
+    def _is_whitelisted_author(self, username: str | None, author_name: str | None = None) -> bool:
+        """Match the unique handle only. Display name (authorName) is spoofable
+        and must NOT grant verified-skip. Normalize punctuation so
+        'Binance_News' matches 'binancenews'.
+        """
+        del author_name  # explicitly ignored — do not trust display name
+        if not username:
+            return False
+
+        def _norm(s: str) -> str:
+            return s.strip().lower().replace("_", "").replace("-", "")
+
+        normalized = _norm(username)
+        allowed = {_norm(u) for u in self.config.official_author_whitelist}
+        return normalized in allowed
 
     def _filter_listings(self, listings: list[dict]) -> list[dict]:
         result = []
@@ -167,10 +176,11 @@ class SquareHotSource(BaseSource):
             if not v.get("id") or not v.get("subTitle"):
                 continue
             verified = int(v.get("authorVerificationType") or 0) >= 2
-            username = v.get("username") or v.get("authorName")
+            # username is the unique handle; authorName is display name and is
+            # not used for whitelist matching (spoofable).
+            username = v.get("username")
             whitelisted = self._is_whitelisted_author(
                 str(username) if username else None,
-                v.get("authorName"),
             )
             if verified and self.config.skip_verified_authors and not whitelisted:
                 continue

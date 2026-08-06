@@ -34,16 +34,23 @@ class TweetSourceItem(BaseModel):
             payload.pop("url", None)
         if not payload.get("metadata"):
             payload.pop("metadata", None)
-        if not payload.get("images"):
-            payload.pop("images", None)
-        if payload.get("cover") is None:
-            payload.pop("cover", None)
-        if payload.get("video") is None:
-            payload.pop("video", None)
         if not payload.get("coin_tags"):
             payload.pop("coin_tags", None)
         if payload.get("body") is None:
             payload.pop("body", None)
-        # Never leak local file paths into the LLM prompt.
+        # Local file paths must never be sent to the LLM — the model only
+        # needs to know whether media is present, not the absolute path.
+        if self.images:
+            payload["images"] = [f"<local image {i + 1}>" for i in range(len(self.images))]
+        else:
+            payload.pop("images", None)
+        if self.cover:
+            payload["cover"] = "<local cover>"
+        else:
+            payload.pop("cover", None)
+        if self.video:
+            payload["video"] = "<local video>"
+        else:
+            payload.pop("video", None)
         payload.pop("video_duration", None)
         return payload

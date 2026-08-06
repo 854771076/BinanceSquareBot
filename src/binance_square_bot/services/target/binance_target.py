@@ -72,13 +72,16 @@ class BinanceTarget(BaseTarget):
             logger.info(f"[API:{key_mask}] ⏭️ Skipped - contains stop words: {post.body[:40]}...")
             return False, "Content contains stop words"
 
+        # Build the publish body (uploads media) once — uploaded S3 URLs are
+        # reusable across publish retries; re-uploading wastes the daily upload quota.
+        try:
+            body = self._build_publish_body(post, api_key, key_mask)
+        except BinanceMediaError as exc:
+            # Media errors (fatal OpenAPI codes, processing failures) do not benefit from retry.
+            logger.error(f"[API:{key_mask}] ❌ Media upload failed: {exc}")
+            return False, str(exc)
+
         for attempt in range(self.config.max_retries):
-            try:
-                body = self._build_publish_body(post, api_key, key_mask)
-            except BinanceMediaError as exc:
-                # Media errors (fatal OpenAPI codes, processing failures) do not benefit from retry.
-                logger.error(f"[API:{key_mask}] ❌ Media upload failed: {exc}")
-                return False, str(exc)
 
             success, error, retryable = self._try_publish_once(body, api_key, key_mask, post)
             if success:
