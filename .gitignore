@@ -1,5 +1,8 @@
 .playwright-mcp/
 js_reverse_cache/
 data/media/
+logs/
+*.egg-info/
 __pycache__/
 *.pyc
+.env
