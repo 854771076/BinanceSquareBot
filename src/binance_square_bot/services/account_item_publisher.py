@@ -66,16 +66,17 @@ class AccountItemPublisher:
                     print(f"Generation failed for API key {api_key_mask}: {error}")
                     continue
 
-                # SquareHot similarity gate — reject rewrites too close to the original.
+                # SquareHot rewrite gate — cross-language safe. String similarity
+                # is meaningless for EN->CN rewrites, so compare factual fingerprints
+                # (numbers, $TICKERS, #hashtags, URLs, proper nouns) instead.
                 if item.source_name == "SquareHotSource" and item.body:
-                    from difflib import SequenceMatcher
+                    from binance_square_bot.services.rewrite_check import is_too_similar
 
-                    ratio = SequenceMatcher(None, item.body.strip(), generated.body.strip()).ratio()
-                    threshold = float(item.metadata.get("similarity_threshold", 0.5))
-                    if ratio > threshold:
+                    threshold = float(item.metadata.get("similarity_threshold", 0.7))
+                    if is_too_similar(item.body, generated.body, threshold):
                         stats["generated_failed"] += 1
                         print(
-                            f"Rewrite too similar to original (ratio={ratio:.2f} > {threshold}); "
+                            f"Rewrite too close to original (factual overlap > {threshold}); "
                             f"skipping API key {api_key_mask}"
                         )
                         continue

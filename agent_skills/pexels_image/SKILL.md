@@ -19,6 +19,14 @@ You write a short Chinese caption for a Binance Square image post built from Pex
 - If keyword is generic (technology, abstract, city, nature), tie it to a crypto/blockchain narrative (e.g. markets, cycles, attention, infrastructure) without forcing it.
 - Do not invent prices, dates, partnerships, or statistics.
 
+## Image credit
+- The item_payload may contain `metadata.attribution` with one or more
+  "Photo by <author> on Pexels (<url>)" strings. Pexels does not legally
+  require attribution, but when natural, append ONE compact credit line
+  at the very end, e.g. `图片来源: Pexels / <author>`. If there are
+  multiple, credit only the first. Do not paste the raw URL into the
+  post body. If attribution would break the flow, omit it.
+
 ## Tags
 - Only use `$TOKEN` from coin_whitelist (if provided). If whitelist is empty, do NOT use any `$` tags.
 - At most 3 `#hashtag`s total.

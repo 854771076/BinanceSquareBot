@@ -79,6 +79,7 @@ class PexelsSource(BaseSource):
             "cryptocurrency",
             "blockchain",
             "candlestick chart",
+            "crypto trading",
         ]
 
     def __init__(self) -> None:

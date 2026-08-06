@@ -99,10 +99,13 @@ class SquareHotSource(BaseSource):
         skip_ai_content: bool = True
         min_content_chars: int = 200
         max_content_chars: int = 6000
-        # Rewrite gate used downstream by AccountItemPublisher; 1.0 disables it.
-        similarity_threshold: float = 0.5
-        # Stricter gate for official-account rewrites (lower = must differ more).
-        official_similarity_threshold: float = 0.4
+        # Same-script rewrite gate: SequenceMatcher ratio in [0,1].
+        # Cross-script pairs (EN original -> CN rewrite) always pass because the
+        # language shift itself is sufficient transformation; this only blocks
+        # CN->CN or EN->EN synonym-swap rewrites. Higher = more lenient.
+        similarity_threshold: float = 0.8
+        # Stricter gate for official-account same-script rewrites.
+        official_similarity_threshold: float = 0.7
         request_timeout: float = 15.0
         scene: str = "web-homepage"
         lang: str = "en"
