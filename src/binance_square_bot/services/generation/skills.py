@@ -12,6 +12,9 @@ _SKILL_BY_SOURCE_AND_TYPE = {
     ("FollowinSource", "io_flow"): "followin_token",
     ("FollowinSource", "discussion"): "followin_token",
     ("PolymarketSource", "polymarket_research"): "polymarket_research",
+    ("PexelsSource", "stock_image"): "pexels_image",
+    ("SquareHotSource", "hot_rewrite"): "square_hot_rewrite",
+    ("BinanceAnnSource", "announcement"): "binance_announcement",
 }
 
 

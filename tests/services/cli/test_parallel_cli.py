@@ -7,13 +7,13 @@ def test_parallel_cli_service_initializes_source_limits():
     service = ParallelCliService()
 
     expected_limits = {
-        "FnSource_execute": 2,
+        "FnSource_execute": 4,
         "FnSource_execute_calendar": 1,
         "FnSource_execute_airdrops": 1,
         "FnSource_execute_fundraising": 1,
-        "FollowinSource_execute_topics": 1,
-        "FollowinSource_execute_io_flow": 1,
-        "FollowinSource_execute_discussion": 1,
+        "FollowinSource_execute_topics": 4,
+        "FollowinSource_execute_io_flow": 4,
+        "FollowinSource_execute_discussion": 4,
     }
 
     assert service.source_limits == expected_limits
@@ -84,10 +84,10 @@ def test_source_configs_have_correct_limit_values():
     # Verify each source has the correct limit value
     limits_by_execute = {cfg["execute"]: cfg["limit"] for cfg in source_configs}
 
-    assert limits_by_execute["execute"] == 2  # Fn news
+    assert limits_by_execute["execute"] == 4  # Fn news
     assert limits_by_execute["execute_calendar"] == 1
     assert limits_by_execute["execute_airdrops"] == 1
     assert limits_by_execute["execute_fundraising"] == 1
-    assert limits_by_execute["execute_topics"] == 1
-    assert limits_by_execute["execute_io_flow"] == 1
-    assert limits_by_execute["execute_discussion"] == 1
+    assert limits_by_execute["execute_topics"] == 4
+    assert limits_by_execute["execute_io_flow"] == 4
+    assert limits_by_execute["execute_discussion"] == 4

@@ -652,21 +652,30 @@ class SourceOrchestrator:
                 "execute_discussion": "FollowinSourceDiscussion",
             },
             "PolymarketSource": {"execute": "PolymarketSource"},
+            "PexelsSource": {"execute": "PexelsSource"},
+            "SquareHotSource": {"execute": "SquareHotSource"},
+            "BinanceAnnSource": {"execute": "BinanceAnnSource"},
         }
         return workflow_storage_keys.get(source_name, {}).get(execute_fn, source_name)
 
     def _get_service_for_source(self, source_name: str) -> Any:
         """Get the CLI service class for a source."""
         from binance_square_bot.services.cli import (
+            BinanceAnnCliService,
             FnCliService,
             FollowinCliService,
+            PexelsCliService,
             PolymarketCliService,
+            SquareHotCliService,
         )
 
         service_map = {
             "FnSource": FnCliService,
             "PolymarketSource": PolymarketCliService,
             "FollowinSource": FollowinCliService,
+            "PexelsSource": PexelsCliService,
+            "SquareHotSource": SquareHotCliService,
+            "BinanceAnnSource": BinanceAnnCliService,
         }
 
         return service_map.get(source_name, FnCliService)

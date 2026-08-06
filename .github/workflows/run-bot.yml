@@ -24,15 +24,21 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install system dependencies
+        run: |
+          # ffmpeg 用于视频帖自动抽封面（无视频源时不会被调用，但二进制需存在）
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
 
-      - name: Create data and logs directories
+      - name: Create data, logs and media directories
         run: |
-          mkdir -p data logs
+          mkdir -p data logs data/media/pexels
 
       - name: Run ALL sources in parallel
         env:
@@ -45,6 +51,7 @@ jobs:
           # BinanceTarget 配置 (多 API Key)
           BINANCE_TARGET_API_KEYS: ${{ secrets.BINANCE_TARGET_API_KEYS }}
           BINANCE_TARGET_DAILY_MAX_POSTS_PER_KEY: 100
+          BINANCE_TARGET_DAILY_MAX_UPLOADS_PER_KEY: 400
           BINANCE_TARGET_STOP_WORDS: bitget,okx,bybit
 
           # FnSource 配置
@@ -58,11 +65,24 @@ jobs:
           # FollowinSource 配置
           FOLLOWIN_SOURCE_ENABLED: true
           FOLLOWIN_SOURCE_DAILY_MAX_EXECUTIONS: 50
+
+          # Pexels 图源 (图文/长文封面); 在 GitHub repo Settings → Secrets 配置
+          PEXELS_SOURCE_ENABLED: true
+          PEXELS_SOURCE_API_KEY: ${{ secrets.PEXELS_SOURCE_API_KEY }}
+          PEXELS_SOURCE_DOWNLOAD_DIR: data/media/pexels
+          PEXELS_SOURCE_MAX_ITEMS_PER_RUN: 5
+
+          # 币安官方公告润色 (长文需要 Pexels 封面)
+          BINANCE_ANN_SOURCE_ENABLED: true
+          BINANCE_ANN_SOURCE_MAX_ITEMS_PER_RUN: 3
+
+          # 广场热门改写 (默认关闭; 启用需评估洗稿/封号风险)
+          SQUARE_HOT_SOURCE_ENABLED: false
         run: |
-          # 默认启用: Fn news, calendar, airdrop, fundraising + Followin all
-          # 可选启用: Polymarket
-          # --total-per-run 6: 每轮最多发布 6 篇, 避免一次性发布太多
-          poetry run binance-square-bot parallel --workers 10 --total-per-run 25
+          # 默认启用: Fn, Followin, Pexels, BinanceAnn
+          # SquareHot 默认关闭 (反爬/重复内容风险), 需要时加 --enable-square-hot
+          poetry run binance-square-bot parallel --workers 10 --total-per-run 25 \
+            --enable-pexels --enable-binance-ann
 
       - name: Commit and push if changes
         env:

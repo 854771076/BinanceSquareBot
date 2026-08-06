@@ -4,7 +4,16 @@ import typer
 from rich.console import Console
 
 from binance_square_bot.common.logging import setup_logger
-from binance_square_bot.services.cli import FnCliService, PolymarketCliService, FollowinCliService, CommonCliService, ParallelCliService
+from binance_square_bot.services.cli import (
+    BinanceAnnCliService,
+    CommonCliService,
+    FnCliService,
+    FollowinCliService,
+    ParallelCliService,
+    PexelsCliService,
+    PolymarketCliService,
+    SquareHotCliService,
+)
 
 # Initialize logger
 setup_logger()
@@ -195,6 +204,36 @@ def followin_discussion(
     service.execute_discussion()
 
 
+@app.command("pexels")
+def pexels_run(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
+    limit: int | None = typer.Option(None, "--limit", help="Max Pexels items to process"),
+) -> None:
+    """Search Pexels for images and publish image/article posts to Square."""
+    service = PexelsCliService(dry_run=dry_run, limit=limit)
+    service.execute()
+
+
+@app.command("square-hot")
+def square_hot_run(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
+    limit: int | None = typer.Option(None, "--limit", help="Max hot posts to rewrite"),
+) -> None:
+    """Crawl Binance Square hot posts, rewrite with AI, and republish."""
+    service = SquareHotCliService(dry_run=dry_run, limit=limit)
+    service.execute()
+
+
+@app.command("binance-ann")
+def binance_ann_run(
+    dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
+    limit: int | None = typer.Option(None, "--limit", help="Max announcements to polish"),
+) -> None:
+    """Crawl Binance official announcements, polish with AI, and publish."""
+    service = BinanceAnnCliService(dry_run=dry_run, limit=limit)
+    service.execute()
+
+
 @app.command("parallel")
 def parallel_run(
     dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
@@ -208,6 +247,9 @@ def parallel_run(
     disable_followin_topics: bool = typer.Option(False, "--no-followin-topics", help="Disable Followin topics"),
     disable_followin_io: bool = typer.Option(False, "--no-followin-io", help="Disable Followin IO flow"),
     disable_followin_discussion: bool = typer.Option(False, "--no-followin-discussion", help="Disable Followin discussion"),
+    enable_pexels: bool = typer.Option(False, "--enable-pexels", help="Enable Pexels image source"),
+    enable_square_hot: bool = typer.Option(False, "--enable-square-hot", help="Enable Square hot-post rewrite source"),
+    enable_binance_ann: bool = typer.Option(False, "--enable-binance-ann", help="Enable Binance official announcement source"),
 ) -> None:
     """Run ALL sources in parallel and publish to ALL targets concurrently."""
     service = ParallelCliService(
@@ -222,6 +264,9 @@ def parallel_run(
         enable_followin_topics=not disable_followin_topics,
         enable_followin_io_flow=not disable_followin_io,
         enable_followin_discussion=not disable_followin_discussion,
+        enable_pexels=enable_pexels,
+        enable_square_hot=enable_square_hot,
+        enable_binance_ann=enable_binance_ann,
     )
     service.execute_all()
 

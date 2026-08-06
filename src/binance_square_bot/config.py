@@ -63,6 +63,9 @@ class MainConfig(BaseSettings):
     max_hashtags: int = 3
     max_mentions: int = 3
     agent_trace_enabled: bool = True
+    # 长文配置
+    article_min_chars: int = 800
+    article_max_chars: int = 15000
 
     @classmethod
     def register_source_config(cls, name: str, config_cls: Type[BaseModel]):
