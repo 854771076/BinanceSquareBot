@@ -96,6 +96,7 @@ def followin_token_to_item(token: FollowinToken) -> TweetSourceItem:
         identifier=str(token.id),
         title=f"{token.name} (${token.symbol})",
         summary=token.summary,
+        coin_tags=[token.symbol] if token.symbol else [],
         metadata={
             "name": token.name,
             "symbol": token.symbol,

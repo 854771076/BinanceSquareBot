@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from binance_square_bot.services.account_item_publisher import AccountItemPublisher
+from binance_square_bot.services.generation.deep_agent_generator import GeneratedPost
 from binance_square_bot.services.generation.models import TweetSourceItem
 from binance_square_bot.services.target.binance_target import mask_api_key
 
@@ -28,7 +29,8 @@ class FakeGenerator:
                 f"generation failed for {api_key_mask}",
             )
             raise ValueError(message)
-        return self.outputs.get(key, f"tweet-{item.identifier}-{account_index}")
+        body = self.outputs.get(key, f"tweet-{item.identifier}-{account_index}")
+        return GeneratedPost(body=body)
 
 
 class FakeStorage:
@@ -75,18 +77,20 @@ class FakeTarget:
         self.filter_calls = []
         self.publish_calls = []
 
-    def filter(self, tweet):
-        self.filter_calls.append(tweet)
-        if tweet in self.filter_exceptions:
-            raise ValueError(self.filter_exceptions[tweet])
-        return f"filtered:{tweet}"
+    def filter(self, post):
+        self.filter_calls.append(post)
+        if post.body in self.filter_exceptions:
+            raise ValueError(self.filter_exceptions[post.body])
+        filtered = post.model_copy(update={"body": f"filtered:{post.body}"})
+        return filtered
 
-    def publish(self, tweet, api_key):
-        self.publish_calls.append((tweet, api_key))
-        if (tweet, api_key) in self.publish_exceptions:
-            raise RuntimeError(self.publish_exceptions[(tweet, api_key)])
-        if (tweet, api_key) in self.failures or api_key in self.failures:
-            return False, self.failure_messages.get((tweet, api_key), "publish failed")
+    def publish(self, post, api_key):
+        self.publish_calls.append((post, api_key))
+        key = (post.body, api_key)
+        if key in self.publish_exceptions:
+            raise RuntimeError(self.publish_exceptions[key])
+        if key in self.failures or (post.body, api_key) in self.failures or api_key in self.failures:
+            return False, self.failure_messages.get(key, "publish failed")
         return True, ""
 
 
@@ -140,7 +144,7 @@ def test_publishes_every_item_to_every_available_key_and_marks_each_item():
         mask_api_key(api_keys[1]),
     ]
     assert [call["account_index"] for call in generator.calls] == [1, 2, 1, 2]
-    assert target.publish_calls == [
+    assert [(c[0].body, c[1]) for c in target.publish_calls] == [
         ("filtered:tweet-item-1-1", api_keys[0]),
         ("filtered:tweet-item-1-2", api_keys[1]),
         ("filtered:tweet-item-2-1", api_keys[0]),
@@ -252,7 +256,8 @@ def test_skips_unavailable_keys_for_generation_and_publishing():
     ]
     assert [call["api_key"] for call in generator.calls] == [api_keys[1]]
     assert [call["account_index"] for call in generator.calls] == [1]
-    assert target.publish_calls == [("filtered:tweet-available-only-1", api_keys[1])]
+    assert target.publish_calls[0][0].body == "filtered:tweet-available-only-1"
+    assert target.publish_calls[0][1] == api_keys[1]
 
 
 def test_rechecks_key_quota_before_each_item_generation_attempt():
@@ -274,7 +279,7 @@ def test_rechecks_key_quota_before_each_item_generation_attempt():
     assert stats["generated_success"] == 1
     assert stats["published_success"] == 1
     assert [call["item"].identifier for call in generator.calls] == ["first-item"]
-    assert target.publish_calls == [("filtered:tweet-first-item-1", api_key)]
+    assert [(c[0].body, c[1]) for c in target.publish_calls] == [("filtered:tweet-first-item-1", api_key)]
     assert storage.can_publish_key_calls == [
         ("FakeTarget", api_key, 3),
         ("FakeTarget", api_key, 3),
@@ -304,9 +309,8 @@ def test_generation_failure_for_one_key_continues_other_accounts():
     assert stats["published_success"] == 1
     assert stats["published_failed"] == 0
     assert len(generator.calls) == 2
-    assert target.publish_calls == [
-        ("filtered:tweet-generation-failure-2", api_keys[1]),
-    ]
+    assert [c[0].body for c in target.publish_calls] == ["filtered:tweet-generation-failure-2"]
+    assert [c[1] for c in target.publish_calls] == [api_keys[1]]
     assert storage.increment_calls == [("FakeTarget", api_keys[1])]
     assert storage.mark_calls == [
         {
@@ -402,7 +406,8 @@ def test_filter_exception_increments_publish_failed_continues_and_masks_key(caps
     assert stats["generated_success"] == 2
     assert stats["published_success"] == 1
     assert stats["published_failed"] == 1
-    assert target.publish_calls == [("filtered:tweet-filter-exception-2", api_keys[1])]
+    assert target.publish_calls[0][0].body == "filtered:tweet-filter-exception-2"
+    assert target.publish_calls[0][1] == api_keys[1]
     assert storage.increment_calls == [("FakeTarget", api_keys[1])]
     assert storage.mark_calls == [
         {
@@ -435,7 +440,7 @@ def test_publish_exception_increments_publish_failed_continues_and_masks_key(cap
     assert stats["generated_success"] == 2
     assert stats["published_success"] == 1
     assert stats["published_failed"] == 1
-    assert target.publish_calls == [
+    assert [(c[0].body, c[1]) for c in target.publish_calls] == [
         ("filtered:tweet-publish-exception-1", api_keys[0]),
         ("filtered:tweet-publish-exception-2", api_keys[1]),
     ]

@@ -6,10 +6,11 @@ from binance_square_bot.services.generation.deep_agent_generator import (
 )
 from binance_square_bot.services.generation.models import TweetSourceItem
 from binance_square_bot.services.target.binance_target import mask_api_key
+from binance_square_bot.services.target.square_post import SquarePost
 
 
 class AccountItemPublisher:
-    """Generate and publish account-specific tweets for source items."""
+    """Generate and publish account-specific posts for source items."""
 
     def __init__(
         self,
@@ -53,7 +54,7 @@ class AccountItemPublisher:
                 available_account_index += 1
                 api_key_mask = key_masks[api_key]
                 try:
-                    tweet = self.generator.generate_for_account(
+                    generated = self.generator.generate_for_account(
                         item=item,
                         api_key_mask=api_key_mask,
                         account_index=available_account_index,
@@ -65,16 +66,37 @@ class AccountItemPublisher:
                     print(f"Generation failed for API key {api_key_mask}: {error}")
                     continue
 
+                # SquareHot similarity gate — reject rewrites too close to the original.
+                if item.source_name == "SquareHotSource" and item.body:
+                    from difflib import SequenceMatcher
+
+                    ratio = SequenceMatcher(None, item.body.strip(), generated.body.strip()).ratio()
+                    threshold = float(item.metadata.get("similarity_threshold", 0.5))
+                    if ratio > threshold:
+                        stats["generated_failed"] += 1
+                        print(
+                            f"Rewrite too similar to original (ratio={ratio:.2f} > {threshold}); "
+                            f"skipping API key {api_key_mask}"
+                        )
+                        continue
+
                 stats["generated_success"] += 1
 
+                post = _build_square_post(item, generated.body, generated.title)
+
                 if dry_run:
-                    safe_tweet = _sanitize_message(tweet, key_masks)
-                    print(f"[DRY RUN] API key {api_key_mask}: {safe_tweet}")
+                    safe_body = _sanitize_message(generated.body, key_masks)
+                    title_part = f" | title={generated.title}" if generated.title else ""
+                    media_part = _describe_media(item)
+                    print(
+                        f"[DRY RUN] API key {api_key_mask}{title_part} "
+                        f"[{item.post_type}{media_part}]: {safe_body[:200]}"
+                    )
                     continue
 
                 try:
-                    filtered_tweet = target.filter(tweet)
-                    success, error = target.publish(filtered_tweet, api_key)
+                    filtered_post = target.filter(post)
+                    success, error = target.publish(filtered_post, api_key)
                 except Exception as exc:
                     stats["published_failed"] += 1
                     safe_error = _sanitize_message(str(exc), key_masks)
@@ -101,6 +123,28 @@ class AccountItemPublisher:
                 )
 
         return stats
+
+
+def _build_square_post(item: TweetSourceItem, body: str, title: str | None) -> SquarePost:
+    return SquarePost(
+        post_type=item.post_type,
+        body=body,
+        title=title,
+        images=list(item.images),
+        cover=item.cover,
+        video=item.video,
+        video_duration=item.video_duration,
+    )
+
+
+def _describe_media(item: TweetSourceItem) -> str:
+    if item.post_type == "image":
+        return f", {len(item.images)} imgs"
+    if item.post_type == "article":
+        return ", cover" if item.cover else ""
+    if item.post_type == "video":
+        return ", video"
+    return ""
 
 
 def _sanitize_message(message: str, key_masks: dict[str, str]) -> str:

@@ -33,6 +33,7 @@ def source_item():
         title="Bitcoin ETF inflows accelerate",
         summary="Spot Bitcoin ETFs reported another day of strong net inflows.",
         url="https://example.com/news/1",
+        coin_tags=["BTC"],
         metadata={"symbols": ["BTC"]},
     )
 
@@ -49,6 +50,8 @@ def generator_config():
         max_hashtags=2,
         max_mentions=2,
         agent_trace_enabled=False,
+        article_min_chars=800,
+        article_max_chars=15000,
     )
 
 
@@ -86,7 +89,7 @@ def test_generate_invokes_deep_agent_with_skill_and_returns_valid_content(
         api_key="FULL_SECRET_API_KEY",
     )
 
-    assert content == "BTC ETF资金继续流入，市场情绪保持升温 #Bitcoin $BTC"
+    assert content.body == "BTC ETF资金继续流入，市场情绪保持升温 #Bitcoin $BTC"
     assert len(factory_calls) == 1
     assert factory_calls[0]["model"] == "test-model"
     assert isinstance(factory_calls[0]["system_prompt"], str)
@@ -141,7 +144,7 @@ def test_generate_for_account_retries_with_validation_errors(
         account_index=1,
     )
 
-    assert content == "第二次生成满足长度要求，并保留清晰观点 #BTC $BTC"
+    assert content.body == "第二次生成满足长度要求，并保留清晰观点 #BTC $BTC"
     assert len(agent.invocations) == 2
     assert agent.invocations[1]["messages"] == [
         {"role": "user", "content": _user_content(agent.invocations[1])}
@@ -319,7 +322,7 @@ def test_generate_for_account_streams_and_prints_trace_when_enabled(
     )
 
     output = capsys.readouterr().out
-    assert content == "合规内容聚焦ETF流入，不堆叠标签 #BTC $BTC"
+    assert content.body == "合规内容聚焦ETF流入，不堆叠标签 #BTC $BTC"
     assert agent.invocations == []
     assert agent.streams[0]["stream_mode"] == "values"
     assert "Agent attempt 1/3" in output
@@ -364,7 +367,7 @@ def test_generate_for_account_trace_skips_duplicate_user_prompts_and_prints_skil
     )
 
     output = capsys.readouterr().out
-    assert content == final_message
+    assert content.body == final_message
     assert "Skill configured: fn_news" in output
     assert "Skill path:" in output
     assert repeated_prompt not in output

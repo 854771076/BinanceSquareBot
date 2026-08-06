@@ -200,6 +200,7 @@ def test_io_flow_and_discussion_token_content_types_are_preserved() -> None:
             identifier="101",
             title="IO Token ($IO)",
             summary="IO summary",
+            coin_tags=["IO"],
             metadata={
                 "name": "IO Token",
                 "symbol": "IO",
@@ -215,6 +216,7 @@ def test_io_flow_and_discussion_token_content_types_are_preserved() -> None:
             identifier="201",
             title="Discussion Token ($DISC)",
             summary="Discussion summary",
+            coin_tags=["DISC"],
             metadata={
                 "name": "Discussion Token",
                 "symbol": "DISC",
