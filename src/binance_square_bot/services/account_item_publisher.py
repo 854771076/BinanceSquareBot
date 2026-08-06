@@ -85,6 +85,18 @@ class AccountItemPublisher:
 
                 post = _build_square_post(item, generated.body, generated.title)
 
+                # Articles require a cover (Square API rule). If image
+                # attribution couldn't find one, skip rather than crash on
+                # validate_media().
+                try:
+                    post.validate_media()
+                except ValueError as exc:
+                    stats["published_failed"] += 1
+                    print(
+                        f"Skipping item {item.identifier} for {api_key_mask}: {exc}"
+                    )
+                    continue
+
                 if dry_run:
                     safe_body = _sanitize_message(generated.body, key_masks)
                     title_part = f" | title={generated.title}" if generated.title else ""

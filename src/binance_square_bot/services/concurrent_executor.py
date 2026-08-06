@@ -481,6 +481,7 @@ class SourceOrchestrator:
         storage: Any,
         dry_run: bool = False,
         total_per_run: int | None = None,
+        image_attributor: Callable[[list[Any]], int] | None = None,
     ) -> dict[str, Any]:
         """Run multiple sources in parallel, then publish to targets.
 
@@ -535,6 +536,17 @@ class SourceOrchestrator:
                 effective_limit,
                 total_generated,
             )
+
+        # Attach images to text/article items before publishing.
+        if image_attributor is not None:
+            try:
+                attached = image_attributor(all_items)
+                if attached:
+                    console.print(
+                        f"[blue]🖼️ Attached images to {attached} items[/blue]"
+                    )
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(f"Image attribution failed: {exc}")
 
         action = "Generating dry-run posts for" if dry_run else "Publishing"
         console.print(

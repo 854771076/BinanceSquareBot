@@ -117,18 +117,28 @@ class DeepAgentTweetGenerator:
 
     @staticmethod
     def _split_article(raw: str, item: TweetSourceItem) -> tuple[str | None, str]:
-        """For article posts, split the 'TITLE: ...\n\n<body>' response."""
+        """For article posts, split the 'TITLE: ...\n\n<body>' response.
+
+        The model sometimes prefixes narration ("Let me...", numbered lines
+        from a read-back) before the real TITLE line. We find the LAST line
+        that starts with TITLE: and treat everything after it as the body.
+        """
         text = raw.strip()
         if item.post_type != "article":
             return None, text
-        if text.upper().startswith("TITLE:"):
-            head, _, rest = text.partition("\n")
-            title = head.split(":", 1)[1].strip()
-            return title, rest.strip()
-        # Fallback: first non-empty line as title.
-        lines = text.split("\n", 1)
-        if len(lines) == 2 and len(lines[0]) <= 80:
-            return lines[0].strip(), lines[1].strip()
+        lines = text.splitlines()
+        title_idx = None
+        for i in range(len(lines) - 1, -1, -1):
+            if lines[i].strip().upper().startswith("TITLE:"):
+                title_idx = i
+                break
+        if title_idx is not None:
+            title = lines[title_idx].split(":", 1)[1].strip()
+            body = "\n".join(lines[title_idx + 1 :]).strip()
+            return title, body
+        # Fallback: first non-empty line as title if short enough.
+        if len(lines) >= 2 and len(lines[0]) <= 80:
+            return lines[0].strip(), "\n".join(lines[1:]).strip()
         return None, text
 
     def _create_agent(self, skill_path: Any, config: Any, item: TweetSourceItem) -> Any:
@@ -393,4 +403,9 @@ class DeepAgentTweetGenerator:
             model=config.llm_model,
         )
         kwargs["model"] = model
+        # Disable built-in filesystem tools (ls/write_file/read_file/glob).
+        # Without this the model explores the sandbox, writes drafts to temp
+        # files, reads them back, and narrates its own QA — all of which leaks
+        # into the final output. We only need the skills and chat.
+        kwargs.setdefault("permissions", [])
         return create_deep_agent(**kwargs)

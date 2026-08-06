@@ -1,8 +1,14 @@
-"""Pexels image source.
+"""Pexels image-attribution service.
 
-Searches Pexels for free-to-use images, downloads them locally, and yields
-TweetSourceItem objects with post_type='image' (or 'article' for Binance-
-ecosystem keywords that benefit from long-form coverage).
+PexelsSource is NOT a content source. It is an image service that attaches
+relevant free stock photos to real content items produced by other sources
+(Fn news, Followin, BinanceAnn, SquareHot) before publishing:
+
+  - article posts -> search one cover image by title/coin tags
+  - text posts    -> convert to image post with 1-4 relevant images
+
+The search query is derived from each item's own coin_tags and title, so
+images match the actual content rather than a static keyword list.
 
 Pexels API docs: https://www.pexels.com/api/documentation/
 """
@@ -10,6 +16,7 @@ Pexels API docs: https://www.pexels.com/api/documentation/
 from __future__ import annotations
 
 import pathlib
+import re
 from typing import Any
 
 import httpx
@@ -19,20 +26,7 @@ from pydantic import BaseModel
 from binance_square_bot.services.base import BaseSource
 from binance_square_bot.services.generation.models import TweetSourceItem
 
-# Keywords that signal Binance-platform relevance — these get long-form articles
-# because Square boosts Binance-ecosystem content (per project guidance #2/#5).
-BINANCE_KEYWORDS = {
-    "binance",
-    "bnb",
-    "binance launchpool",
-    "binance launchpad",
-    "binance megadrop",
-    "binance listing",
-    "cz",
-    "binance alpha",
-}
-
-# Map Pexels response Content-Type to the extension we'll store and upload with.
+# Map Pexels response Content-Type to the extension we store/upload with.
 # Binance media upload picks content-type from the file extension.
 _EXT_BY_CONTENT_TYPE = {
     "image/jpeg": ".jpg",
@@ -42,6 +36,14 @@ _EXT_BY_CONTENT_TYPE = {
     "image/gif": ".gif",
 }
 
+# Tokens too generic/ambiguous to make a good image search on their own.
+_STOP_QUERY_TOKENS = {
+    "the", "a", "an", "and", "or", "of", "to", "in", "on", "for", "with",
+    "is", "are", "was", "were", "be", "by", "as", "at", "it", "this", "that",
+    "crypto", "cryptocurrency", "announcement", "update", "news", "post",
+    "币安", "公告", "上线", "关于", "的", "与", "及", "或",
+}
+
 
 class PexelsPhoto(BaseModel):
     id: int
@@ -49,156 +51,144 @@ class PexelsPhoto(BaseModel):
     height: int
     url: str  # Pexels page (for attribution)
     photographer: str
-    photographer_url: str | None = None
     src_large: str
     src_original: str
 
 
-class PexelsSearchResponse(BaseModel):
-    photos: list[PexelsPhoto]
-    total_results: int = 0
-
-
 class PexelsSource(BaseSource):
-    """Fetch images from Pexels and produce image/article TweetSourceItems."""
+    """Attach Pexels images to content items. Not a content source itself."""
 
     class Config(BaseSource.Config):
         enabled: bool = False
-        daily_max_executions: int = 1
+        daily_max_executions: int = 1000  # not a source; limit is irrelevant
         api_key: str = ""
         api_url: str = "https://api.pexels.com/v1/search"
-        per_keyword: int = 3
-        max_items_per_run: int = 10
+        # Number of images to attach to text posts (converted to image posts).
+        text_post_images: int = 2
+        # Article cover: always 1.
         min_width: int = 1024
         orientation: str = "landscape"  # landscape | portrait | square
         download_dir: str = "data/media/pexels"
-        keywords: list[str] = [
-            "binance",
-            "bitcoin",
-            "ethereum",
-            "cryptocurrency",
-            "blockchain",
-            "candlestick chart",
-            "crypto trading",
-        ]
+        request_timeout: float = 20.0
 
     def __init__(self) -> None:
         super().__init__()
-        self._client = httpx.Client(timeout=30.0)
+        self._client = httpx.Client(timeout=self.config.request_timeout)
         self._download_dir = pathlib.Path(self.config.download_dir)
         self._download_dir.mkdir(parents=True, exist_ok=True)
 
-    # ----- BaseSource contract -----
+    # ----- BaseSource contract (no longer produces content) -----
 
-    def fetch(self) -> list[TweetSourceItem]:
-        if not self.config.api_key:
-            logger.warning("Pexels API key not configured; skipping")
-            return []
-        items: list[TweetSourceItem] = []
-        for keyword in self.config.keywords:
-            if len(items) >= self.config.max_items_per_run:
-                break
-            try:
-                items.extend(self._fetch_keyword(keyword))
-            except Exception as exc:  # noqa: BLE001
-                logger.error(f"Pexels fetch failed for {keyword!r}: {exc}")
-        return items[: self.config.max_items_per_run]
+    def fetch(self) -> list[Any]:
+        return []
 
     def generate(self, data: Any) -> Any:
-        # Pexels source maps directly to TweetSourceItem in fetch(); kept for API parity.
         return data
+
+    # ----- image attribution -----
+
+    def attach_images(self, items: list[TweetSourceItem]) -> int:
+        """Mutate items in place, attaching relevant images.
+
+        article posts get a cover; text posts are converted to image posts.
+        Items that already have media, or for which no suitable image is
+        found, are left untouched. Returns the number of items enriched.
+        """
+        if not self.config.api_key:
+            logger.warning("Pexels API key not configured; skipping image attribution")
+            return 0
+
+        enriched = 0
+        for item in items:
+            # Don't override sources that already supply their own media.
+            if item.images or item.cover or item.video:
+                continue
+            # Only text and article posts are good image candidates.
+            if item.post_type not in ("text", "article"):
+                continue
+            try:
+                if self._attach_one(item):
+                    enriched += 1
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(f"Pexels attribution failed for {item.identifier}: {exc}")
+        if enriched:
+            logger.info(f"Pexels attached images to {enriched}/{len(items)} items")
+        return enriched
+
+    def _attach_one(self, item: TweetSourceItem) -> bool:
+        query = self._build_query(item)
+        if not query:
+            return False
+
+        wanted = 1 if item.post_type == "article" else self.config.text_post_images
+        wanted = max(1, min(wanted, 4))
+        photos = self._search(query, wanted)
+        if not photos:
+            return False
+
+        paths: list[str] = []
+        attribution: list[str] = []
+        for photo in photos:
+            local = self._download(photo)
+            if local:
+                paths.append(local)
+                attribution.append(f"Photo by {photo.photographer} on Pexels ({photo.url})")
+        if not paths:
+            return False
+
+        if item.post_type == "article":
+            item.cover = paths[0]
+        else:
+            # text -> image post
+            item.post_type = "image"
+            item.images = paths[:4]
+
+        existing = list(item.metadata.get("attribution", []))
+        item.metadata["attribution"] = existing + attribution
+        item.metadata["pexels_query"] = query
+        return True
 
     # ----- internals -----
 
-    def _fetch_keyword(self, keyword: str) -> list[TweetSourceItem]:
-        headers = {"Authorization": self.config.api_key}
-        is_binance = keyword.strip().lower() in BINANCE_KEYWORDS
-        post_type = "article" if is_binance else "image"
-        # Article posts need exactly one cover; image posts take up to 4.
-        # Fetch a couple of extras to survive width filtering / failed downloads.
-        wanted = 1 if post_type == "article" else min(self.config.per_keyword, 4)
+    def _search(self, query: str, wanted: int) -> list[PexelsPhoto]:
         params = {
-            "query": keyword,
+            "query": query,
             "per_page": wanted + 2,
             "orientation": self.config.orientation,
         }
-        response = self._client.get(self.config.api_url, headers=headers, params=params)
-        response.raise_for_status()
-        payload = response.json()
-        photos = self._parse_photos(payload)
-        photos = [p for p in photos if p.width >= self.config.min_width]
-        photos = photos[:wanted]
-        if not photos:
-            return []
-
-        items: list[TweetSourceItem] = []
-        downloaded: list[str] = []
-        attribution: list[str] = []
-        for photo in photos:
-            local_path = self._download(photo)
-            if not local_path:
-                continue
-            downloaded.append(local_path)
-            attribution.append(
-                f"Photo by {photo.photographer} on Pexels ({photo.url})"
-            )
-
-        if not downloaded:
-            return []
-
-        if post_type == "image":
-            images = downloaded[:4]
-            cover = None
-        else:
-            images = []
-            cover = downloaded[0]
-
-        item = TweetSourceItem(
-            source_name=self.__class__.__name__,
-            content_type="stock_image",
-            identifier=f"pexels-{keyword}-{photos[0].id}",
-            title=keyword,
-            summary=(
-                f"Pexels image set for keyword '{keyword}'. "
-                "Write a Binance Square caption for these images."
-            ),
-            post_type=post_type,
-            images=images,
-            cover=cover,
-            coin_tags=_coin_tags_for_keyword(keyword),
-            metadata={
-                "keyword": keyword,
-                "attribution": attribution,
-                "photo_ids": [p.id for p in photos[: len(downloaded)]],
-            },
+        response = self._client.get(
+            self.config.api_url,
+            headers={"Authorization": self.config.api_key},
+            params=params,
         )
-        items.append(item)
-        return items
+        response.raise_for_status()
+        photos = self._parse_photos(response.json())
+        photos = [p for p in photos if p.width >= self.config.min_width]
+        return photos[:wanted]
 
     @staticmethod
     def _parse_photos(payload: dict) -> list[PexelsPhoto]:
-        photos: list[PexelsPhoto] = []
+        result: list[PexelsPhoto] = []
         for p in payload.get("photos", []):
             src = p.get("src", {})
-            photos.append(
+            result.append(
                 PexelsPhoto(
                     id=p["id"],
                     width=p.get("width", 0),
                     height=p.get("height", 0),
                     url=p.get("url", ""),
                     photographer=p.get("photographer", "Pexels"),
-                    photographer_url=p.get("photographer_url"),
                     src_large=src.get("large") or src.get("large2x") or src.get("medium", ""),
                     src_original=src.get("original", ""),
                 )
             )
-        return photos
+        return result
 
     def _download(self, photo: PexelsPhoto) -> str | None:
         url = photo.src_original or photo.src_large
         if not url:
             return None
-        # Default to .jpg; corrected from Content-Type once response arrives.
+        # Default .jpg; corrected from Content-Type once the response arrives.
         target = self._download_dir / f"{photo.id}.jpg"
         try:
             with self._client.stream("GET", url) as resp:
@@ -216,17 +206,23 @@ class PexelsSource(BaseSource):
             logger.warning(f"Pexels download failed for {photo.id}: {exc}")
             return None
 
+    @staticmethod
+    def _build_query(item: TweetSourceItem) -> str:
+        """Derive an image-search query from the item's coin tags and title."""
+        # Coin symbols make the most specific, relevant query.
+        tokens: list[str] = list(dict.fromkeys(item.coin_tags))
 
-def _coin_tags_for_keyword(keyword: str) -> list[str]:
-    """Map a Pexels search keyword to Binance-recognized coin symbols.
+        # Add meaningful words from the title (English/latin tokens only;
+        # CJK titles don't search well on Pexels).
+        if item.title:
+            title_words = re.findall(r"[A-Za-z][A-Za-z0-9]+", item.title)
+            for word in title_words:
+                wl = word.lower()
+                if wl not in _STOP_QUERY_TOKENS and word not in tokens:
+                    tokens.append(word)
 
-    Only returns symbols the keyword clearly implies — no guessing.
-    """
-    k = keyword.lower()
-    if "bnb" in k or "binance" in k:
-        return ["BNB"]
-    if "bitcoin" in k or "btc" in k:
-        return ["BTC"]
-    if "ethereum" in k or "eth" in k:
-        return ["ETH"]
-    return []
+        # Pexels search works best with 1-3 terms.
+        query = " ".join(tokens[:3]).strip()
+        if not query:
+            return "cryptocurrency"
+        return query

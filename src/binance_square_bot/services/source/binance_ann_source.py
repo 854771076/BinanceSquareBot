@@ -10,8 +10,10 @@ body as a draft-JSON tree, so two requests per item are required.
 
 from __future__ import annotations
 
+import pathlib
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
+from urllib.parse import urlparse
 
 from curl_cffi import requests
 from loguru import logger
@@ -37,6 +39,7 @@ class Announcement(BaseModel):
     body: str = ""
     coin_tags: list[str] = []
     release_date: int = 0
+    cover: str | None = None  # local path to downloaded real cover image
 
 
 class BinanceAnnSource(BaseSource):
@@ -52,6 +55,8 @@ class BinanceAnnSource(BaseSource):
         min_body_chars: int = 80
         max_body_chars: int = 12000
         request_timeout: float = 15.0
+        # Directory for real announcement cover images downloaded from bnbstatic.
+        cover_dir: str = "data/media/binance-ann"
         user_agent: str = (
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
@@ -168,13 +173,21 @@ class BinanceAnnSource(BaseSource):
             logger.warning(f"detail error for {article.code}: {payload.get('message')}")
             return None
         data = payload.get("data") or {}
-        body_text = self._extract_body_text(data.get("body"))
+        body_tree = data.get("body")
+        body_text = self._extract_body_text(body_tree)
         if not (self.config.min_body_chars <= len(body_text) <= self.config.max_body_chars):
             return None
 
         article.body = body_text
         article.catalog_name = data.get("firstCatalogName") or article.catalog_name
         article.coin_tags = _extract_coin_tags(data.get("pairs"))
+
+        # Use the announcement's own first image as the real cover. Pexels
+        # image-attribution skips items that already have a cover, so real
+        # announcement art is never replaced with stock photos.
+        image_url = self._extract_first_image_url(body_tree)
+        if image_url:
+            article.cover = self._download_cover(image_url, article.code)
         return article
 
     @staticmethod
@@ -221,24 +234,19 @@ class BinanceAnnSource(BaseSource):
         return "\n".join(line for line in lines if line).strip()
 
     def _to_item(self, article: Announcement) -> TweetSourceItem | None:
-        """Build a TweetSourceItem, or None if the announcement is unpublishable.
+        """Build a TweetSourceItem for the announcement.
 
-        New-listing/long bodies want an article (Square boosts platform content),
-        but articles require a cover image. If no cover can be fetched (e.g. no
-        Pexels key) the body is too long for the text-post limit, so we skip the
-        item rather than emit something the validator will reject.
+        New-listing/long bodies become articles (Square boosts platform
+        content). If the announcement carries its own image we download it as
+        the real cover and Pexels image-attribution will leave it untouched
+        (items that already have a cover are skipped). If it has no image we
+        still emit an article with cover=None; the central Pexels service
+        fills in a relevant stock cover. If neither succeeds the publisher's
+        validate_media guard skips the item.
         """
         is_listing = article.catalog_id == 48
         body_len = len(article.body)
-        wants_article = is_listing or body_len >= 800
-        cover = self._fetch_cover(article) if wants_article else None
-        if wants_article and not cover:
-            logger.info(
-                f"Skipping {article.code}: article needs a cover but none was "
-                "fetched (set PEXELS_SOURCE_API_KEY to enable BinanceAnn articles)"
-            )
-            return None
-        post_type = "article" if cover else "text"
+        post_type = "article" if (is_listing or body_len >= 800) else "text"
         return TweetSourceItem(
             source_name=self.__class__.__name__,
             content_type="announcement",
@@ -248,7 +256,7 @@ class BinanceAnnSource(BaseSource):
             body=article.body,
             url=f"{DETAIL_PAGE}/{article.code}",
             post_type=post_type,
-            cover=cover,
+            cover=article.cover,
             coin_tags=article.coin_tags,
             metadata={
                 "code": article.code,
@@ -258,34 +266,58 @@ class BinanceAnnSource(BaseSource):
             },
         )
 
-    def _fetch_cover(self, article: Announcement) -> str | None:
-        """Fetch a generic crypto cover from Pexels if its API key is set.
-
-        Returns None when Pexels is not configured or the download fails —
-        the item then falls back to a text post instead of an article.
-        """
-        import os
-
-        if not os.environ.get("PEXELS_SOURCE_API_KEY", "").strip():
+    @staticmethod
+    def _extract_first_image_url(body_tree: Any) -> str | None:
+        """Walk the draft-JSON tree and return the first <img> src."""
+        if not body_tree:
             return None
-        try:
-            # Import lazily so this source works without Pexels enabled.
-            from binance_square_bot.services.source.pexels_source import PexelsSource
+        if isinstance(body_tree, str):
+            try:
+                import json
 
-            pexels = PexelsSource()
-            keyword = "binance" if article.catalog_id == 48 else "cryptocurrency"
-            resp = pexels._client.get(
-                pexels.config.api_url,
-                headers={"Authorization": pexels.config.api_key},
-                params={"query": keyword, "per_page": 1, "orientation": "landscape"},
-            )
-            resp.raise_for_status()
-            photos = pexels._parse_photos(resp.json())
-            if not photos:
+                body_tree = json.loads(body_tree)
+            except (ValueError, TypeError):
                 return None
-            return pexels._download(photos[0])
+
+        found: list[str] = []
+
+        def walk(node: Any) -> None:
+            if found:
+                return
+            if isinstance(node, list):
+                for n in node:
+                    walk(n)
+                return
+            if not isinstance(node, dict):
+                return
+            if node.get("tag") == "img":
+                src = (node.get("attr") or {}).get("src", "")
+                if src and src.startswith("http"):
+                    found.append(src)
+                    return
+            for child in node.get("child") or []:
+                walk(child)
+
+        walk(body_tree)
+        return found[0] if found else None
+
+    def _download_cover(self, url: str, code: str) -> str | None:
+        """Download a real announcement cover image to a local file."""
+        try:
+            ext = pathlib.Path(urlparse(url).path).suffix or ".jpg"
+            if ext.lower() not in {".jpg", ".jpeg", ".png", ".webp", ".gif"}:
+                ext = ".jpg"
+            cover_dir = pathlib.Path(self.config.cover_dir)
+            cover_dir.mkdir(parents=True, exist_ok=True)
+            target = cover_dir / f"{code}{ext}"
+            if target.is_file() and target.stat().st_size > 0:
+                return str(target)
+            resp = self._client.get(url, timeout=self.config.request_timeout)
+            resp.raise_for_status()
+            target.write_bytes(resp.content)
+            return str(target)
         except Exception as exc:  # noqa: BLE001
-            logger.warning(f"BinanceAnn cover fetch failed for {article.code}: {exc}")
+            logger.warning(f"BinanceAnn cover download failed for {code}: {exc}")
             return None
 
 

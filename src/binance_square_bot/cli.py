@@ -10,7 +10,6 @@ from binance_square_bot.services.cli import (
     FnCliService,
     FollowinCliService,
     ParallelCliService,
-    PexelsCliService,
     PolymarketCliService,
     SquareHotCliService,
 )
@@ -202,16 +201,6 @@ def followin_discussion(
     """Run Followin discussion tokens workflow."""
     service = FollowinCliService(dry_run=dry_run, limit=limit)
     service.execute_discussion()
-
-
-@app.command("pexels")
-def pexels_run(
-    dry_run: bool = typer.Option(False, "--dry-run", help="Only generate, no publishing"),
-    limit: int | None = typer.Option(None, "--limit", help="Max Pexels items to process"),
-) -> None:
-    """Search Pexels for images and publish image/article posts to Square."""
-    service = PexelsCliService(dry_run=dry_run, limit=limit)
-    service.execute()
 
 
 @app.command("square-hot")

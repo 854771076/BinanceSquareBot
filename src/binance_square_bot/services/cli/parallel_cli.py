@@ -137,16 +137,20 @@ class ParallelCliService:
             })
             console.print("[blue]✅ FollowinSource (discussion) enabled[/blue]")
 
-        # PexelsSource (opt-in — requires PEXELS_SOURCE_API_KEY)
+        # Pexels is no longer an independent content source. When enabled it
+        # attaches relevant cover/inline images to items AFTER aggregation (see
+        # image_attributor below). Article posts get a cover; text posts become
+        # image posts. Requires PEXELS_SOURCE_API_KEY.
+        image_attributor = None
         if self.enable_pexels:
             pexels = PexelsSource()
-            if pexels.config.enabled and pexels.config.api_key:
-                source_configs.append({"source": pexels, "execute": "execute"})
-                console.print("[blue]✅ PexelsSource enabled[/blue]")
+            if pexels.config.api_key:
+                image_attributor = pexels.attach_images
+                console.print("[blue]✅ Pexels image attribution enabled[/blue]")
             else:
                 console.print(
-                    "[yellow]⚠️ PexelsSource requested but disabled or missing "
-                    "PEXELS_SOURCE_API_KEY; skipping[/yellow]"
+                    "[yellow]⚠️ Pexels requested but PEXELS_SOURCE_API_KEY "
+                    "is missing; posting without images[/yellow]"
                 )
 
         # SquareHotSource (opt-in — reverse-engineered feed, use carefully)
@@ -192,6 +196,7 @@ class ParallelCliService:
             storage=self.storage,
             dry_run=self.dry_run,
             total_per_run=self.total_per_run,
+            image_attributor=image_attributor,
         )
 
         logger.info(f"Parallel execution complete: {results}")
