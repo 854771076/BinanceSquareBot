@@ -94,6 +94,7 @@ class SquareHotSource(BaseSource):
             "binance_announcements",
             "binance_alpha",
             "binance_square",
+            "binance_academy",
             "cz",
         ]
         skip_ai_content: bool = True
@@ -187,7 +188,10 @@ class SquareHotSource(BaseSource):
             )
             if verified and self.config.skip_verified_authors and not whitelisted:
                 continue
-            if int(v.get("likeCount") or 0) < self.config.min_like_count:
+            # Official-account posts are worth rewriting regardless of
+            # engagement; apply the like-count floor only to non-whitelisted
+            # community posts.
+            if not whitelisted and int(v.get("likeCount") or 0) < self.config.min_like_count:
                 continue
             result.append(v)
         return result
