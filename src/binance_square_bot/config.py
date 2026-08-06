@@ -88,14 +88,24 @@ class MainConfig(BaseSettings):
         return cls._target_configs.get(target_name)
 
     def _get_env_prefix(self, name: str) -> str:
-        """Convert class name to environment variable prefix.
+        """Convert class name to an UPPER_SNAKE_CASE env prefix.
 
-        Example: "FnSource" → "FN_SOURCE", "BinanceTarget" → "BINANCE_TARGET"
+        Examples:
+          FnSource -> FN_SOURCE
+          BinanceTarget -> BINANCE_TARGET
+          BinanceAnnSource -> BINANCE_ANN_SOURCE
+          SquareHotSource -> SQUARE_HOT_SOURCE
         """
+        import re
+
         for suffix in ["Source", "Target"]:
             if name.endswith(suffix):
-                return f"{name[:-len(suffix)]}_{suffix}".upper()
-        return name.upper()
+                stem = name[: -len(suffix)]
+                # Insert underscore before each internal uppercase letter:
+                # "BinanceAnn" -> "Binance_Ann".
+                stem = re.sub(r"(?<!^)(?=[A-Z])", "_", stem)
+                return f"{stem}_{suffix}".upper()
+        return re.sub(r"(?<!^)(?=[A-Z])", "_", name).upper()
 
     def get_source_config(self, source_name: str) -> Optional[BaseModel]:
         """Get instantiated config for a specific source, loaded from env vars.

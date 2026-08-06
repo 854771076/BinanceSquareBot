@@ -128,7 +128,12 @@ class BinanceTarget(BaseTarget):
             poll_interval=self.config.upload_poll_interval,
             max_poll_retries=self.config.upload_max_poll_retries,
         )
-        body: dict = {"contentType": CONTENT_TYPE_MAP[post.post_type], "bodyTextOnly": post.body}
+        # Plain text posts do NOT send contentType (the reference skill's
+        # post-text.mjs only sets bodyTextOnly; sending contentType=0 triggers
+        # "Content type not supported for OpenAPI"). Media post types do.
+        body: dict = {"bodyTextOnly": post.body}
+        if post.post_type != "text":
+            body["contentType"] = CONTENT_TYPE_MAP[post.post_type]
 
         if post.post_type == "image":
             logger.debug(f"[API:{key_mask}] 🖼️ Uploading {len(post.images)} images")
